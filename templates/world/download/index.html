@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block title %}World Downloads{% endblock %}
+{% block body %}
+<h2>Downloads</h2>
+<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2012-07-13.7z') }}">July 13th, 2012</a> (650 MB)</h3>
+<ul>
+  <li>The Old World, just before the server opened on July 14th, 2012.</li>
+  <li>Pristine and untouched, except for the 4 original MRT v4.1 lines built by Frumple: Blue, Green, Yellow, and Red.</li>
+</ul>
+
+<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2012-12-17.7z') }}">December 17th, 2012</a> (867 MB)</h3>
+<ul>
+  <li>The Old World, 5 months after opening.</li>
+</ul>
+
+<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2013-08-13.7z') }}">August 13th, 2013</a> (909 MB)</h3>
+<ul>
+  <li>The Old World, 1 year and 1 month after opening.</li>
+</ul>
+
+<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2014-01-04.7z') }}">January 4th, 2014</a> (919 MB)</h3>
+<ul>
+  <li>The Old World, 1 year and 6 months after opening.</li>
+</ul>
+
+<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2014-10-03.7z') }}">October 3rd, 2014</a> (6.09 GB)</h3>
+<ul>
+  <li>The Old, New, Lab, Games, and Space Worlds just before the opening of the Gamma Server on October 4th, 2014.</li>
+  <li>Download this for the pristine New World with all 11 of the new MRT v5.0 lines built by MRT staff members: Arctic, Circle, Desert, Expo, Forest, Island, Mesa, Plains, Taiga, Valley, and Zephyr.</li>
+</ul>
+
+<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2015-12-14.7z') }}">December 14th, 2015</a> (6.65 GB)</h3>
+<ul>
+  <li>The Old, New, Lab, Games, and Space Worlds 1 year and 2 months after the opening of the Gamma Server.</li>
+</ul>
+
+<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2016-12-27.7z') }}">December 27th, 2016</a> (6.82 GB)</h3>
+<ul>
+  <li>The Old, New, Lab, Games, and Space Worlds just before the migration from Gamma to the new Epsilon Server on December 30th, 2016.</li>
+  <li>This is the last archive of the New World in its original 20000 by 20000 size before it got expanded as part of the Epsilon migration.</li>
+</ul>
+
+<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2017-06-12.7z') }}">June 12th, 2017</a> (18.2 GB)</h3>
+<ul>
+  <li>The Old, New, Lab, Games, and Space Worlds about 6 months after the migration to the new Epsilon Server.</li>
+  <li>This is the first archive of the New World in its expanded 36000 by 36000 size.</li>
+</ul>
+
+<hr />
+
+<h2>Frequently Asked Questions</h2>
+
+<h3>How do I extract these files?</h3>
+<ul><li>These archive files were made using 7-zip for its better compression ratio. Download and install <a href="http://www.7-zip.org">7-zip</a> from to extract them.</li></ul>
+
+<h3>What is the password to extract these files?</h3>
+<ul><li>The password for all world download files here is: <strong>BusesTrainsShipsPlanesOhMy!</strong></li></ul>
+
+<h3>My download is slow or fails to complete!</h3>
+<ul><li>Ensure that you have a stable and fast internet connection before downloading these files. Most of these files are 1 gigabyte or more, so expect these files to take a lot of time to completely download.</li></ul>
+
+<h3>Will more world downloads be made available in the future?</h3>
+<ul><li>If time allows for it, then yes.</li></ul>
+{% endblock %}

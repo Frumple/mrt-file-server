@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block title %}World Downloads{% endblock %}
+{% block body %}
+<h1 style="color:red">STOP, READ THIS FIRST!</h1>
+
+<h2>Terms of Use</h2>
+<ul>
+  <li>These world files are for current MRT members ONLY. Do NOT share the download links, password, or world files to guests, banned players, or non-members.</li>
+  <li>You are free to use these worlds for any personal projects on a single-player world.</li>
+  <li>If you would like to host these worlds on your own multiplayer server, please ask for permission by contacting us at admin@minecartrapidtransit.net.</li>
+  <li>DO NOT STEAL any structures, projects, or designs from these worlds and DO NOT claim them as your own. Give credit to the original builder where it is due.</li>
+</ul>
+
+<span>If you have read and agree to the above terms, then continue to the <a href="{{ url_for('list_world_downloads') }}">World Downloads</a>.</span>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block title %}Schematic Uploader{% endblock %}
+{% block body %}
+<script type="text/javascript" src="{{ url_for('static', filename = 'scripts/schematic-uploader.js') }}" defer></script>
+
+<span>Upload your schematic files directly to the Minecraft server here. After you have successfully uploaded your files, take note of the filenames and ask an admod in-game to paste them using WorldEdit.</span>
+
+<form method="post" enctype="multipart/form-data" action="{{ url_for('upload_schematic') }}">
+  <h2>1. Enter your Minecraft Username</h2>
+  <span>Username:</span>
+  <input type="text" id="userName" name="userName" onchange="handleFiles(fileInput.files)" />
+  <br />
+  <h2>2. Select schematics to upload</h2>
+  <span>Please note:</span>
+  <ul>
+    <li>Maximum of 10 files can be uploaded at one time.</li>
+    <li>Maximum size per file is 100 kb.</li>
+    <li>File names must end with the .schematic extension.</li>
+    <li>File names must not contain spaces.</li>
+    <li>File names will be automatically prepended with your username when uploaded to the server.</li>
+  </ul>
+  <span>File name example:</span>
+  <ul>
+    <li>Username = "Frumple"
+    <li>Local File = "taco.schematic"
+    <li>Uploaded File = "Frumple-taco.schematic"
+  </ul>
+  <input type="file" id="fileInput" name="schematic" multiple accept=".schematic" onchange="handleFiles(this.files)">
+  <br />
+  <br />
+  <span>Schematics to upload:</span>
+  <div id="fileList">      
+    <ul>
+      <li>No files selected.</li>
+    </ul>
+  </div>
+  <input type="submit" value="Upload" name="submit" />
+</form>
+{% endblock %}
