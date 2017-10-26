@@ -11,3 +11,6 @@ UPLOADED_SCHEMATICS_DEST = SCHEMATICS_UPLOADS_DIR
 
 # Required by Flask to enable sessions and flash messages
 SECRET_KEY = "\x97/\xb6\xecsc\x91\xd3r\xab\xcf\xc0\xd1aez\xc0>\xe2\xf0\xee\xe1\xd5F"
+
+# Enable high-performance file transfer
+USE_X_SENDFILE = True
