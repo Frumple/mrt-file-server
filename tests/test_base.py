@@ -1,5 +1,3 @@
-
-
 import glob
 import mrt_file_server
 import os
@@ -18,8 +16,12 @@ class TestBase(unittest.TestCase):
   def tearDown(self):
     pass
 
-  def flash_message(self, message):
+  def flash_message_html(self, message):
     return '<li name="flash_message">{}</li>'.format(message)
+
+  def verify_flash_message(self, filename, expected_message, response_data):
+    expected_message_html = self.flash_message_html("{}: {}".format(filename, expected_message))
+    self.assertIn(bytes(expected_message_html, encoding = "utf-8"), response_data)
 
   def read_data_file(self, filepath):
     with open(filepath, "r+b") as file:
