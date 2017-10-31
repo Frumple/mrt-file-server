@@ -2,6 +2,7 @@ from flask import Flask, flash, request, render_template, send_from_directory
 from flask_uploads import UploadSet, configure_uploads
 
 import os
+import re
 
 def configure_instance_folders(app):
   instance_path = app.instance_path
@@ -16,9 +17,37 @@ def configure_instance_folders(app):
   # Used by Flask-Uploads to determine where to upload schematics
   app.config['UPLOADED_SCHEMATICS_DEST'] = schematic_uploads_dir
 
+def configure_flash_messages(app):
+  messages = {
+    "UPLOAD_SUCCESS":             "Upload Successful!",
+    "UPLOAD_FAILURE":             "Upload Failed!",
+    "UPLOAD_USERNAME_EMPTY":      "Upload Failed! Username must not be empty.",
+    "UPLOAD_USERNAME_WHITESPACE": "Upload Failed! Username must not contain spaces.",
+    "UPLOAD_NO_FILES":            "Upload Failed! No files selected.",
+    "UPLOAD_TOO_MANY_FILES":      "Upload Failed! A maximum of {} files can be uploaded at one time.".format( \
+                                  app.config['MAX_SCHEMATIC_FILES_TO_UPLOAD'])
+  }
+
+  app.config['FLASH_MESSAGES'] = messages
+
+def get_flash_message(app, key):
+  return app.config['FLASH_MESSAGES'][key]
+
+def flash_by_key(app, key, filename = None):
+  message = get_flash_message(app, key)
+
+  if filename:
+    flash("{}: {}".format(filename, message))
+  else:
+    flash(message)
+
+def str_contains_whitespace(str):
+  return bool(re.search('\s', str))
+
 app = Flask(__name__)
 app.config.from_pyfile("config.py")
 configure_instance_folders(app)
+configure_flash_messages(app)
 
 schematics = UploadSet('schematics', extensions = ['schematic'])
 configure_uploads(app, schematics)
@@ -29,23 +58,35 @@ def index():
 
 @app.route("/schematic/upload", methods = ['GET', 'POST'])
 def upload_schematics():
-  if request.method == 'POST' and 'schematic' in request.files:
-    files = request.files.getlist('schematic')
-    for file in files:
-      upload_single_schematic(file)
+  if request.method == 'POST':
+    upload_schematics_post()
 
   return render_template('schematic/upload/index.html', footer = True)
+
+def upload_schematics_post():
+  if 'userName' not in request.form or request.form['userName'] == "":
+    flash_by_key(app, 'UPLOAD_USERNAME_EMPTY')
+  elif str_contains_whitespace(request.form['userName']):
+    flash_by_key(app, 'UPLOAD_USERNAME_WHITESPACE')
+  elif 'schematic' not in request.files:
+    flash_by_key(app, 'UPLOAD_NO_FILES')
+  else:
+    files = request.files.getlist('schematic')
+
+    if len(files) > app.config['MAX_SCHEMATIC_FILES_TO_UPLOAD']:
+      flash_by_key(app, 'UPLOAD_TOO_MANY_FILES')
+    else:
+      for file in files:
+        upload_single_schematic(file)
 
 def upload_single_schematic(file):
   filename = file.filename
 
   try:
     schematics.save(file)
-    message = "Success!"
+    message = flash_by_key(app, 'UPLOAD_SUCCESS', filename)
   except Exception as e:
-    message = "Failed!"
-
-  flash("{}: {}".format(filename, message))
+    message = flash_by_key(app, 'UPLOAD_FAILURE', filename)  
 
 @app.route("/schematic/download")
 def download_schematics():

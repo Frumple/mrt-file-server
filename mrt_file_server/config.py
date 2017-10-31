@@ -1,3 +1,6 @@
+# Maximum number of schematic files that can be uploaded at time
+MAX_SCHEMATIC_FILES_TO_UPLOAD = 10
+
 # Required by Flask to enable sessions and flash messages
 SECRET_KEY = "\x97/\xb6\xecsc\x91\xd3r\xab\xcf\xc0\xd1aez\xc0>\xe2\xf0\xee\xe1\xd5F"
 

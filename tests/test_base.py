@@ -19,8 +19,17 @@ class TestBase(unittest.TestCase):
   def flash_message_html(self, message):
     return '<li name="flash_message">{}</li>'.format(message)
 
-  def verify_flash_message(self, filename, expected_message, response_data):
-    expected_message_html = self.flash_message_html("{}: {}".format(filename, expected_message))
+  def get_flash_message(self, key):
+    return self.app.config['FLASH_MESSAGES'][key]
+
+  def verify_flash_message_by_key(self, key, response_data, filename = None):
+    self.verify_flash_message(self.get_flash_message(key), response_data, filename)  
+
+  def verify_flash_message(self, expected_message, response_data, filename = None):
+    if filename:
+      expected_message_html = self.flash_message_html("{}: {}".format(filename, expected_message))      
+    else:
+      expected_message_html = self.flash_message_html(expected_message)
     self.assertIn(bytes(expected_message_html, encoding = "utf-8"), response_data)
 
   def read_data_file(self, filepath):
