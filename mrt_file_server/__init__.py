@@ -1,5 +1,6 @@
 from flask import Flask, flash, request, render_template, send_from_directory
 from flask_uploads import UploadSet, configure_uploads
+from werkzeug.utils import secure_filename
 
 import os
 import re
@@ -20,7 +21,7 @@ def configure_instance_folders(app):
 def configure_flash_messages(app):
   messages = {
     "UPLOAD_SUCCESS":             "Upload Successful!",
-    "UPLOAD_FAILURE":             "Upload Failed!",
+    "UPLOAD_FAILURE":             "Upload Failed! Please contact the admins for assistance.",
     "UPLOAD_USERNAME_EMPTY":      "Upload Failed! Username must not be empty.",
     "UPLOAD_USERNAME_WHITESPACE": "Upload Failed! Username must not contain spaces.",
     "UPLOAD_NO_FILES":            "Upload Failed! No files selected.",
@@ -100,11 +101,15 @@ def upload_schematics_post():
 
 def upload_single_schematic(file):
   filename = file.filename
-  filesize = get_filesize(file)
 
   if str_contains_whitespace(filename):
     flash_by_key(app, 'UPLOAD_FILENAME_WHITESPACE', filename)
-  elif get_file_extension(filename) != '.schematic':
+    return
+
+  filename = secure_filename(filename)
+  filesize = get_filesize(file)
+  
+  if get_file_extension(filename) != '.schematic':
     flash_by_key(app, 'UPLOAD_FILENAME_EXTENSION', filename)
   elif filesize > app.config['MAX_UPLOAD_FILE_SIZE']:
     flash_by_key(app, 'UPLOAD_FILE_TOO_LARGE', filename)

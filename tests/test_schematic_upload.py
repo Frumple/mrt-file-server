@@ -9,6 +9,8 @@ import os
 class TestSchematicUpload(TestBase):
   def setUp(self):
     TestBase.setUp(self)
+    self.uploads_dir = self.app.config['SCHEMATIC_UPLOADS_DIR']
+
     self.clean_schematic_uploads_dir()
  
   def tearDown(self):
@@ -154,11 +156,10 @@ class TestSchematicUpload(TestBase):
   def test_upload_file_that_already_exists_should_fail(self):
     filename = "mrt_v5_final_elevated_centre_station.schematic"
     impostor_filename = "mrt_v5_final_underground_single_track.schematic"
-    uploads_dir = self.app.config['SCHEMATIC_UPLOADS_DIR']
 
     # Copy an impostor file with different content to the uploads directory with the same name as the file to upload
     src_filepath = os.path.join(self.TEST_DATA_DIR, impostor_filename)
-    dest_filepath = os.path.join(uploads_dir, filename)
+    dest_filepath = os.path.join(self.uploads_dir, filename)
     copyfile(src_filepath, dest_filepath)
 
     original_file_content = self.load_file(filename)
@@ -175,13 +176,13 @@ class TestSchematicUpload(TestBase):
     self.verify_flash_message_by_key('UPLOAD_FILE_EXISTS', response.data, filename)
 
     # Verify that the uploads directory has the impostor file and nothing else
-    files = os.listdir(uploads_dir)
+    files = os.listdir(self.uploads_dir)
     self.assertEqual(len(files), 1)
 
     impostor_file_content = self.load_file(impostor_filename)
     self.verify_uploaded_file_content(impostor_file_content, filename)  
 
-  def test_upload_file_with_filename_containing_whitespace(self):
+  def test_upload_file_with_filename_containing_whitespace_should_fail(self):
     filename = "this file has spaces.schematic"
     original_file_content = self.load_file(filename)
 
@@ -197,7 +198,7 @@ class TestSchematicUpload(TestBase):
     self.verify_flash_message_by_key('UPLOAD_FILENAME_WHITESPACE', response.data, filename)
     self.verify_schematic_uploads_dir_is_empty()
 
-  def test_upload_file_with_filename_ending_with_incorrect_extension(self):
+  def test_upload_file_with_filename_ending_with_incorrect_extension_should_fail(self):
     filename = "this_file_has_the_wrong_extension.dat"
     original_file_content = self.load_file(filename)
 
@@ -231,12 +232,12 @@ class TestSchematicUpload(TestBase):
     return self.client.post('/schematic/upload', content_type = 'multipart/form-data', data = data)
 
   def clean_schematic_uploads_dir(self):
-    self.remove_files(self.app.config['SCHEMATIC_UPLOADS_DIR'], "schematic")
+    self.remove_files(self.uploads_dir, "schematic")
 
   def verify_schematic_uploads_dir_is_empty(self):
-    self.assertFalse(os.listdir(self.app.config['SCHEMATIC_UPLOADS_DIR']))  
+    self.assertFalse(os.listdir(self.uploads_dir))  
 
   def verify_uploaded_file_content(self, original_file_content, filename):
-    uploaded_filepath = os.path.join(self.app.config['SCHEMATIC_UPLOADS_DIR'], filename)
+    uploaded_filepath = os.path.join(self.uploads_dir, filename)
     uploaded_file_content = self.read_data_file(uploaded_filepath)
     self.assertEqual(uploaded_file_content, original_file_content)
