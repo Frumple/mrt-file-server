@@ -3,6 +3,7 @@ from test_base import TestBase
 from collections import OrderedDict
 from werkzeug import OrderedMultiDict
 from io import BytesIO
+from shutil import copyfile
 import os
 
 class TestSchematicUpload(TestBase):
@@ -134,7 +135,7 @@ class TestSchematicUpload(TestBase):
     self.verify_flash_message_by_key('UPLOAD_TOO_MANY_FILES', response.data)
     self.verify_schematic_uploads_dir_is_empty()
 
-  def test_upload_file_too_large(self):
+  def test_upload_file_too_large_should_fail(self):
     filename = "admod.schematic"
     original_file_content = self.load_file(filename)
 
@@ -149,8 +150,38 @@ class TestSchematicUpload(TestBase):
 
     self.verify_flash_message_by_key('UPLOAD_FILE_TOO_LARGE', response.data, filename)
     self.verify_schematic_uploads_dir_is_empty()
-    
-  # Helper Methods
+
+  def test_upload_file_that_already_exists_should_fail(self):
+    filename = "mrt_v5_final_elevated_centre_station.schematic"
+    impostor_filename = "mrt_v5_final_underground_single_track.schematic"
+    uploads_dir = self.app.config['SCHEMATIC_UPLOADS_DIR']
+
+    # Copy an impostor file with different content to the uploads directory with the same name as the file to upload
+    src_filepath = os.path.join(self.TEST_DATA_DIR, impostor_filename)
+    dest_filepath = os.path.join(uploads_dir, filename)
+    copyfile(src_filepath, dest_filepath)
+
+    original_file_content = self.load_file(filename)
+
+    data = OrderedMultiDict()
+    data.add("userName", "Frumple")
+    data.add("schematic", (BytesIO(original_file_content), filename))
+
+    response = self.perform_upload(data)
+
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(response.mimetype, "text/html")
+
+    self.verify_flash_message_by_key('UPLOAD_FILE_EXISTS', response.data, filename)
+
+    # Verify that the uploads directory has the impostor file and nothing else
+    files = os.listdir(uploads_dir)
+    self.assertEqual(len(files), 1)
+
+    impostor_file_content = self.load_file(impostor_filename)
+    self.verify_uploaded_file_content(impostor_file_content, filename)  
+
+  # Helper Functions
 
   def load_file(self, filename):
     filepath = os.path.join(self.TEST_DATA_DIR, filename)

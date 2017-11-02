@@ -26,8 +26,9 @@ def configure_flash_messages(app):
     "UPLOAD_NO_FILES":            "Upload Failed! No files selected.",
     "UPLOAD_TOO_MANY_FILES":      "Upload Failed! A maximum of {} files can be uploaded at one time.".format( \
                                   app.config['MAX_NUMBER_OF_UPLOAD_FILES']),
-    "UPLOAD_FILE_TOO_LARGE":      "Upload Failed! File size is larger than allowed maximum of {} bytes".format( \
-                                  app.config['MAX_UPLOAD_FILE_SIZE'])
+    "UPLOAD_FILE_TOO_LARGE":      "Upload Failed! File size is larger than allowed maximum of {} bytes.".format( \
+                                  app.config['MAX_UPLOAD_FILE_SIZE']),
+    "UPLOAD_FILE_EXISTS":         "Upload Failed! File with same name already exists on the server."
   }
 
   app.config['FLASH_MESSAGES'] = messages
@@ -48,6 +49,10 @@ def get_filesize(file):
   filesize = file.tell()
   file.seek(0)
   return filesize
+
+def file_exists_in_upload_dir(filename):
+  filepath = os.path.join(app.config['SCHEMATIC_UPLOADS_DIR'], filename)
+  return os.path.isfile(filepath)
 
 def str_contains_whitespace(str):
   return bool(re.search('\s', str))
@@ -94,6 +99,10 @@ def upload_single_schematic(file):
 
   if filesize > app.config['MAX_UPLOAD_FILE_SIZE']:
     flash_by_key(app, 'UPLOAD_FILE_TOO_LARGE', filename)
+    return
+
+  if file_exists_in_upload_dir(filename):
+    flash_by_key(app, 'UPLOAD_FILE_EXISTS', filename)
     return
 
   try:
