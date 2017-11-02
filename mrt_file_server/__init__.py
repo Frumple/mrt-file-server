@@ -28,7 +28,9 @@ def configure_flash_messages(app):
                                   app.config['MAX_NUMBER_OF_UPLOAD_FILES']),
     "UPLOAD_FILE_TOO_LARGE":      "Upload Failed! File size is larger than allowed maximum of {} bytes.".format( \
                                   app.config['MAX_UPLOAD_FILE_SIZE']),
-    "UPLOAD_FILE_EXISTS":         "Upload Failed! File with same name already exists on the server."
+    "UPLOAD_FILE_EXISTS":         "Upload Failed! File with same name already exists on the server.",
+    "UPLOAD_FILENAME_WHITESPACE": "Upload Failed! File name must not contain spaces.",
+    "UPLOAD_FILENAME_EXTENSION":  "Upload Failed! File must end with the .schematic extension."
   }
 
   app.config['FLASH_MESSAGES'] = messages
@@ -49,6 +51,9 @@ def get_filesize(file):
   filesize = file.tell()
   file.seek(0)
   return filesize
+
+def get_file_extension(filename):
+  return os.path.splitext(filename)[1]
 
 def file_exists_in_upload_dir(filename):
   filepath = os.path.join(app.config['SCHEMATIC_UPLOADS_DIR'], filename)
@@ -97,20 +102,21 @@ def upload_single_schematic(file):
   filename = file.filename
   filesize = get_filesize(file)
 
-  if filesize > app.config['MAX_UPLOAD_FILE_SIZE']:
+  if str_contains_whitespace(filename):
+    flash_by_key(app, 'UPLOAD_FILENAME_WHITESPACE', filename)
+  elif get_file_extension(filename) != '.schematic':
+    flash_by_key(app, 'UPLOAD_FILENAME_EXTENSION', filename)
+  elif filesize > app.config['MAX_UPLOAD_FILE_SIZE']:
     flash_by_key(app, 'UPLOAD_FILE_TOO_LARGE', filename)
-    return
-
-  if file_exists_in_upload_dir(filename):
+  elif file_exists_in_upload_dir(filename):
     flash_by_key(app, 'UPLOAD_FILE_EXISTS', filename)
-    return
+  else:
+    try:
+      schematics.save(file)
 
-  try:
-    schematics.save(file)
-
-    message = flash_by_key(app, 'UPLOAD_SUCCESS', filename)
-  except Exception as e:
-    message = flash_by_key(app, 'UPLOAD_FAILURE', filename)  
+      message = flash_by_key(app, 'UPLOAD_SUCCESS', filename)
+    except Exception as e:
+      message = flash_by_key(app, 'UPLOAD_FAILURE', filename)
 
 @app.route("/schematic/download")
 def download_schematics():

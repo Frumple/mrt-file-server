@@ -181,6 +181,38 @@ class TestSchematicUpload(TestBase):
     impostor_file_content = self.load_file(impostor_filename)
     self.verify_uploaded_file_content(impostor_file_content, filename)  
 
+  def test_upload_file_with_filename_containing_whitespace(self):
+    filename = "this file has spaces.schematic"
+    original_file_content = self.load_file(filename)
+
+    data = OrderedMultiDict()
+    data.add("userName", "Frumple")
+    data.add("schematic", (BytesIO(original_file_content), filename))
+
+    response = self.perform_upload(data)
+
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(response.mimetype, "text/html")
+
+    self.verify_flash_message_by_key('UPLOAD_FILENAME_WHITESPACE', response.data, filename)
+    self.verify_schematic_uploads_dir_is_empty()
+
+  def test_upload_file_with_filename_ending_with_incorrect_extension(self):
+    filename = "this_file_has_the_wrong_extension.dat"
+    original_file_content = self.load_file(filename)
+
+    data = OrderedMultiDict()
+    data.add("userName", "Frumple")
+    data.add("schematic", (BytesIO(original_file_content), filename))
+
+    response = self.perform_upload(data)
+
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(response.mimetype, "text/html")
+
+    self.verify_flash_message_by_key('UPLOAD_FILENAME_EXTENSION', response.data, filename)
+    self.verify_schematic_uploads_dir_is_empty()
+
   # Helper Functions
 
   def load_file(self, filename):
