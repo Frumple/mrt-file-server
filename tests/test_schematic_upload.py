@@ -102,7 +102,7 @@ class TestSchematicUpload(TestBase):
     self.verify_flash_message_by_key('UPLOAD_NO_FILES', response.data)
     self.verify_schematic_uploads_dir_is_empty()
 
-  def test_upload_too_many_files_should_fail(self):
+  def test_upload_with_too_many_files_should_fail(self):
     # Upload 12 files, over the limit of 10.
     filenames = [
       "mrt_v5_final_elevated_centre_station.schematic",
@@ -134,6 +134,22 @@ class TestSchematicUpload(TestBase):
     self.verify_flash_message_by_key('UPLOAD_TOO_MANY_FILES', response.data)
     self.verify_schematic_uploads_dir_is_empty()
 
+  def test_upload_file_too_large(self):
+    filename = "admod.schematic"
+    original_file_content = self.load_file(filename)
+
+    data = OrderedMultiDict()
+    data.add("userName", "Frumple")
+    data.add("schematic", (BytesIO(original_file_content), filename))
+
+    response = self.perform_upload(data)
+
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(response.mimetype, "text/html")
+
+    self.verify_flash_message_by_key('UPLOAD_FILE_TOO_LARGE', response.data, filename)
+    self.verify_schematic_uploads_dir_is_empty()
+    
   # Helper Methods
 
   def load_file(self, filename):

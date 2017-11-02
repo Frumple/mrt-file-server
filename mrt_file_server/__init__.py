@@ -25,7 +25,9 @@ def configure_flash_messages(app):
     "UPLOAD_USERNAME_WHITESPACE": "Upload Failed! Username must not contain spaces.",
     "UPLOAD_NO_FILES":            "Upload Failed! No files selected.",
     "UPLOAD_TOO_MANY_FILES":      "Upload Failed! A maximum of {} files can be uploaded at one time.".format( \
-                                  app.config['MAX_SCHEMATIC_FILES_TO_UPLOAD'])
+                                  app.config['MAX_NUMBER_OF_UPLOAD_FILES']),
+    "UPLOAD_FILE_TOO_LARGE":      "Upload Failed! File size is larger than allowed maximum of {} bytes".format( \
+                                  app.config['MAX_CONTENT_LENGTH'])
   }
 
   app.config['FLASH_MESSAGES'] = messages
@@ -41,11 +43,18 @@ def flash_by_key(app, key, filename = None):
   else:
     flash(message)
 
+def get_filesize(file):
+  file.seek(0, os.SEEK_END)
+  filesize = file.tell()
+  file.seek(0)
+  return filesize
+
 def str_contains_whitespace(str):
   return bool(re.search('\s', str))
 
 app = Flask(__name__)
 app.config.from_pyfile("config.py")
+
 configure_instance_folders(app)
 configure_flash_messages(app)
 
@@ -73,7 +82,7 @@ def upload_schematics_post():
   else:
     files = request.files.getlist('schematic')
 
-    if len(files) > app.config['MAX_SCHEMATIC_FILES_TO_UPLOAD']:
+    if len(files) > app.config['MAX_NUMBER_OF_UPLOAD_FILES']:
       flash_by_key(app, 'UPLOAD_TOO_MANY_FILES')
     else:
       for file in files:
@@ -81,9 +90,15 @@ def upload_schematics_post():
 
 def upload_single_schematic(file):
   filename = file.filename
+  filesize = get_filesize(file)
+
+  if filesize > app.config['MAX_UPLOAD_FILE_SIZE']:
+    flash_by_key(app, 'UPLOAD_FILE_TOO_LARGE', filename)
+    return
 
   try:
     schematics.save(file)
+
     message = flash_by_key(app, 'UPLOAD_SUCCESS', filename)
   except Exception as e:
     message = flash_by_key(app, 'UPLOAD_FAILURE', filename)  
