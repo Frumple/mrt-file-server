@@ -27,7 +27,7 @@ def configure_flash_messages(app):
     "UPLOAD_TOO_MANY_FILES":      "Upload Failed! A maximum of {} files can be uploaded at one time.".format( \
                                   app.config['MAX_NUMBER_OF_UPLOAD_FILES']),
     "UPLOAD_FILE_TOO_LARGE":      "Upload Failed! File size is larger than allowed maximum of {} bytes".format( \
-                                  app.config['MAX_CONTENT_LENGTH'])
+                                  app.config['MAX_UPLOAD_FILE_SIZE'])
   }
 
   app.config['FLASH_MESSAGES'] = messages
