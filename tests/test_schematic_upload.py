@@ -180,7 +180,7 @@ class TestSchematicUpload(TestBase):
     self.assertEqual(len(files), 1)
 
     impostor_file_content = self.load_file(impostor_filename)
-    self.verify_uploaded_file_content(impostor_file_content, filename)  
+    self.verify_uploaded_file_content(impostor_file_content, filename)
 
   def test_upload_file_with_filename_containing_whitespace_should_fail(self):
     filename = "this file has spaces.schematic"
