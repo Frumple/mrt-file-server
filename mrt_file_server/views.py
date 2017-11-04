@@ -34,29 +34,30 @@ def upload_schematics_post():
         upload_single_schematic(file)
 
 def upload_single_schematic(file):
-  filename = file.filename
+  username = request.form['userName']
+  file.filename = "{}-{}".format(username, file.filename)
   uploads_dir = app.config['SCHEMATIC_UPLOADS_DIR']
 
-  if str_contains_whitespace(filename):
-    flash_by_key(app, 'UPLOAD_FILENAME_WHITESPACE', filename)
+  if str_contains_whitespace(file.filename):
+    flash_by_key(app, 'UPLOAD_FILENAME_WHITESPACE', file.filename)
     return
 
-  filename = secure_filename(filename)
+  file.filename = secure_filename(file.filename)
   filesize = get_filesize(file)
   
-  if get_file_extension(filename) != '.schematic':
-    flash_by_key(app, 'UPLOAD_FILENAME_EXTENSION', filename)
+  if get_file_extension(file.filename) != '.schematic':
+    flash_by_key(app, 'UPLOAD_FILENAME_EXTENSION', file.filename)
   elif filesize > app.config['MAX_UPLOAD_FILE_SIZE']:
-    flash_by_key(app, 'UPLOAD_FILE_TOO_LARGE', filename)
-  elif file_exists_in_dir(uploads_dir, filename):
-    flash_by_key(app, 'UPLOAD_FILE_EXISTS', filename)
+    flash_by_key(app, 'UPLOAD_FILE_TOO_LARGE', file.filename)
+  elif file_exists_in_dir(uploads_dir, file.filename):
+    flash_by_key(app, 'UPLOAD_FILE_EXISTS', file.filename)
   else:
     try:
       schematics.save(file)
 
-      message = flash_by_key(app, 'UPLOAD_SUCCESS', filename)
+      message = flash_by_key(app, 'UPLOAD_SUCCESS', file.filename)
     except Exception as e:
-      message = flash_by_key(app, 'UPLOAD_FAILURE', filename)
+      message = flash_by_key(app, 'UPLOAD_FAILURE', file.filename)
 
 @app.route("/schematic/download", methods = ['GET', 'POST'])
 def download_schematic():

@@ -18,11 +18,13 @@ class TestSchematicUpload(TestBase):
   # Tests
 
   def test_upload_single_file_should_be_successful(self):
+    username = "Frumple"
     filename = "mrt_v5_final_elevated_centre_station.schematic"
+    uploaded_filename = self.uploaded_filename(username, filename)
     original_file_content = self.load_file(filename)
 
     data = OrderedMultiDict()
-    data.add("userName", "Frumple")
+    data.add("userName", username)
     data.add("schematic", (BytesIO(original_file_content), filename))
 
     response = self.perform_upload(data)
@@ -30,10 +32,12 @@ class TestSchematicUpload(TestBase):
     self.assertEqual(response.status_code, 200)
     self.assertEqual(response.mimetype, "text/html")
 
-    self.verify_flash_message_by_key('UPLOAD_SUCCESS', response.data, filename)
-    self.verify_uploaded_file_content(original_file_content, filename)
+    self.verify_flash_message_by_key('UPLOAD_SUCCESS', response.data, uploaded_filename)
+    self.verify_uploaded_file_content(original_file_content, uploaded_filename)
 
   def test_upload_multiple_files_should_be_successful(self):
+    username = "Frumple"
+
     # Upload 5 files
     filenames = [
       "mrt_v5_final_elevated_centre_station.schematic",
@@ -45,7 +49,7 @@ class TestSchematicUpload(TestBase):
     original_files = self.load_files(filenames)
 
     data = OrderedMultiDict()
-    data.add("userName", "Frumple")
+    data.add("userName", username)
 
     for filename in original_files:
       data.add("schematic", (BytesIO(original_files[filename]), filename))
@@ -56,8 +60,10 @@ class TestSchematicUpload(TestBase):
     self.assertEqual(response.mimetype, "text/html")
       
     for filename in original_files:
-      self.verify_flash_message_by_key('UPLOAD_SUCCESS', response.data, filename)
-      self.verify_uploaded_file_content(original_files[filename], filename)
+      uploaded_filename = self.uploaded_filename(username, filename)
+
+      self.verify_flash_message_by_key('UPLOAD_SUCCESS', response.data, uploaded_filename)
+      self.verify_uploaded_file_content(original_files[filename], uploaded_filename)
 
   def test_upload_with_no_username_should_fail(self):
     filename = "mrt_v5_final_elevated_centre_station.schematic"
@@ -104,6 +110,8 @@ class TestSchematicUpload(TestBase):
     self.verify_schematic_uploads_dir_is_empty()
 
   def test_upload_with_too_many_files_should_fail(self):
+    username = "Frumple"
+
     # Upload 12 files, over the limit of 10.
     filenames = [
       "mrt_v5_final_elevated_centre_station.schematic",
@@ -122,7 +130,7 @@ class TestSchematicUpload(TestBase):
     original_files = self.load_files(filenames)
 
     data = OrderedMultiDict()
-    data.add("userName", "Frumple")
+    data.add("userName", username)
 
     for filename in original_files:
       data.add("schematic", (BytesIO(original_files[filename]), filename))
@@ -136,11 +144,13 @@ class TestSchematicUpload(TestBase):
     self.verify_schematic_uploads_dir_is_empty()
 
   def test_upload_file_too_large_should_fail(self):
+    username = "Frumple"
     filename = "admod.schematic"
+    uploaded_filename = self.uploaded_filename(username, filename)
     original_file_content = self.load_file(filename)
 
     data = OrderedMultiDict()
-    data.add("userName", "Frumple")
+    data.add("userName", username)
     data.add("schematic", (BytesIO(original_file_content), filename))
 
     response = self.perform_upload(data)
@@ -148,22 +158,24 @@ class TestSchematicUpload(TestBase):
     self.assertEqual(response.status_code, 200)
     self.assertEqual(response.mimetype, "text/html")
 
-    self.verify_flash_message_by_key('UPLOAD_FILE_TOO_LARGE', response.data, filename)
+    self.verify_flash_message_by_key('UPLOAD_FILE_TOO_LARGE', response.data, uploaded_filename)
     self.verify_schematic_uploads_dir_is_empty()
 
   def test_upload_file_that_already_exists_should_fail(self):
+    username = "Frumple"
     filename = "mrt_v5_final_elevated_centre_station.schematic"
+    uploaded_filename = self.uploaded_filename(username, filename)
     impostor_filename = "mrt_v5_final_underground_single_track.schematic"
 
     # Copy an impostor file with different content to the uploads directory with the same name as the file to upload
     src_filepath = os.path.join(self.TEST_DATA_DIR, impostor_filename)
-    dest_filepath = os.path.join(self.uploads_dir, filename)
+    dest_filepath = os.path.join(self.uploads_dir, uploaded_filename)
     copyfile(src_filepath, dest_filepath)
 
     original_file_content = self.load_file(filename)
 
     data = OrderedMultiDict()
-    data.add("userName", "Frumple")
+    data.add("userName", username)
     data.add("schematic", (BytesIO(original_file_content), filename))
 
     response = self.perform_upload(data)
@@ -171,21 +183,23 @@ class TestSchematicUpload(TestBase):
     self.assertEqual(response.status_code, 200)
     self.assertEqual(response.mimetype, "text/html")
 
-    self.verify_flash_message_by_key('UPLOAD_FILE_EXISTS', response.data, filename)
+    self.verify_flash_message_by_key('UPLOAD_FILE_EXISTS', response.data, uploaded_filename)
 
-    # Verify that the uploads directory has the impostor file and nothing else
+    # Verify that the uploads directory has only the impostor file, and the file has not been modified
     files = os.listdir(self.uploads_dir)
     self.assertEqual(len(files), 1)
 
     impostor_file_content = self.load_file(impostor_filename)
-    self.verify_uploaded_file_content(impostor_file_content, filename)
+    self.verify_uploaded_file_content(impostor_file_content, uploaded_filename)
 
   def test_upload_file_with_filename_containing_whitespace_should_fail(self):
+    username = "Frumple"
     filename = "this file has spaces.schematic"
+    uploaded_filename = self.uploaded_filename(username, filename)
     original_file_content = self.load_file(filename)
 
     data = OrderedMultiDict()
-    data.add("userName", "Frumple")
+    data.add("userName", username)
     data.add("schematic", (BytesIO(original_file_content), filename))
 
     response = self.perform_upload(data)
@@ -193,15 +207,17 @@ class TestSchematicUpload(TestBase):
     self.assertEqual(response.status_code, 200)
     self.assertEqual(response.mimetype, "text/html")
 
-    self.verify_flash_message_by_key('UPLOAD_FILENAME_WHITESPACE', response.data, filename)
+    self.verify_flash_message_by_key('UPLOAD_FILENAME_WHITESPACE', response.data, uploaded_filename)
     self.verify_schematic_uploads_dir_is_empty()
 
   def test_upload_file_with_filename_ending_with_incorrect_extension_should_fail(self):
+    username = "Frumple"
     filename = "this_file_has_the_wrong_extension.dat"
+    uploaded_filename = self.uploaded_filename(username, filename)
     original_file_content = self.load_file(filename)
 
     data = OrderedMultiDict()
-    data.add("userName", "Frumple")
+    data.add("userName", username)
     data.add("schematic", (BytesIO(original_file_content), filename))
 
     response = self.perform_upload(data)
@@ -209,7 +225,7 @@ class TestSchematicUpload(TestBase):
     self.assertEqual(response.status_code, 200)
     self.assertEqual(response.mimetype, "text/html")
 
-    self.verify_flash_message_by_key('UPLOAD_FILENAME_EXTENSION', response.data, filename)
+    self.verify_flash_message_by_key('UPLOAD_FILENAME_EXTENSION', response.data, uploaded_filename)
     self.verify_schematic_uploads_dir_is_empty()
 
   # Helper Functions
@@ -219,6 +235,9 @@ class TestSchematicUpload(TestBase):
 
   def clean_schematic_uploads_dir(self):
     self.remove_files(self.uploads_dir, "schematic")
+
+  def uploaded_filename(self, username, filename):
+    return "{}-{}".format(username, filename)
 
   def verify_schematic_uploads_dir_is_empty(self):
     self.assertFalse(os.listdir(self.uploads_dir))
