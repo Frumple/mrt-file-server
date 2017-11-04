@@ -35,6 +35,7 @@ def upload_schematics_post():
 
 def upload_single_schematic(file):
   filename = file.filename
+  uploads_dir = app.config['SCHEMATIC_UPLOADS_DIR']
 
   if str_contains_whitespace(filename):
     flash_by_key(app, 'UPLOAD_FILENAME_WHITESPACE', filename)
@@ -47,7 +48,7 @@ def upload_single_schematic(file):
     flash_by_key(app, 'UPLOAD_FILENAME_EXTENSION', filename)
   elif filesize > app.config['MAX_UPLOAD_FILE_SIZE']:
     flash_by_key(app, 'UPLOAD_FILE_TOO_LARGE', filename)
-  elif file_exists_in_upload_dir(filename):
+  elif file_exists_in_dir(uploads_dir, filename):
     flash_by_key(app, 'UPLOAD_FILE_EXISTS', filename)
   else:
     try:
@@ -57,9 +58,37 @@ def upload_single_schematic(file):
     except Exception as e:
       message = flash_by_key(app, 'UPLOAD_FAILURE', filename)
 
-@app.route("/schematic/download")
-def download_schematics():
-  return render_template('schematic/download/index.html', footer = True)
+@app.route("/schematic/download", methods = ['GET', 'POST'])
+def download_schematic():
+  response = False
+
+  if request.method == 'POST':
+    response = download_schematic_post()
+
+  if response:
+    return response
+  else:
+    return render_template('schematic/download/index.html', footer = True)
+
+def download_schematic_post():
+  filename = request.form['fileName']
+  downloads_dir = app.config['SCHEMATIC_DOWNLOADS_DIR']
+
+  if filename == "":
+    flash_by_key(app, 'DOWNLOAD_FILENAME_EMPTY')
+    return
+
+  if str_contains_whitespace(filename):
+    flash_by_key(app, 'DOWNLOAD_FILENAME_WHITESPACE')
+    return
+
+  filename = "{}.schematic".format(secure_filename(filename))
+
+  if file_exists_in_dir(downloads_dir, filename):
+    return send_from_directory(downloads_dir, filename, as_attachment = True)
+  else:
+    flash_by_key(app, 'DOWNLOAD_FILE_NOT_FOUND', filename)
+    return
 
 @app.route("/world/download/terms")
 def show_world_downloads_terms():
@@ -93,8 +122,8 @@ def get_filesize(file):
 def get_file_extension(filename):
   return os.path.splitext(filename)[1]
 
-def file_exists_in_upload_dir(filename):
-  filepath = os.path.join(app.config['SCHEMATIC_UPLOADS_DIR'], filename)
+def file_exists_in_dir(dir, filename):
+  filepath = os.path.join(dir, filename)
   return os.path.isfile(filepath)
 
 def str_contains_whitespace(str):

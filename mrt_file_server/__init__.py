@@ -19,18 +19,21 @@ def configure_instance_folders(app):
 
 def configure_flash_messages(app):
   messages = {
-    "UPLOAD_SUCCESS":             "Upload Successful!",
-    "UPLOAD_FAILURE":             "Upload Failed! Please contact the admins for assistance.",
-    "UPLOAD_USERNAME_EMPTY":      "Upload Failed! Username must not be empty.",
-    "UPLOAD_USERNAME_WHITESPACE": "Upload Failed! Username must not contain spaces.",
-    "UPLOAD_NO_FILES":            "Upload Failed! No files selected.",
-    "UPLOAD_TOO_MANY_FILES":      "Upload Failed! A maximum of {} files can be uploaded at one time.".format( \
-                                  app.config['MAX_NUMBER_OF_UPLOAD_FILES']),
-    "UPLOAD_FILE_TOO_LARGE":      "Upload Failed! File size is larger than allowed maximum of {} bytes.".format( \
-                                  app.config['MAX_UPLOAD_FILE_SIZE']),
-    "UPLOAD_FILE_EXISTS":         "Upload Failed! File with same name already exists on the server.",
-    "UPLOAD_FILENAME_WHITESPACE": "Upload Failed! File name must not contain spaces.",
-    "UPLOAD_FILENAME_EXTENSION":  "Upload Failed! File must end with the .schematic extension."
+    "UPLOAD_SUCCESS":               "Upload Successful!",
+    "UPLOAD_FAILURE":               "Upload Failed! Please contact the admins for assistance.",
+    "UPLOAD_USERNAME_EMPTY":        "Upload Failed! Username must not be empty.",
+    "UPLOAD_USERNAME_WHITESPACE":   "Upload Failed! Username must not contain spaces.",
+    "UPLOAD_NO_FILES":              "Upload Failed! No files selected.",
+    "UPLOAD_TOO_MANY_FILES":        "Upload Failed! A maximum of {} files can be uploaded at one time.".format( \
+                                    app.config['MAX_NUMBER_OF_UPLOAD_FILES']),
+    "UPLOAD_FILE_TOO_LARGE":        "Upload Failed! File size is larger than allowed maximum of {} bytes.".format( \
+                                    app.config['MAX_UPLOAD_FILE_SIZE']),
+    "UPLOAD_FILE_EXISTS":           "Upload Failed! File with same name already exists on the server.",
+    "UPLOAD_FILENAME_WHITESPACE":   "Upload Failed! File name must not contain spaces.",
+    "UPLOAD_FILENAME_EXTENSION":    "Upload Failed! File must end with the .schematic extension.",
+    "DOWNLOAD_FILENAME_EMPTY":      "Download Failed! Filaname must not be empty.",
+    "DOWNLOAD_FILENAME_WHITESPACE": "Download Failed! Filename must not contain spaces.",
+    "DOWNLOAD_FILE_NOT_FOUND":      "Download Failed! File does not exist."
   }
 
   app.config['FLASH_MESSAGES'] = messages

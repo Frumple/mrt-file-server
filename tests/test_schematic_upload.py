@@ -1,6 +1,5 @@
 from test_base import TestBase
 
-from collections import OrderedDict
 from werkzeug import OrderedMultiDict
 from io import BytesIO
 from shutil import copyfile
@@ -10,7 +9,6 @@ class TestSchematicUpload(TestBase):
   def setUp(self):
     TestBase.setUp(self)
     self.uploads_dir = self.app.config['SCHEMATIC_UPLOADS_DIR']
-
     self.clean_schematic_uploads_dir()
  
   def tearDown(self):
@@ -216,18 +214,6 @@ class TestSchematicUpload(TestBase):
 
   # Helper Functions
 
-  def load_file(self, filename):
-    filepath = os.path.join(self.TEST_DATA_DIR, filename)
-    return self.read_data_file(filepath)
-
-  def load_files(self, filenames):
-    files = OrderedDict()
-    for filename in filenames:
-      file_content = self.load_file(filename)
-      files[filename] = file_content
-
-    return files
-
   def perform_upload(self, data):
     return self.client.post('/schematic/upload', content_type = 'multipart/form-data', data = data)
 
@@ -235,7 +221,7 @@ class TestSchematicUpload(TestBase):
     self.remove_files(self.uploads_dir, "schematic")
 
   def verify_schematic_uploads_dir_is_empty(self):
-    self.assertFalse(os.listdir(self.uploads_dir))  
+    self.assertFalse(os.listdir(self.uploads_dir))
 
   def verify_uploaded_file_content(self, original_file_content, filename):
     uploaded_filepath = os.path.join(self.uploads_dir, filename)

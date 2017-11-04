@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import glob
 import mrt_file_server
 import os
@@ -15,6 +17,18 @@ class TestBase(unittest.TestCase):
 
   def tearDown(self):
     pass
+
+  def load_file(self, filename):
+    filepath = os.path.join(self.TEST_DATA_DIR, filename)
+    return self.read_data_file(filepath)
+
+  def load_files(self, filenames):
+    files = OrderedDict()
+    for filename in filenames:
+      file_content = self.load_file(filename)
+      files[filename] = file_content
+
+    return files  
 
   def flash_message_html(self, message):
     return '<li name="flash_message">{}</li>'.format(message)
@@ -40,9 +54,3 @@ class TestBase(unittest.TestCase):
     path = "{}/*.{}".format(dir, extension)
     for file in glob.glob(path):
       os.remove(file)
-
-  def print_response(self, response):
-    print(response.status_code)
-    print(response.mimetype)
-    print(response.headers)
-    print(response.data)
