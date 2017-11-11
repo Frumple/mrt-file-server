@@ -1,21 +1,34 @@
 from flask import Flask
 from flask_uploads import UploadSet, configure_uploads
 
+import modes
 import os
 import re
 
-def configure_instance_folders(app):
+def load_environment_config(app, mode):
   instance_path = app.instance_path
+  config_file_path = os.path.join(instance_path, mode, "config.py")
 
-  app.config['DOWNLOADS_DIR'] = downloads_dir = os.path.join(instance_path, "downloads")
-  app.config['WORLD_DOWNLOADS_DIR'] = os.path.join(downloads_dir, "worlds")
-  app.config['SCHEMATIC_DOWNLOADS_DIR'] = os.path.join(downloads_dir, "schematics")
+  if os.path.isfile(config_file_path):
+    app.config.from_pyfile(config_file_path)
 
-  app.config['UPLOADS_DIR'] = uploads_dir = os.path.join(instance_path, "uploads")
+def configure_instance_folders(app, mode):
+  instance_path = app.instance_path
+  mode_dir = os.path.join(instance_path, mode)
+
+  app.config['DOWNLOADS_DIR'] = downloads_dir = os.path.join(mode_dir, "downloads")
+  app.config['WORLD_DOWNLOADS_DIR'] = world_downloads_dir = os.path.join(downloads_dir, "worlds")
+  app.config['SCHEMATIC_DOWNLOADS_DIR'] = schematics_downloads_dir = os.path.join(downloads_dir, "schematics")
+
+  app.config['UPLOADS_DIR'] = uploads_dir = os.path.join(mode_dir, "uploads")
   app.config['SCHEMATIC_UPLOADS_DIR'] = schematic_uploads_dir = os.path.join(uploads_dir, "schematics")
 
   # Used by Flask-Uploads to determine where to upload schematics
   app.config['UPLOADED_SCHEMATICS_DEST'] = schematic_uploads_dir
+
+  os.makedirs(world_downloads_dir, exist_ok = True)
+  os.makedirs(schematics_downloads_dir, exist_ok = True)
+  os.makedirs(schematic_uploads_dir, exist_ok = True)
 
 def configure_flash_messages(app):
   messages = {
@@ -31,17 +44,20 @@ def configure_flash_messages(app):
     "UPLOAD_FILE_EXISTS":           "Upload Failed! File with same name already exists on the server.",
     "UPLOAD_FILENAME_WHITESPACE":   "Upload Failed! File name must not contain spaces.",
     "UPLOAD_FILENAME_EXTENSION":    "Upload Failed! File must end with the .schematic extension.",
-    "DOWNLOAD_FILENAME_EMPTY":      "Download Failed! Filaname must not be empty.",
+    "DOWNLOAD_FILENAME_EMPTY":      "Download Failed! Filename must not be empty.",
     "DOWNLOAD_FILENAME_WHITESPACE": "Download Failed! Filename must not contain spaces.",
     "DOWNLOAD_FILE_NOT_FOUND":      "Download Failed! File does not exist."
   }
 
   app.config['FLASH_MESSAGES'] = messages
 
-app = Flask(__name__)
-app.config.from_pyfile("config.py")
+mode = os.environ.get(modes.ENVIRONMENT_VARIABLE, modes.DEVELOPMENT)
 
-configure_instance_folders(app)
+app = Flask(__name__, instance_relative_config = True)
+app.config.from_object('mrt_file_server.default_config')
+
+load_environment_config(app, mode)
+configure_instance_folders(app, mode)
 configure_flash_messages(app)
 
 schematics = UploadSet('schematics', extensions = ['schematic'])

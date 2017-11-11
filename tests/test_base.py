@@ -1,19 +1,20 @@
 from collections import OrderedDict
 
 import glob
-import mrt_file_server
+import modes
 import os
 import unittest
 
 class TestBase(unittest.TestCase):
   def setUp(self):
+    os.environ[modes.ENVIRONMENT_VARIABLE] = modes.TEST
+
     self.TEST_DATA_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")
 
+    import mrt_file_server
     self.app = mrt_file_server.app
-    self.app.testing = True    
+    self.app.testing = True
     self.client = self.app.test_client()
-
-    self.app.config['USE_X_SENDFILE'] = True
 
   def tearDown(self):
     pass

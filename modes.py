@@ -1,0 +1,5 @@
+ENVIRONMENT_VARIABLE = "MRT_FILE_SERVER_MODE"
+
+DEVELOPMENT = "development"
+TEST = "test"
+PRODUCTION = "production"
