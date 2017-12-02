@@ -1,4 +1,5 @@
 from test_base import TestBase
+from unittest.mock import patch
 
 from werkzeug import OrderedMultiDict
 from shutil import copyfile
@@ -15,7 +16,10 @@ class TestSchematicDownload(TestBase):
     TestBase.tearDown(self)
     self.clean_schematic_downloads_dir()
 
-  def test_download_schematic_should_be_successful(self):
+  # Tests
+
+  @patch("mrt_file_server.views.log_adapter")
+  def test_download_schematic_should_be_successful(self, mock_logger):
     filename = "mrt_v5_final_elevated_centre_station.schematic"
     original_file_content = self.load_file(filename)
 
@@ -36,7 +40,10 @@ class TestSchematicDownload(TestBase):
     self.assertEqual(int(response.headers.get("Content-Length")), len(original_file_content))
     self.assertEqual(os.path.normpath(response.headers.get("X-Sendfile")), dest_filepath)
 
-  def test_download_schematic_with_empty_filename_should_fail(self):
+    mock_logger.info.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_SUCCESS'), filename)
+
+  @patch("mrt_file_server.views.log_adapter")
+  def test_download_schematic_with_empty_filename_should_fail(self, mock_logger):
     data = OrderedMultiDict()
     data.add("fileName", "")
 
@@ -45,20 +52,28 @@ class TestSchematicDownload(TestBase):
     self.assertEqual(response.status_code, 200)
     self.assertEqual(response.mimetype, "text/html")
 
-    self.verify_flash_message_by_key('DOWNLOAD_FILENAME_EMPTY', response.data)
+    self.verify_flash_message_by_key('SCHEMATIC_DOWNLOAD_FILENAME_EMPTY', response.data)
 
-  def test_download_schematic_with_filename_containing_whitespace_should_fail(self):
+    mock_logger.warn.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_FILENAME_EMPTY'))
+
+  @patch("mrt_file_server.views.log_adapter")
+  def test_download_schematic_with_filename_containing_whitespace_should_fail(self, mock_logger):
+    filename = "this file has spaces"
+
     data = OrderedMultiDict()
-    data.add("fileName", "this file has spaces")
+    data.add("fileName", filename)
 
     response = self.perform_download(data)
 
     self.assertEqual(response.status_code, 200)
     self.assertEqual(response.mimetype, "text/html")
 
-    self.verify_flash_message_by_key('DOWNLOAD_FILENAME_WHITESPACE', response.data)
+    self.verify_flash_message_by_key('SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE', response.data)
 
-  def test_download_schematic_that_does_not_exist_should_fail(self):
+    mock_logger.warn.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE'), filename)
+
+  @patch("mrt_file_server.views.log_adapter")
+  def test_download_schematic_that_does_not_exist_should_fail(self, mock_logger):
     filename = "mrt_v5_final_elevated_centre_station.schematic"
 
     data = OrderedMultiDict()
@@ -69,7 +84,9 @@ class TestSchematicDownload(TestBase):
     self.assertEqual(response.status_code, 200)
     self.assertEqual(response.mimetype, "text/html")
 
-    self.verify_flash_message_by_key('DOWNLOAD_FILE_NOT_FOUND', response.data, filename)
+    self.verify_flash_message_by_key('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', response.data, filename)
+
+    mock_logger.warn.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND'), filename)
 
   # Helper Functions
 

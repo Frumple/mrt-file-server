@@ -31,8 +31,8 @@ class TestBase(unittest.TestCase):
 
     return files  
 
-  def flash_message_html(self, message):
-    return '<li name="flash_message">{}</li>'.format(message)
+  def get_log_message(self, key):
+    return self.app.config['LOG_MESSAGES'][key]
 
   def get_flash_message(self, key):
     return self.app.config['FLASH_MESSAGES'][key]
@@ -46,6 +46,9 @@ class TestBase(unittest.TestCase):
     else:
       expected_message_html = self.flash_message_html(expected_message)
     self.assertIn(bytes(expected_message_html, encoding = "utf-8"), response_data)
+
+  def flash_message_html(self, message):
+    return '<li name="flash_message">{}</li>'.format(message)
 
   def read_data_file(self, filepath):
     with open(filepath, "r+b") as file:
