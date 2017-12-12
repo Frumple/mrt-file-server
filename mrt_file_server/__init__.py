@@ -1,9 +1,8 @@
 from flask import Flask
 from flask_uploads import UploadSet, configure_uploads
 
-import mrt_file_server.modes
-
 import logging
+import modes
 import os
 import re
 
