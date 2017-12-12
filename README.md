@@ -22,9 +22,9 @@ Finally, copy the contents of the **instance_template** directory into a new dir
 
 The server can be run in three different modes. To change modes, set the environment variable **`MRT_FILE_SERVER_MODE`** to one of the following values:
 
-- **`DEVELOPMENT`** - Used for Flask development servers. Default if `MRT_FILE_SERVER_MODE` is not set.
-- **`TEST`** - Used when running tests.
-- **`PRODUCTION`** - Used for production servers.
+- **`development`** - Used for Flask development servers. Default if `MRT_FILE_SERVER_MODE` is not set.
+- **`test`** - Used when running tests.
+- **`production`** - Used for production servers.
 
 In the **instance** directory, there are three subdirectories each corresponding to one of the application modes. For example, if `MRT_FILE_SERVER_MODE` was set to `PRODUCTION`, the application would read and write files from the **instance/production** directory. Each subdirectory has the following contents:
 
