@@ -21,6 +21,12 @@
     {% block body %}
     {% endblock %}
     <hr />
-    <span><a href="{{ url_for('index') }}">Back to File Server Home</a></span>
+    {% if home %}
+      <span><a href="https://www.minecartrapidtransit.net">Back to the MRT Website</a></span>
+      <hr />
+      <div class="credits">This file server, created by <a href="https://github.com/Frumple">Frumple</a>, is an open-source web application available on <a href="https://github.com/Frumple/mrt-file-server">GitHub</a> under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.</div>
+    {% else %}
+      <span><a href="{{ url_for('index') }}">Back to File Server Home</a></span>
+    {% endif %}
   </body>
 </html>

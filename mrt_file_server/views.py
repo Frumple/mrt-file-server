@@ -13,14 +13,14 @@ log_adapter = RequestLogAdapter(logger, request)
 
 @app.route("/")
 def index():
-  return render_template('index.html', footer = False)
+  return render_template('index.html', home = True)
 
 @app.route("/schematic/upload", methods = ['GET', 'POST'])
 def upload_schematics():
   if request.method == 'POST':
     upload_schematics_post()
 
-  return render_template('schematic/upload/index.html', footer = True)
+  return render_template('schematic/upload/index.html', home = False)
 
 def upload_schematics_post():
   if 'userName' not in request.form or request.form['userName'] == "":
@@ -84,7 +84,7 @@ def download_schematic():
   if response:
     return response
   else:
-    return render_template('schematic/download/index.html', footer = True)
+    return render_template('schematic/download/index.html', home = False)
 
 def download_schematic_post():
   filename = request.form['fileName']
@@ -112,11 +112,11 @@ def download_schematic_post():
 
 @app.route("/world/download/terms")
 def show_world_downloads_terms():
-  return render_template('world/download/terms.html', footer = True)
+  return render_template('world/download/terms.html', home = False)
 
 @app.route("/world/download")
 def list_world_downloads():
-  return render_template('world/download/index.html', footer = True)
+  return render_template('world/download/index.html', home = False)
 
 @app.route("/world/download/<path:filename>")
 def download_world(filename):
