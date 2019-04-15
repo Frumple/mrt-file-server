@@ -127,7 +127,7 @@ def set_config_variable(name, value):
   logger.info("Config variable '%s' set to: '%s'", name, value)
 
 def configure_schematic_uploads(app):
-  schematics = UploadSet('schematics', extensions = ['schematic'])
+  schematics = UploadSet('schematics', extensions = ['schematic', 'schem'])
   configure_uploads(app, schematics)
   logger.info("Schematic uploads configured.")
   return schematics
