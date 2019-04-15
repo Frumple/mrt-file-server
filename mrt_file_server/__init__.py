@@ -77,7 +77,7 @@ def configure_flash_messages(app):
                                                app.config['MAX_UPLOAD_FILE_SIZE']),
     "SCHEMATIC_UPLOAD_FILE_EXISTS":           "Upload Failed! File with same name already exists on the server.",
     "SCHEMATIC_UPLOAD_FILENAME_WHITESPACE":   "Upload Failed! File name must not contain spaces.",
-    "SCHEMATIC_UPLOAD_FILENAME_EXTENSION":    "Upload Failed! File must end with the .schematic extension.",
+    "SCHEMATIC_UPLOAD_FILENAME_EXTENSION":    "Upload Failed! File must end with the .schematic or .schem extension.",
     "SCHEMATIC_DOWNLOAD_FILENAME_EMPTY":      "Download Failed! Filename must not be empty.",
     "SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE": "Download Failed! Filename must not contain spaces.",
     "SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND":      "Download Failed! File does not exist."
