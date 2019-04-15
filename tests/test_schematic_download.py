@@ -84,9 +84,9 @@ class TestSchematicDownload(TestBase):
     self.assertEqual(response.status_code, 200)
     self.assertEqual(response.mimetype, "text/html")
 
-    self.verify_flash_message_by_key('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', response.data, filename)
+    self.verify_flash_message_by_key('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', response.data, self.filename_without_extension(filename))
 
-    mock_logger.warn.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND'), filename)
+    mock_logger.warn.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND'), self.filename_without_extension(filename))
 
   # Helper Functions
 
