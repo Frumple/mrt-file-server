@@ -100,11 +100,21 @@ def download_schematic_post():
     log_warn('SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE', filename)
     return
 
-  filename = "{}.schematic".format(secure_filename(filename))
+  filename1 = "{}.schematic".format(secure_filename(filename))
+  filename2 = "{}.schem".format(secure_filename(filename))
 
-  if file_exists_in_dir(downloads_dir, filename):
-    log_info('SCHEMATIC_DOWNLOAD_SUCCESS', filename)
-    return send_from_directory(downloads_dir, filename, as_attachment = True)
+  file1_exists = file_exists_in_dir(downloads_dir, filename1)
+  file2_exists = file_exists_in_dir(downloads_dir, filename2)
+
+  if file1_exists and not file2_exists:
+    log_info('SCHEMATIC_DOWNLOAD_SUCCESS', filename1)
+    return send_from_directory(downloads_dir, filename1, as_attachment = True)
+  elif not file1_exists and file2_exists:
+    log_info('SCHEMATIC_DOWNLOAD_SUCCESS', filename2)
+    return send_from_directory(downloads_dir, filename2, as_attachment = True)
+  elif file1_exists and file2_exists:
+    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_FILENAME_NOT_UNIQUE', filename)
+    log_warn('SCHEMATIC_DOWNLOAD_FILENAME_NOT_UNIQUE', filename)
   else:
     flash_by_key(app, 'SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', filename)
     log_warn('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', filename)
