@@ -92,6 +92,23 @@ class TestSchematicDownload(TestBase):
 
     mock_logger.warn.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND'), filename)
 
+  @patch("mrt_file_server.views.log_adapter")
+  def test_download_schematic_with_invalid_extension_should_fail(self, mock_logger):
+    filename = "mrt_v5_final_elevated_centre_station.txt"
+
+    data = OrderedMultiDict()
+    data.add("fileName", self.filename_without_extension(filename))
+    data.add("fileExtension", self.file_extension(filename))
+
+    response = self.perform_download(data)
+
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(response.mimetype, "text/html")
+
+    self.verify_flash_message_by_key('SCHEMATIC_DOWNLOAD_INVALID_EXTENSION', response.data)
+
+    mock_logger.warn.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_INVALID_EXTENSION'), filename)
+
   # Helper Functions
 
   def clean_schematic_downloads_dir(self):

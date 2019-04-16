@@ -100,7 +100,7 @@ def download_schematic_post():
 
   if file_extension not in ["schem", "schematic"]:
     flash_by_key(app, 'SCHEMATIC_DOWNLOAD_INVALID_EXTENSION')
-    log_warn('SCHEMATIC_DOWNLOAD_INVALID_EXTENSION', filename)
+    log_warn('SCHEMATIC_DOWNLOAD_INVALID_EXTENSION', filename + "." + file_extension)
     return
 
   if str_contains_whitespace(filename):
