@@ -30,6 +30,7 @@ class TestSchematicDownload(TestBase):
 
     data = OrderedMultiDict()
     data.add("fileName", self.filename_without_extension(filename))
+    data.add("fileExtension", self.file_extension(filename))
 
     response = self.perform_download(data)
 
@@ -46,6 +47,7 @@ class TestSchematicDownload(TestBase):
   def test_download_schematic_with_empty_filename_should_fail(self, mock_logger):
     data = OrderedMultiDict()
     data.add("fileName", "")
+    data.add("fileExtension", "schematic")
 
     response = self.perform_download(data)
 
@@ -58,10 +60,11 @@ class TestSchematicDownload(TestBase):
 
   @patch("mrt_file_server.views.log_adapter")
   def test_download_schematic_with_filename_containing_whitespace_should_fail(self, mock_logger):
-    filename = "this file has spaces"
+    filename = "this file has spaces.schematic"
 
     data = OrderedMultiDict()
-    data.add("fileName", filename)
+    data.add("fileName", self.filename_without_extension(filename))
+    data.add("fileExtension", self.file_extension(filename))
 
     response = self.perform_download(data)
 
@@ -78,15 +81,16 @@ class TestSchematicDownload(TestBase):
 
     data = OrderedMultiDict()
     data.add("fileName", self.filename_without_extension(filename))
+    data.add("fileExtension", self.file_extension(filename))
 
     response = self.perform_download(data)
 
     self.assertEqual(response.status_code, 200)
     self.assertEqual(response.mimetype, "text/html")
 
-    self.verify_flash_message_by_key('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', response.data, self.filename_without_extension(filename))
+    self.verify_flash_message_by_key('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', response.data, filename)
 
-    mock_logger.warn.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND'), self.filename_without_extension(filename))
+    mock_logger.warn.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND'), filename)
 
   # Helper Functions
 
@@ -98,3 +102,7 @@ class TestSchematicDownload(TestBase):
 
   def filename_without_extension(self, filename):
     return os.path.splitext(filename)[0]
+
+  def file_extension(self, filename):
+    extension = os.path.splitext(filename)[1]
+    return extension[1:]

@@ -105,7 +105,7 @@ def download_schematic_post():
 
   if str_contains_whitespace(filename):
     flash_by_key(app, 'SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE')
-    log_warn('SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE', filename)
+    log_warn('SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE', filename + "." + file_extension)
     return
 
   full_filename = "{}.{}".format(secure_filename(filename), file_extension)
