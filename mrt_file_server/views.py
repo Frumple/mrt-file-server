@@ -54,14 +54,16 @@ def upload_single_schematic(file):
 
   file.filename = secure_filename(file.filename)
   filesize = get_filesize(file)
+  file_extension = get_file_extension(file.filename)
+  filename_without_extension = get_filename_without_extension(file.filename)
   
-  if get_file_extension(file.filename) != '.schematic' and get_file_extension(file.filename) != '.schem':
+  if file_extension != '.schematic' and file_extension != '.schem':
     flash_by_key(app, 'SCHEMATIC_UPLOAD_FILENAME_EXTENSION', file.filename)
     log_warn('SCHEMATIC_UPLOAD_FILENAME_EXTENSION', file.filename)
   elif filesize > app.config['MAX_UPLOAD_FILE_SIZE']:
     flash_by_key(app, 'SCHEMATIC_UPLOAD_FILE_TOO_LARGE', file.filename)
     log_warn('SCHEMATIC_UPLOAD_FILE_TOO_LARGE', file.filename)
-  elif file_exists_in_dir(uploads_dir, get_file_name(file.filename) + '.schematic') or file_exists_in_dir(uploads_dir, get_file_name(file.filename) + '.schem'):
+  elif file_exists_in_dir(uploads_dir, filename_without_extension + '.schematic') or file_exists_in_dir(uploads_dir, filename_without_extension + '.schem'):
     flash_by_key(app, 'SCHEMATIC_UPLOAD_FILE_EXISTS', file.filename)
     log_warn('SCHEMATIC_UPLOAD_FILE_EXISTS', file.filename)
   else:
@@ -170,7 +172,7 @@ def get_filesize(file):
 def get_file_extension(filename):
   return os.path.splitext(filename)[1]
 
-def get_file_name(filename):
+def get_filename_without_extension(filename):
   return os.path.splitext(filename)[0]
 
 def file_exists_in_dir(dir, filename):
