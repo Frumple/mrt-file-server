@@ -57,7 +57,6 @@ def configure_log_messages(app):
     "SCHEMATIC_DOWNLOAD_SUCCESS":             "Schematic download initiated: '%s'",
     "SCHEMATIC_DOWNLOAD_FILENAME_EMPTY":      "Schematic download failed. Filename is empty.",
     "SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE": "Schematic download failed. Filename contains whitespace: '%s'",
-    "SCHEMATIC_DOWNLOAD_FILENAME_NOT_UNIQUE": "Schematic download failed. Multiple files with this filename exist: '%s'",
     "SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND":      "Schematic download failed. File does not exist: '%s'",
     "SCHEMATIC_DOWNLOAD_INVALID_EXTENSION":   "Schematic download failed. Invalid file extension: '%s'",
     "WORLD_DOWNLOAD_SUCCESS":                 "World download initiated: '%s'",
@@ -82,7 +81,6 @@ def configure_flash_messages(app):
     "SCHEMATIC_UPLOAD_FILENAME_EXTENSION":    "Upload Failed! File must end with the .schematic or .schem extension.",
     "SCHEMATIC_DOWNLOAD_FILENAME_EMPTY":      "Download Failed! Filename must not be empty.",
     "SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE": "Download Failed! Filename must not contain spaces.",
-    "SCHEMATIC_DOWNLOAD_FILENAME_NOT_UNIQUE": "Download Failed! Multiple files with this filename exist. Please contact an admin for further assistance.",
     "SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND":      "Download Failed! File does not exist.",
     "SCHEMATIC_DOWNLOAD_INVALID_EXTENSION":   "Download Failed! Invalid file extension."
   }
