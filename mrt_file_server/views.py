@@ -90,6 +90,7 @@ def download_schematic():
 
 def download_schematic_post():
   filename = request.form['fileName']
+  file_extension = request.form['fileExtension']
   downloads_dir = app.config['SCHEMATIC_DOWNLOADS_DIR']
 
   if filename == "":
@@ -97,29 +98,24 @@ def download_schematic_post():
     log_warn('SCHEMATIC_DOWNLOAD_FILENAME_EMPTY')
     return
 
+  if file_extension not in ["schem", "schematic"]:
+    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_INVALID_EXTENSION')
+    log_warn('SCHEMATIC_DOWNLOAD_INVALID_EXTENSION', filename)
+    return
+
   if str_contains_whitespace(filename):
     flash_by_key(app, 'SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE')
     log_warn('SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE', filename)
     return
 
-  filename1 = "{}.schematic".format(secure_filename(filename))
-  filename2 = "{}.schem".format(secure_filename(filename))
+  full_filename = "{}.{}".format(secure_filename(filename), file_extension)
 
-  file1_exists = file_exists_in_dir(downloads_dir, filename1)
-  file2_exists = file_exists_in_dir(downloads_dir, filename2)
-
-  if file1_exists and not file2_exists:
-    log_info('SCHEMATIC_DOWNLOAD_SUCCESS', filename1)
-    return send_from_directory(downloads_dir, filename1, as_attachment = True)
-  elif not file1_exists and file2_exists:
-    log_info('SCHEMATIC_DOWNLOAD_SUCCESS', filename2)
-    return send_from_directory(downloads_dir, filename2, as_attachment = True)
-  elif file1_exists and file2_exists:
-    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_FILENAME_NOT_UNIQUE', filename)
-    log_warn('SCHEMATIC_DOWNLOAD_FILENAME_NOT_UNIQUE', filename)
+  if file_exists_in_dir(downloads_dir, full_filename):
+    log_info('SCHEMATIC_DOWNLOAD_SUCCESS', full_filename)
+    return send_from_directory(downloads_dir, full_filename, as_attachment = True)
   else:
-    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', filename)
-    log_warn('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', filename)
+    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', full_filename)
+    log_warn('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', full_filename)
     return
 
 @app.route("/world/download/terms")
