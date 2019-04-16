@@ -19,8 +19,33 @@ class TestSchematicDownload(TestBase):
   # Tests
 
   @patch("mrt_file_server.views.log_adapter")
-  def test_download_schematic_should_be_successful(self, mock_logger):
+  def test_download_schematic_with_schematic_extension_should_be_successful(self, mock_logger):
     filename = "mrt_v5_final_elevated_centre_station.schematic"
+    original_file_content = self.load_file(filename)
+
+    # Copy the schematic to the download folder
+    src_filepath = os.path.join(self.TEST_DATA_DIR, filename)
+    dest_filepath = os.path.join(self.downloads_dir, filename)
+    copyfile(src_filepath, dest_filepath)
+
+    data = OrderedMultiDict()
+    data.add("fileName", self.filename_without_extension(filename))
+    data.add("fileExtension", self.file_extension(filename))
+
+    response = self.perform_download(data)
+
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(response.mimetype, "application/octet-stream")
+
+    self.assertEqual(response.headers.get("Content-Disposition"), "attachment; filename={}".format(filename))
+    self.assertEqual(int(response.headers.get("Content-Length")), len(original_file_content))
+    self.assertEqual(os.path.normpath(response.headers.get("X-Sendfile")), dest_filepath)
+
+    mock_logger.info.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_SUCCESS'), filename)
+
+  @patch("mrt_file_server.views.log_adapter")
+  def test_download_schematic_with_schem_extension_should_be_successful(self, mock_logger):
+    filename = "mrt_v5_final_elevated_centre_station.schem"
     original_file_content = self.load_file(filename)
 
     # Copy the schematic to the download folder
