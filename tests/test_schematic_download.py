@@ -138,6 +138,7 @@ class TestSchematicDownload(TestBase):
 
   def clean_schematic_downloads_dir(self):
     self.remove_files(self.downloads_dir, "schematic")
+    self.remove_files(self.downloads_dir, "schem")
 
   def perform_download(self, data):
     return self.client.post('/schematic/download', data = data)
