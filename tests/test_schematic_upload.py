@@ -19,9 +19,30 @@ class TestSchematicUpload(TestBase):
   # Tests
 
   @patch("mrt_file_server.views.log_adapter")
-  def test_upload_single_file_should_be_successful(self, mock_logger):
+  def test_upload_single_file_with_schematic_extension_should_be_successful(self, mock_logger):
     username = "Frumple"
     filename = "mrt_v5_final_elevated_centre_station.schematic"
+    uploaded_filename = self.uploaded_filename(username, filename)
+    original_file_content = self.load_file(filename)
+
+    data = OrderedMultiDict()
+    data.add("userName", username)
+    data.add("schematic", (BytesIO(original_file_content), filename))
+
+    response = self.perform_upload(data)
+
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(response.mimetype, "text/html")
+
+    self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_SUCCESS', response.data, uploaded_filename)
+    self.verify_uploaded_file_content(original_file_content, uploaded_filename)
+
+    mock_logger.info.assert_called_with(self.get_log_message('SCHEMATIC_UPLOAD_SUCCESS'), uploaded_filename)
+
+  @patch("mrt_file_server.views.log_adapter")
+  def test_upload_single_file_with_schem_extension_should_be_successful(self, mock_logger):
+    username = "Frumple"
+    filename = "mrt_v5_final_elevated_centre_station.schem"
     uploaded_filename = self.uploaded_filename(username, filename)
     original_file_content = self.load_file(filename)
 
@@ -45,7 +66,7 @@ class TestSchematicUpload(TestBase):
 
     # Upload 5 files
     filenames = [
-      "mrt_v5_final_elevated_centre_station.schematic",
+      "mrt_v5_final_elevated_centre_station.schem",
       "mrt_v5_final_elevated_side_station.schematic",
       "mrt_v5_final_elevated_single_track.schematic",
       "mrt_v5_final_elevated_double_track.schematic",
@@ -271,6 +292,7 @@ class TestSchematicUpload(TestBase):
 
   def clean_schematic_uploads_dir(self):
     self.remove_files(self.uploads_dir, "schematic")
+    self.remove_files(self.uploads_dir, "schem")
 
   def uploaded_filename(self, username, filename):
     return "{}-{}".format(username, filename)
