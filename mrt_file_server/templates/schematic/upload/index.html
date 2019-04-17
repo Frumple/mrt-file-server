@@ -15,7 +15,7 @@
   <ul>
     <li>Maximum of 10 files can be uploaded at one time.</li>
     <li>Maximum size per file is 100 kb.</li>
-    <li>File names must end with the .schematic extension.</li>
+    <li>File names must end with the .schematic or .schem extension.</li>
     <li>File names must not contain spaces.</li>
     <li>File names will be automatically prepended with your username when uploaded to the server.</li>
   </ul>
@@ -25,7 +25,7 @@
     <li>Local File = "taco.schematic"</li>
     <li>Uploaded File = "Frumple-taco.schematic"</li>
   </ul>
-  <input type="file" id="fileInput" name="schematic" multiple accept=".schematic" onchange="handleFiles(this.files)">
+  <input type="file" id="fileInput" name="schematic" multiple accept=".schematic,.schem" onchange="handleFiles(this.files)">
   <br />
   <br />
   <span>Schematics to upload:</span>
