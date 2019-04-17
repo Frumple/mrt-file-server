@@ -8,15 +8,17 @@ This application was built for the **[Minecart Rapid Transit (MRT) Minecraft Ser
 
 ## Prerequisites
 
-This application was built using **Python 3.6.2**. Install it from **[https://www.python.org](https://www.python.org/)**.
+This application uses **Python 3.6.2 or higher**. Install it from **[https://www.python.org](https://www.python.org/)**.
 
 After installing Python, install the required packages by navigating to the application root directory and running **pip** with the provided requirements file:
 
     pip install -r requirements.txt
 
-Finally, copy the contents of the **instance_template** directory into a new directory named **instance**:
+Then, copy the contents of the **instance_template** directory into a new directory named **instance**:
 
     cp -R instance_template instance
+
+Finally in **config.py**, you must set **`SECRET_KEY`** to a unique and random phrase. For more details on how to generate a good secret key, see **[the "Sessions" section in the Flask quickstart documentation](http://flask.pocoo.org/docs/1.0/quickstart/#sessions)**.
 
 ## Application Mode
 
@@ -40,9 +42,7 @@ If you want the schematic upload and download directories to point to your World
 
 ## Configuration
 
-In **config.py**, you must set **`SECRET_KEY`** to a unique and random phrase. For more details on how to generate a good secret key, see **[the "Sessions" section in the Flask documentation](http://flask.pocoo.org/docs/0.12/quickstart/#sessions)**.
-
-`SECRET_KEY` is the only mandatory configuration setting. You may choose to set other optional settings:
+`SECRET_KEY` is the only mandatory configuration setting in config.py. You may choose to set other optional settings:
 
 - **`MAX_NUMBER_OF_UPLOAD_FILES`** - Maximum number of files that can be uploaded at one time. (Default: 10)
 - **`MAX_UPLOAD_FILE_SIZE`** - Maximum number of bytes that can be uploaded per file. (Default: 100 kilobytes)
