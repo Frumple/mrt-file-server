@@ -1,74 +1,284 @@
 {% extends "layout.html" %}
 {% block title %}World Downloads{% endblock %}
 {% block body %}
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+}
+
+ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+</style>
 <h2>Downloads</h2>
-<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2012-07-13.7z') }}">July 13th, 2012</a> (650 MB)</h3>
-<ul>
-  <li>The Old World, just before the server opened on July 14th, 2012.</li>
-  <li>Pristine and untouched, except for the 4 original MRT v4.1 lines built by Frumple: Blue, Green, Yellow, and Red.</li>
-</ul>
-
-<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2012-12-17.7z') }}">December 17th, 2012</a> (867 MB)</h3>
-<ul>
-  <li>The Old World, 5 months after opening.</li>
-</ul>
-
-<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2013-08-13.7z') }}">August 13th, 2013</a> (909 MB)</h3>
-<ul>
-  <li>The Old World, 1 year and 1 month after opening.</li>
-</ul>
-
-<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2014-01-04.7z') }}">January 4th, 2014</a> (919 MB)</h3>
-<ul>
-  <li>The Old World, 1 year and 6 months after opening.</li>
-</ul>
-
-<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2014-10-03.7z') }}">October 3rd, 2014</a> (6.09 GB)</h3>
-<ul>
-  <li>The Old, New, Lab, Games, and Space Worlds just before the opening of the Gamma Server on October 4th, 2014.</li>
-  <li>Download this for the pristine New World with all 11 of the new MRT v5.0 lines built by MRT staff members: Arctic, Circle, Desert, Expo, Forest, Island, Mesa, Plains, Taiga, Valley, and Zephyr.</li>
-</ul>
-
-<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2015-12-14.7z') }}">December 14th, 2015</a> (6.65 GB)</h3>
-<ul>
-  <li>The Old, New, Lab, Games, and Space Worlds 1 year and 2 months after the opening of the Gamma Server.</li>
-</ul>
-
-<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2016-12-27.7z') }}">December 27th, 2016</a> (6.82 GB)</h3>
-<ul>
-  <li>The Old, New, Lab, Games, and Space Worlds just before the migration from Gamma to the new Epsilon Server on December 30th, 2016.</li>
-  <li>This is the last archive of the New World in its original 20000 by 20000 size before it got expanded as part of the Epsilon migration.</li>
-</ul>
-
-<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2017-06-12.7z') }}">June 12th, 2017</a> (18.2 GB)</h3>
-<ul>
-  <li>The Old, New, Lab, Games, and Space Worlds about 6 months after the migration to the new Epsilon Server.</li>
-  <li>This is the first archive of the New World in its expanded 36000 by 36000 size.</li>
-</ul>
-
-<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2017-12-12.7z') }}">December 12th, 2017</a> (18.4 GB)</h3>
-<ul>
-  <li>The Old, New, Lab, Games, and Space Worlds about 1 year after the migration to the new Epsilon Server.</li>
-</ul>
-
-<h3><a href="{{ url_for('download_world', filename = 'mrt-server-world-2018-07-13.7z') }}">July 13th, 2018</a> (18.5 GB)</h3>
-<ul>
-  <li>The Old, New, Lab, Games, and Space Worlds from the 6th Anniversary date of the MRT Server.</li>
-</ul>
+<table>
+  <tr>
+    <th>Date</th>
+    <th>Description</th>
+    <th>Minecraft Version</th>
+    <th>New World</th>
+    <th>Old World</th>
+    <th>Lab World</th>
+    <th>Games World</th>
+    <th>Space World</th>
+    <th>Map World</th>
+  </tr>
+  <tr>
+    <td class="nowrap">2012-07-13</td>
+    <td>
+      <ul>
+        <li><strong>Server opens to the public with the Old World</strong></li>
+        <li>Download this for the pristine Old World with the 4 MRT v4.1 lines built by Frumple:
+          <ul>
+            <li>Blue, Green, Yellow, and Red.</li>
+          </ul>
+        </li>
+      </ul>
+    </td>
+    <td>1.2.5</td>
+    <td class="nowrap">-</td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2012-07-13/mrt-server-world-2012-07-13.7z') }}">Download (650 MB)</a></td>
+    <td class="nowrap">-</td>
+    <td class="nowrap">-</td>
+    <td class="nowrap">-</td>
+    <td class="nowrap">-</td>
+  </tr>
+  <tr>
+    <td class="nowrap">2012-12-17</td>
+    <td>
+      <ul>
+        <li>5 months after opening</li>
+      </ul>
+    </td>
+    <td>1.3.2</td>
+    <td class="nowrap">-</td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2012-12-17/mrt-server-world-2012-12-17.7z') }}">Download (867 MB)</a></td>
+    <td class="nowrap">-</td>
+    <td class="nowrap">-</td>
+    <td class="nowrap">-</td>
+    <td class="nowrap">-</td>
+  </tr>
+  <tr>
+    <td class="nowrap">2013-08-13</td>
+    <td>
+      <ul>
+        <li>1 year and 1 month after opening</li>
+      </ul>
+    </td>
+    <td>1.5.2</td>
+    <td class="nowrap">-</td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2013-08-13/mrt-server-world-2013-08-13.7z') }}">Download (909 MB)</a></td>
+    <td class="nowrap">-</td>
+    <td class="nowrap">-</td>
+    <td class="nowrap">-</td>
+    <td class="nowrap">-</td>
+  </tr>
+  <tr>
+    <td class="nowrap">2014-01-04</td>
+    <td>
+      <ul>
+        <li>1 year and 6 months after opening</li>
+      </ul>
+    </td>
+    <td>1.7.4</td>
+    <td class="nowrap">-</td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2014-01-04/mrt-server-world-2014-01-04.7z') }}">Download (919 MB)</a></td>
+    <td class="nowrap">-</td>
+    <td class="nowrap">-</td>
+    <td class="nowrap">-</td>
+    <td class="nowrap">-</td>
+  </tr>
+  <tr>
+    <td class="nowrap">2014-10-03</td>
+    <td>
+      <ul>
+        <li><strong>Gamma Server opens, adding the New, Lab, Games, and Space Worlds</strong></li>
+        <li>Download this for the pristine New World with all of the new MRT v5.0 lines built by MRT staff members:
+          <ul>
+            <li>Arctic, Circle, Desert, Expo, Forest, Island, Mesa, Plains, Taiga, Valley, and Zephyr.</li>
+          </ul>
+        </li>
+      </ul>
+    </td>
+    <td>1.8.0</td>
+    <td class="nowrap">
+      <ul>
+        <li><a href="{{ url_for('download_world', filename = '2014-10-03/mrt-server-world-new-2014-10-03.7z.001') }}">Part 1 (2.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2014-10-03/mrt-server-world-new-2014-10-03.7z.002') }}">Part 2 (2.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2014-10-03/mrt-server-world-new-2014-10-03.7z.003') }}">Part 3 (1.16 GB)</a></li>
+      </ul>
+    </td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2014-10-03/mrt-server-world-old-2014-10-03.7z') }}">Download (938 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2014-10-03/mrt-server-world-lab-2014-10-03.7z') }}">Download (2 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2014-10-03/mrt-server-world-games-2014-10-03.7z') }}">Download (2 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2014-10-03/mrt-server-world-space-2014-10-03.7z') }}">Download (3 MB)</a></td>
+    <td class="nowrap">-</td>
+  </tr>
+  <tr>
+    <td class="nowrap">2015-12-14</td>
+    <td>
+      <ul>
+        <li>1 year and 2 months after the migration to the Gamma Server</li>
+      </ul>
+    </td>
+    <td>1.8.8</td>
+    <td class="nowrap">
+      <ul>
+        <li><a href="{{ url_for('download_world', filename = '2015-12-14/mrt-server-world-new-2015-12-14.7z.001') }}">Part 1 (2.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2015-12-14/mrt-server-world-new-2015-12-14.7z.002') }}">Part 2 (2.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2015-12-14/mrt-server-world-new-2015-12-14.7z.003') }}">Part 3 (1.66 GB)</a></li>
+      </ul>
+    </td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2015-12-14/mrt-server-world-old-2015-12-14.7z') }}">Download (952 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2015-12-14/mrt-server-world-lab-2015-12-14.7z') }}">Download (33 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2015-12-14/mrt-server-world-games-2015-12-14.7z') }}">Download (15 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2015-12-14/mrt-server-world-space-2015-12-14.7z') }}">Download (5 MB)</a></td>
+    <td class="nowrap">-</td>
+  </tr>
+  <tr>
+    <td class="nowrap">2016-12-27</td>
+    <td>
+      <ul>
+        <li><strong>Epsilon Server opens</strong></li>
+        <li>This is the last archive of the New World in its original 20000 by 20000 size before it got expanded as part of the Epsilon migration.</li>
+      </ul>
+    </td>
+    <td>1.8.8</td>
+    <td class="nowrap">
+      <ul>
+        <li><a href="{{ url_for('download_world', filename = '2016-12-27/mrt-server-world-new-2016-12-27.7z.001') }}">Part 1 (2.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2016-12-27/mrt-server-world-new-2016-12-27.7z.002') }}">Part 2 (2.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2016-12-27/mrt-server-world-new-2016-12-27.7z.003') }}">Part 3 (1.80 GB)</a></li>
+      </ul>
+    </td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2016-12-27/mrt-server-world-old-2016-12-27.7z') }}">Download (956 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2016-12-27/mrt-server-world-lab-2016-12-27.7z') }}">Download (52 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2016-12-27/mrt-server-world-games-2016-12-27.7z') }}">Download (21 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2016-12-27/mrt-server-world-space-2016-12-27.7z') }}">Download (6 MB)</a></td>
+    <td class="nowrap">-</td>
+  </tr>
+  <tr>
+    <td class="nowrap">2017-06-12</td>
+    <td>
+      <ul>
+        <li>6 months after the migration to the Epsilon Server</li>
+        <li>This is the first archive of the New World in its expanded 36000 by 36000 size.</li>
+      </ul>
+    </td>
+    <td>1.11.2</td>
+    <td class="nowrap">
+      <ul>
+        <li><a href="{{ url_for('download_world', filename = '2017-06-12/mrt-server-world-new-2017-06-12.7z.001') }}">Part 1 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2017-06-12/mrt-server-world-new-2017-06-12.7z.002') }}">Part 2 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2017-06-12/mrt-server-world-new-2017-06-12.7z.003') }}">Part 3 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2017-06-12/mrt-server-world-new-2017-06-12.7z.004') }}">Part 4 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2017-06-12/mrt-server-world-new-2017-06-12.7z.005') }}">Part 5 (1.21 GB)</a></li>
+      </ul>
+    </td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2017-06-12/mrt-server-world-old-2017-06-12.7z') }}">Download (957 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2017-06-12/mrt-server-world-lab-2017-06-12.7z') }}">Download (80 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2017-06-12/mrt-server-world-games-2017-06-12.7z') }}">Download (24 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2017-06-12/mrt-server-world-space-2017-06-12.7z') }}">Download (7 MB)</a></td>
+    <td class="nowrap">-</td>
+  </tr>
+  <tr>
+    <td class="nowrap">2017-12-12</td>
+    <td>
+      <ul>
+        <li>1 year after the migration to the Epsilon Server</li>
+      </ul>
+    </td>
+    <td>1.12.2</td>
+    <td class="nowrap">
+      <ul>
+        <li><a href="{{ url_for('download_world', filename = '2017-12-12/mrt-server-world-new-2017-12-12.7z.001') }}">Part 1 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2017-12-12/mrt-server-world-new-2017-12-12.7z.002') }}">Part 2 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2017-12-12/mrt-server-world-new-2017-12-12.7z.003') }}">Part 3 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2017-12-12/mrt-server-world-new-2017-12-12.7z.004') }}">Part 4 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2017-12-12/mrt-server-world-new-2017-12-12.7z.005') }}">Part 5 (1.32 GB)</a></li>
+      </ul>
+    </td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2017-12-12/mrt-server-world-old-2017-12-12.7z') }}">Download (957 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2017-12-12/mrt-server-world-lab-2017-12-12.7z') }}">Download (174 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2017-12-12/mrt-server-world-games-2017-12-12.7z') }}">Download (30 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2017-12-12/mrt-server-world-space-2017-12-12.7z') }}">Download (14 MB)</a></td>
+    <td class="nowrap">-</td>
+  </tr>
+  <tr>
+    <td class="nowrap">2018-07-13</td>
+    <td>
+      <ul>
+        <li>6th Anniversary of the MRT Server</li>
+      </ul>
+    </td>
+    <td>1.12.2</td>
+    <td class="nowrap">
+      <ul>
+        <li><a href="{{ url_for('download_world', filename = '2018-07-13/mrt-server-world-new-2018-07-13.7z.001') }}">Part 1 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2018-07-13/mrt-server-world-new-2018-07-13.7z.002') }}">Part 2 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2018-07-13/mrt-server-world-new-2018-07-13.7z.003') }}">Part 3 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2018-07-13/mrt-server-world-new-2018-07-13.7z.004') }}">Part 4 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2018-07-13/mrt-server-world-new-2018-07-13.7z.005') }}">Part 5 (1.31 GB)</a></li>
+      </ul>
+    </td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2018-07-13/mrt-server-world-old-2018-07-13.7z') }}">Download (958 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2018-07-13/mrt-server-world-lab-2018-07-13.7z') }}">Download (226 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2018-07-13/mrt-server-world-games-2018-07-13.7z') }}">Download (36 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2018-07-13/mrt-server-world-space-2018-07-13.7z') }}">Download (16 MB)</a></td>
+    <td class="nowrap">-</td>
+  </tr>
+  <tr>
+    <td class="nowrap">2019-07-01</td>
+    <td>
+      <ul>
+        <li>Near the 7th Anniversary of the MRT Server</li>
+      </ul>
+    </td>
+    <td>1.13.2</td>
+    <td class="nowrap">
+      <ul>
+        <li><a href="{{ url_for('download_world', filename = '2019-07-13/mrt-server-world-new-2019-07-01.7z.001') }}">Part 1 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2019-07-13/mrt-server-world-new-2019-07-01.7z.002') }}">Part 2 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2019-07-13/mrt-server-world-new-2019-07-01.7z.003') }}">Part 3 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2019-07-13/mrt-server-world-new-2019-07-01.7z.004') }}">Part 4 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2019-07-13/mrt-server-world-new-2019-07-01.7z.005') }}">Part 5 (4.00 GB)</a></li>
+        <li><a href="{{ url_for('download_world', filename = '2019-07-13/mrt-server-world-new-2019-07-01.7z.006') }}">Part 6 (3.81 GB)</a></li>
+      </ul>
+    </td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2019-07-13/mrt-server-world-old-2019-07-01.7z') }}">Download (1.03 GB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2019-07-13/mrt-server-world-lab-2019-07-01.7z') }}">Download (410 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2019-07-13/mrt-server-world-games-2019-07-01.7z') }}">Download (85 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2019-07-13/mrt-server-world-space-2019-07-01.7z') }}">Download (31 MB)</a></td>
+    <td class="nowrap"><a href="{{ url_for('download_world', filename = '2019-07-13/mrt-server-world-map-2019-07-01.7z') }}">Download (16 MB)</a></td>
+  </tr>
+</table>
 
 <hr />
 
 <h2>Frequently Asked Questions</h2>
 
 <h3>How do I extract these files?</h3>
-<ul><li>These archive files were made using 7-zip for its better compression ratio. Download and install <a href="http://www.7-zip.org">7-zip</a> from to extract them.</li></ul>
+<ul>
+  <li>Download and install <a href="http://www.7-zip.org">7-zip</a> to extract them.</li>
+  <li>For multi-part files ending with the extensions .001, .002, etc., make sure you have fully downloaded all parts into the same directory, and then extract the .001 file. 7-zip will automatically combine all parts during extraction.</li>
+</ul>
 
 <h3>What is the password to extract these files?</h3>
-<ul><li>The password for all world download files here is: <strong>BusesTrainsShipsPlanesOhMy!</strong></li></ul>
+<ul><li>The password for all world download files is: <strong>BusesTrainsShipsPlanesOhMy!</strong></li></ul>
 
 <h3>My download is slow or fails to complete!</h3>
-<ul><li>Ensure that you have a stable and fast internet connection before downloading these files. Most of these files are at least 1 GB, so expect these files to take a lot of time to completely download.</li></ul>
+<ul><li>Ensure that you have a stable and fast internet connection before downloading these files. A lot of these files are at least 1 GB, so expect these files to take a lot of time to fully download.</li></ul>
 
 <h3>Will more world downloads be made available in the future?</h3>
-<ul><li>Currently if we have time, we will try to have a world download available every 6 months.</li></ul>
+<ul><li>We will try to make one world download available per year, around the time of the MRT Server's anniversary on July 13th.</li></ul>
 {% endblock %}
