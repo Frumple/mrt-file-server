@@ -89,17 +89,12 @@ def configure_flash_messages(app):
   logger.info("Flash messages configured.")
 
 def load_environment_config(app, mode):
-  instance_path = app.instance_path
-  config_file_path = os.path.join(instance_path, mode, "config.py")
-
-  if os.path.isfile(config_file_path):
-    app.config.from_pyfile(config_file_path)
-    logger.info("Environment config loaded from: '%s'", config_file_path)
-  else:
-    logger.info("Environment config not found.")
+  Instance_relative_config_file_path = os.path.join(mode, "config.py")
+  app.config.from_pyfile(Instance_relative_config_file_path)
+  logger.info("Environment config loaded from: '%s'", Instance_relative_config_file_path)
 
 def configure_instance_folders(app, mode):
-  instance_path = app.instance_path
+  instance_path = os.path.realpath(app.instance_path)
   mode_dir = os.path.join(instance_path, mode)
 
   downloads_dir = os.path.join(mode_dir, "downloads")
