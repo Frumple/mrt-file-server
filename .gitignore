@@ -102,3 +102,7 @@ ENV/
 
 # Mac system files
 .DS_Store
+
+# Visual Studio Code
+.vscode
+*.code-workspace
