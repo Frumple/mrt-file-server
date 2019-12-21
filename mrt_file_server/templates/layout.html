@@ -6,7 +6,10 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/default.css') }}" />
   </head>
   <body>
-    <h1>MRT File Server - {{ self.title() }}</h1>
+    <div class="header">
+      <img src="{{ url_for('static', filename='logo-75.png') }}" alt="Minecart Rapid Transit Logo" class="logo">
+      <h1>MRT File Server - {{ self.title() }}</h1>
+    </div>
     <hr />
     {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -24,7 +27,7 @@
     {% if home %}
       <span><a href="https://www.minecartrapidtransit.net">Back to the MRT Website</a></span>
       <hr />
-      <div class="credits">This file server is an open-source web application <a href="https://github.com/Frumple/mrt-file-server">available on GitHub</a>.</div>
+      <div class="credits">This file server is an open-source Flask web application that is <a href="https://github.com/Frumple/mrt-file-server">available on GitHub</a>.</div>
     {% else %}
       <span><a href="{{ url_for('index') }}">Back to File Server Home</a></span>
     {% endif %}
