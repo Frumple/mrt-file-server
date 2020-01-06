@@ -15,3 +15,11 @@
     font-size: small;
     font-style: italic;
 }
+
+.flash-success {
+  color: green;
+}
+
+.flash-failure {
+  color: red;
+}

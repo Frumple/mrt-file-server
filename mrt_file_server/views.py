@@ -56,7 +56,7 @@ def upload_single_schematic(file):
   filesize = get_filesize(file)
   file_extension = get_file_extension(file.filename)
   filename_without_extension = get_filename_without_extension(file.filename)
-  
+
   if file_extension != '.schematic' and file_extension != '.schem':
     flash_by_key(app, 'SCHEMATIC_UPLOAD_FILENAME_EXTENSION', file.filename)
     log_warn('SCHEMATIC_UPLOAD_FILENAME_EXTENSION', file.filename)
@@ -152,12 +152,12 @@ def get_flash_message(app, key):
   return app.config['FLASH_MESSAGES'][key]
 
 def flash_by_key(app, key, filename = None):
-  message = get_flash_message(app, key)
+  flash_message = get_flash_message(app, key)
 
   if filename:
-    flash("{}: {}".format(filename, message))
+    flash("{}: {}".format(filename, flash_message.message), flash_message.category)
   else:
-    flash(message)
+    flash(flash_message.message, flash_message.category)
 
 def get_filesize(file):
   file.seek(0, os.SEEK_END)
@@ -176,4 +176,4 @@ def file_exists_in_dir(dir, filename):
   return os.path.isfile(filepath)
 
 def str_contains_whitespace(str):
-  return bool(re.search(r"\s", str))  
+  return bool(re.search(r"\s", str))

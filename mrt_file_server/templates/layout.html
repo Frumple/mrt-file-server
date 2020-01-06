@@ -11,12 +11,12 @@
       <h1>MRT File Server - {{ self.title() }}</h1>
     </div>
     <hr />
-    {% with messages = get_flashed_messages() %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <h2>Results</h2>
-        <ul>
-        {% for message in messages %}
-          <li name="flash_message">{{ message }}</li>
+        <ul class="flashes">
+        {% for category, message in messages %}
+          <li class="flash-{{ category }}" name="flash_message">{{ message }}</li>
         {% endfor %}
         </ul>
       {% endif %}

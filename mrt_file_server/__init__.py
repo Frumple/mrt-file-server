@@ -6,6 +6,11 @@ import modes
 import os
 import re
 
+class FlashMessage:
+  def __init__(self, message, category):
+    self.message = message
+    self.category = category
+
 def configure_logger(app, mode):
   logger = logging.getLogger(__name__)
 
@@ -67,22 +72,22 @@ def configure_log_messages(app):
 
 def configure_flash_messages(app):
   messages = {
-    "SCHEMATIC_UPLOAD_SUCCESS":               "Upload Successful!",
-    "SCHEMATIC_UPLOAD_FAILURE":               "Upload Failed! Please contact the admins for assistance.",
-    "SCHEMATIC_UPLOAD_USERNAME_EMPTY":        "Upload Failed! Username must not be empty.",
-    "SCHEMATIC_UPLOAD_USERNAME_WHITESPACE":   "Upload Failed! Username must not contain spaces.",
-    "SCHEMATIC_UPLOAD_NO_FILES":              "Upload Failed! No files selected.",
-    "SCHEMATIC_UPLOAD_TOO_MANY_FILES":        "Upload Failed! A maximum of {} files can be uploaded at one time.".format( \
-                                               app.config['MAX_NUMBER_OF_UPLOAD_FILES']),
-    "SCHEMATIC_UPLOAD_FILE_TOO_LARGE":        "Upload Failed! File size is larger than the allowed maximum of {} kilobytes.".format( \
-                                               int(app.config['MAX_UPLOAD_FILE_SIZE'] / 1024)),
-    "SCHEMATIC_UPLOAD_FILE_EXISTS":           "Upload Failed! File with same name already exists on the server.",
-    "SCHEMATIC_UPLOAD_FILENAME_WHITESPACE":   "Upload Failed! File name must not contain spaces.",
-    "SCHEMATIC_UPLOAD_FILENAME_EXTENSION":    "Upload Failed! File must end with the .schematic or .schem extension.",
-    "SCHEMATIC_DOWNLOAD_FILENAME_EMPTY":      "Download Failed! Filename must not be empty.",
-    "SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE": "Download Failed! Filename must not contain spaces.",
-    "SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND":      "Download Failed! File does not exist.",
-    "SCHEMATIC_DOWNLOAD_INVALID_EXTENSION":   "Download Failed! Invalid file extension."
+    "SCHEMATIC_UPLOAD_SUCCESS":               FlashMessage("Upload Successful!", 'success'),
+    "SCHEMATIC_UPLOAD_FAILURE":               FlashMessage("Upload Failed! Please contact the admins for assistance.", 'failure'),
+    "SCHEMATIC_UPLOAD_USERNAME_EMPTY":        FlashMessage("Upload Failed! Username must not be empty.", 'failure'),
+    "SCHEMATIC_UPLOAD_USERNAME_WHITESPACE":   FlashMessage("Upload Failed! Username must not contain spaces.", 'failure'),
+    "SCHEMATIC_UPLOAD_NO_FILES":              FlashMessage("Upload Failed! No files selected.", 'failure'),
+    "SCHEMATIC_UPLOAD_TOO_MANY_FILES":        FlashMessage("Upload Failed! A maximum of {} files can be uploaded at one time.".format( \
+                                                app.config['MAX_NUMBER_OF_UPLOAD_FILES']), 'failure'),
+    "SCHEMATIC_UPLOAD_FILE_TOO_LARGE":        FlashMessage("Upload Failed! File size is larger than the allowed maximum of {} kilobytes.".format( \
+                                                int(app.config['MAX_UPLOAD_FILE_SIZE'] / 1024)), 'failure'),
+    "SCHEMATIC_UPLOAD_FILE_EXISTS":           FlashMessage("Upload Failed! File with same name already exists on the server.", 'failure'),
+    "SCHEMATIC_UPLOAD_FILENAME_WHITESPACE":   FlashMessage("Upload Failed! File name must not contain spaces.", 'failure'),
+    "SCHEMATIC_UPLOAD_FILENAME_EXTENSION":    FlashMessage("Upload Failed! File must end with the .schematic or .schem extension.", 'failure'),
+    "SCHEMATIC_DOWNLOAD_FILENAME_EMPTY":      FlashMessage("Download Failed! Filename must not be empty.", 'failure'),
+    "SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE": FlashMessage("Download Failed! Filename must not contain spaces.", 'failure'),
+    "SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND":      FlashMessage("Download Failed! File does not exist.", 'failure'),
+    "SCHEMATIC_DOWNLOAD_INVALID_EXTENSION":   FlashMessage("Download Failed! Invalid file extension.", 'failure')
   }
 
   app.config['FLASH_MESSAGES'] = messages
