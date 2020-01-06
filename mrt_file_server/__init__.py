@@ -74,8 +74,8 @@ def configure_flash_messages(app):
     "SCHEMATIC_UPLOAD_NO_FILES":              "Upload Failed! No files selected.",
     "SCHEMATIC_UPLOAD_TOO_MANY_FILES":        "Upload Failed! A maximum of {} files can be uploaded at one time.".format( \
                                                app.config['MAX_NUMBER_OF_UPLOAD_FILES']),
-    "SCHEMATIC_UPLOAD_FILE_TOO_LARGE":        "Upload Failed! File size is larger than allowed maximum of {} bytes.".format( \
-                                               app.config['MAX_UPLOAD_FILE_SIZE']),
+    "SCHEMATIC_UPLOAD_FILE_TOO_LARGE":        "Upload Failed! File size is larger than the allowed maximum of {} kilobytes.".format( \
+                                               int(app.config['MAX_UPLOAD_FILE_SIZE'] / 1024)),
     "SCHEMATIC_UPLOAD_FILE_EXISTS":           "Upload Failed! File with same name already exists on the server.",
     "SCHEMATIC_UPLOAD_FILENAME_WHITESPACE":   "Upload Failed! File name must not contain spaces.",
     "SCHEMATIC_UPLOAD_FILENAME_EXTENSION":    "Upload Failed! File must end with the .schematic or .schem extension.",
