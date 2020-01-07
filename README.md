@@ -18,7 +18,9 @@ Then, copy the contents of the **instance_template** directory into a new direct
 
     cp -R instance_template instance
 
-Finally in **config.py**, you must set **`SECRET_KEY`** to a unique and random phrase. For more details on how to generate a good secret key, see **[the "Sessions" section in the Flask quickstart documentation](http://flask.pocoo.org/docs/1.0/quickstart/#sessions)**.
+Finally in **config.py**:
+- You must set **`SECRET_KEY`** to a unique and random phrase. For more details on how to generate a good secret key, see **[the "Sessions" section in the Flask quickstart documentation](http://flask.pocoo.org/docs/1.0/quickstart/#sessions)**.
+- If you are running your production server with basic authentication enabled, set the basic auth username and password in **`BASIC_AUTH_USERNAME`** and **`BASIC_AUTH_PASSWORD`**. Otherwise, basic authentication can be disabled by setting **`BASIC_AUTH_FORCE`** to `False`.
 
 ## Application Mode
 
@@ -35,10 +37,10 @@ In the **instance** directory, there are three subdirectories each corresponding
 - **uploads** - Where all schematics are uploaded
 - **downloads** - Where all schematics and worlds are downloaded
 
-If you want the schematic upload and download directories to point to your WorldEdit schematics directory on your Minecraft server so that schematics are immediately available, you have a couple of options to achieve this:
+If you want both of the schematic upload and download directories to point to your WorldEdit schematics directory on your Minecraft server so that schematics are immediately available, you have a couple of options to achieve this:
 
 - Use symbolic links to point both directories to the schematic directory.
-- Deploy this application within a Docker container and use Docker volumes to map your directories to the schematic directory.
+- Deploy this application within a Docker container and use Docker volumes to map both directories to the schematic directory.
 
 ## Configuration
 
@@ -46,6 +48,11 @@ If you want the schematic upload and download directories to point to your World
 
 - **`MAX_NUMBER_OF_UPLOAD_FILES`** - Maximum number of files that can be uploaded at one time. (Default: 10)
 - **`MAX_UPLOAD_FILE_SIZE`** - Maximum number of bytes that can be uploaded per file. (Default: 100 kilobytes)
+
+These basic authentication settings are from the **[Flask-BasicAuth](https://github.com/jpvanhal/flask-basicauth)** extension:
+- **`BASIC_AUTH_FORCE`** - Set to True to enable basic authentication on the whole application. (Default: False in development and test environments, True in production)
+- **`BASIC_AUTH_USERNAME`** - The username needed to access the application if basic authentication is enabled.
+- **`BASIC_AUTH_PASSWORD`** - The plaintext password needed to access the application if basic authentication is enabled.
 
 ## Running the Tests
 
@@ -60,4 +67,4 @@ The Flask development server can be run by setting the **`FLASK_APP`** environme
     export FLASK_APP=mrt_file_server
     flask run
 
-For a production server, I recommend running this application using a Docker image, such as **[uwsgi-nginx-flask](https://github.com/tiangolo/uwsgi-nginx-flask-docker)**.
+For a production server, I recommend running this application using a Docker image, such as tiangolo's **[uwsgi-nginx-flask](https://github.com/tiangolo/uwsgi-nginx-flask-docker)** or **[meinheld-gunicorn-docker](https://github.com/tiangolo/meinheld-gunicorn-docker)**.

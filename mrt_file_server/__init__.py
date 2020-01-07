@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_uploads import UploadSet, configure_uploads
+from flask_basicauth import BasicAuth
 
 import logging
 import modes
@@ -143,6 +144,8 @@ configure_flash_messages(app)
 load_environment_config(app, mode)
 configure_instance_folders(app, mode)
 schematics = configure_schematic_uploads(app)
+
+basic_auth = BasicAuth(app)
 
 import mrt_file_server.views
 

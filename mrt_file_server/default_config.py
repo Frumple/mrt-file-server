@@ -6,3 +6,6 @@ MAX_UPLOAD_FILE_SIZE = 100 * 1024 # 100 kilobytes
 
 # Maximum number of bytes that can be uploaded at one time
 MAX_CONTENT_LENGTH = MAX_NUMBER_OF_UPLOAD_FILES * MAX_UPLOAD_FILE_SIZE
+
+# Disable basic authentication by default
+BASIC_AUTH_FORCE = False
