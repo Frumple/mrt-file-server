@@ -67,4 +67,4 @@ The Flask development server can be run by setting the **`FLASK_APP`** environme
     export FLASK_APP=mrt_file_server
     flask run
 
-For a production server, I recommend running this application using a Docker image, such as tiangolo's **[uwsgi-nginx-flask](https://github.com/tiangolo/uwsgi-nginx-flask-docker)** or **[meinheld-gunicorn-docker](https://github.com/tiangolo/meinheld-gunicorn-docker)**.
+For a production server, I recommend running this application using a Docker image, such as tiangolo's **[uwsgi-nginx-flask](https://github.com/tiangolo/uwsgi-nginx-flask-docker)**.
