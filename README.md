@@ -8,11 +8,11 @@ This application was built for the **[Minecart Rapid Transit (MRT) Minecraft Ser
 
 ## Prerequisites
 
-This application uses **Python 3.6.2 or higher**. Install it from **[https://www.python.org](https://www.python.org/)**.
+This application uses **Python 3.8.0 or higher**. Install it from **[https://www.python.org](https://www.python.org/)**.
 
 After installing Python, install the required packages by navigating to the application root directory and running **pip** with the provided requirements file:
 
-    pip install -r requirements.txt
+    pip install -r requirements/development.txt
 
 Then, copy the contents of the **instance_template** directory into a new directory named **instance**:
 
@@ -58,7 +58,7 @@ These basic authentication settings are from the **[Flask-BasicAuth](https://git
 
 Run the tests by navigating to the project root directory and running the following command:
 
-    python -m unittest discover tests
+    pytest
 
 ## Running the Application
 

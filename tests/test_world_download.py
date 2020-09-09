@@ -4,8 +4,8 @@ from unittest.mock import patch
 import os
 
 class TestWorldDownload(TestBase):
-  def setUp(self):
-    TestBase.setUp(self)
+  def setup(self):
+    TestBase.setup(self)
 
     self.FILE_NAME = "mrt-server-world-test.7z"
     self.FILE_SIZE_IN_BYTES = 1073741824
@@ -21,8 +21,8 @@ class TestWorldDownload(TestBase):
       self.file.write(b'\0')
       self.file.flush()
 
-  def tearDown(self):
-    TestBase.tearDown(self)
+  def teardown(self):
+    TestBase.teardown(self)
     os.remove(self.file.name)
 
   @patch("mrt_file_server.views.log_adapter")
@@ -31,10 +31,10 @@ class TestWorldDownload(TestBase):
 
     response = self.client.get(route_to_file)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "application/octet-stream")
+    assert response.status_code == 200
+    assert response.mimetype == "application/octet-stream"
 
-    self.assertEqual(response.headers.get("Content-Disposition"), "attachment; filename={}".format(self.FILE_NAME))
-    self.assertEqual(int(response.headers.get("Content-Length")), self.FILE_SIZE_IN_BYTES)
+    assert response.headers.get("Content-Disposition") == "attachment; filename={}".format(self.FILE_NAME)
+    assert int(response.headers.get("Content-Length")) == self.FILE_SIZE_IN_BYTES
 
     mock_logger.info.assert_called_with(self.get_log_message('WORLD_DOWNLOAD_SUCCESS'), self.FILE_NAME)

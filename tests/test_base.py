@@ -3,10 +3,9 @@ from collections import OrderedDict
 import glob
 import modes
 import os
-import unittest
 
-class TestBase(unittest.TestCase):
-  def setUp(self):
+class TestBase:
+  def setup(self):
     os.environ[modes.ENVIRONMENT_VARIABLE] = modes.TEST
 
     self.TEST_DATA_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")
@@ -16,7 +15,7 @@ class TestBase(unittest.TestCase):
     self.app.testing = True
     self.client = self.app.test_client()
 
-  def tearDown(self):
+  def teardown(self):
     pass
 
   def load_file(self, filename):
@@ -46,7 +45,7 @@ class TestBase(unittest.TestCase):
       expected_message_html = self.flash_message_html("{}: {}".format(filename, expected_message), expected_category)
     else:
       expected_message_html = self.flash_message_html(expected_message, expected_category)
-    self.assertIn(bytes(expected_message_html, encoding = "utf-8"), response_data)
+    assert bytes(expected_message_html, encoding = "utf-8") in response_data
 
   def flash_message_html(self, message, category):
     return '<li class="flash-{}" name="flash_message">{}</li>'.format(category, message)

@@ -1,19 +1,19 @@
 from test_base import TestBase
 from unittest.mock import patch
 
-from werkzeug import OrderedMultiDict
+from werkzeug.datastructures import OrderedMultiDict
 from shutil import copyfile
 
 import os
 
 class TestSchematicDownload(TestBase):
-  def setUp(self):
-    TestBase.setUp(self)
+  def setup(self):
+    TestBase.setup(self)
     self.downloads_dir = self.app.config['SCHEMATIC_DOWNLOADS_DIR']
     self.clean_schematic_downloads_dir()
 
-  def tearDown(self):
-    TestBase.tearDown(self)
+  def teardown(self):
+    TestBase.teardown(self)
     self.clean_schematic_downloads_dir()
 
   # Tests
@@ -34,11 +34,11 @@ class TestSchematicDownload(TestBase):
 
     response = self.perform_download(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "application/octet-stream")
+    assert response.status_code == 200
+    assert response.mimetype == "application/octet-stream"
 
-    self.assertEqual(response.headers.get("Content-Disposition"), "attachment; filename={}".format(filename))
-    self.assertEqual(int(response.headers.get("Content-Length")), len(original_file_content))
+    assert response.headers.get("Content-Disposition") == "attachment; filename={}".format(filename)
+    assert int(response.headers.get("Content-Length")) == len(original_file_content)
 
     mock_logger.info.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_SUCCESS'), filename)
 
@@ -58,11 +58,11 @@ class TestSchematicDownload(TestBase):
 
     response = self.perform_download(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "application/octet-stream")
+    assert response.status_code == 200
+    assert response.mimetype == "application/octet-stream"
 
-    self.assertEqual(response.headers.get("Content-Disposition"), "attachment; filename={}".format(filename))
-    self.assertEqual(int(response.headers.get("Content-Length")), len(original_file_content))
+    assert response.headers.get("Content-Disposition") == "attachment; filename={}".format(filename)
+    assert int(response.headers.get("Content-Length")) == len(original_file_content)
 
     mock_logger.info.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_SUCCESS'), filename)
 
@@ -74,8 +74,8 @@ class TestSchematicDownload(TestBase):
 
     response = self.perform_download(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "text/html")
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
 
     self.verify_flash_message_by_key('SCHEMATIC_DOWNLOAD_FILENAME_EMPTY', response.data)
 
@@ -91,8 +91,8 @@ class TestSchematicDownload(TestBase):
 
     response = self.perform_download(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "text/html")
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
 
     self.verify_flash_message_by_key('SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE', response.data)
 
@@ -108,8 +108,8 @@ class TestSchematicDownload(TestBase):
 
     response = self.perform_download(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "text/html")
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
 
     self.verify_flash_message_by_key('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', response.data, filename)
 
@@ -125,8 +125,8 @@ class TestSchematicDownload(TestBase):
 
     response = self.perform_download(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "text/html")
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
 
     self.verify_flash_message_by_key('SCHEMATIC_DOWNLOAD_INVALID_EXTENSION', response.data)
 

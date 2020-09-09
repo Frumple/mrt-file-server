@@ -1,19 +1,19 @@
 from test_base import TestBase
 from unittest.mock import call, patch
 
-from werkzeug import OrderedMultiDict
+from werkzeug.datastructures import OrderedMultiDict
 from io import BytesIO
 from shutil import copyfile
 import os
 
 class TestSchematicUpload(TestBase):
-  def setUp(self):
-    TestBase.setUp(self)
+  def setup(self):
+    TestBase.setup(self)
     self.uploads_dir = self.app.config['SCHEMATIC_UPLOADS_DIR']
     self.clean_schematic_uploads_dir()
- 
-  def tearDown(self):
-    TestBase.tearDown(self)
+
+  def teardown(self):
+    TestBase.teardown(self)
     self.clean_schematic_uploads_dir()
 
   # Tests
@@ -31,8 +31,8 @@ class TestSchematicUpload(TestBase):
 
     response = self.perform_upload(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "text/html")
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
 
     self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_SUCCESS', response.data, uploaded_filename)
     self.verify_uploaded_file_content(original_file_content, uploaded_filename)
@@ -52,8 +52,8 @@ class TestSchematicUpload(TestBase):
 
     response = self.perform_upload(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "text/html")
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
 
     self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_SUCCESS', response.data, uploaded_filename)
     self.verify_uploaded_file_content(original_file_content, uploaded_filename)
@@ -82,11 +82,11 @@ class TestSchematicUpload(TestBase):
 
     response = self.perform_upload(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "text/html")
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
 
     logger_calls = []
-      
+
     for filename in original_files:
       uploaded_filename = self.uploaded_filename(username, filename)
 
@@ -108,8 +108,8 @@ class TestSchematicUpload(TestBase):
 
     response = self.perform_upload(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "text/html")
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
 
     self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_USERNAME_EMPTY', response.data)
     self.verify_schematic_uploads_dir_is_empty()
@@ -128,8 +128,8 @@ class TestSchematicUpload(TestBase):
 
     response = self.perform_upload(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "text/html")
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
 
     self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_USERNAME_WHITESPACE', response.data)
     self.verify_schematic_uploads_dir_is_empty()
@@ -143,9 +143,9 @@ class TestSchematicUpload(TestBase):
 
     response = self.perform_upload(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "text/html")
-    
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
+
     self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_NO_FILES', response.data)
     self.verify_schematic_uploads_dir_is_empty()
 
@@ -180,8 +180,8 @@ class TestSchematicUpload(TestBase):
 
     response = self.perform_upload(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "text/html")
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
 
     self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_TOO_MANY_FILES', response.data)
     self.verify_schematic_uploads_dir_is_empty()
@@ -201,8 +201,8 @@ class TestSchematicUpload(TestBase):
 
     response = self.perform_upload(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "text/html")
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
 
     self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_FILE_TOO_LARGE', response.data, uploaded_filename)
     self.verify_schematic_uploads_dir_is_empty()
@@ -229,14 +229,14 @@ class TestSchematicUpload(TestBase):
 
     response = self.perform_upload(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "text/html")
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
 
     self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_FILE_EXISTS', response.data, uploaded_filename)
 
     # Verify that the uploads directory has only the impostor file, and the file has not been modified
     files = os.listdir(self.uploads_dir)
-    self.assertEqual(len(files), 1)
+    assert len(files) == 1
 
     impostor_file_content = self.load_file(impostor_filename)
     self.verify_uploaded_file_content(impostor_file_content, uploaded_filename)
@@ -256,15 +256,15 @@ class TestSchematicUpload(TestBase):
 
     response = self.perform_upload(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "text/html")
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
 
     self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_FILENAME_WHITESPACE', response.data, uploaded_filename)
     self.verify_schematic_uploads_dir_is_empty()
 
     mock_logger.warn.assert_called_with(self.get_log_message('SCHEMATIC_UPLOAD_FILENAME_WHITESPACE'), uploaded_filename)
 
-  @patch("mrt_file_server.views.log_adapter")  
+  @patch("mrt_file_server.views.log_adapter")
   def test_upload_file_with_filename_ending_with_invalid_extension_should_fail(self, mock_logger):
     username = "Frumple"
     filename = "this_file_has_the_wrong_extension.dat"
@@ -277,8 +277,8 @@ class TestSchematicUpload(TestBase):
 
     response = self.perform_upload(data)
 
-    self.assertEqual(response.status_code, 200)
-    self.assertEqual(response.mimetype, "text/html")
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
 
     self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_FILENAME_EXTENSION', response.data, uploaded_filename)
     self.verify_schematic_uploads_dir_is_empty()
@@ -298,9 +298,9 @@ class TestSchematicUpload(TestBase):
     return "{}-{}".format(username, filename)
 
   def verify_schematic_uploads_dir_is_empty(self):
-    self.assertFalse(os.listdir(self.uploads_dir))
+    assert os.listdir(self.uploads_dir) == []
 
   def verify_uploaded_file_content(self, original_file_content, filename):
     uploaded_filepath = os.path.join(self.uploads_dir, filename)
     uploaded_file_content = self.read_data_file(uploaded_filepath)
-    self.assertEqual(uploaded_file_content, original_file_content)
+    assert uploaded_file_content == original_file_content
