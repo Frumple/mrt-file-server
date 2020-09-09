@@ -39,7 +39,6 @@ class TestSchematicDownload(TestBase):
 
     self.assertEqual(response.headers.get("Content-Disposition"), "attachment; filename={}".format(filename))
     self.assertEqual(int(response.headers.get("Content-Length")), len(original_file_content))
-    self.assertEqual(os.path.normpath(response.headers.get("X-Sendfile")), dest_filepath)
 
     mock_logger.info.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_SUCCESS'), filename)
 
@@ -64,7 +63,6 @@ class TestSchematicDownload(TestBase):
 
     self.assertEqual(response.headers.get("Content-Disposition"), "attachment; filename={}".format(filename))
     self.assertEqual(int(response.headers.get("Content-Length")), len(original_file_content))
-    self.assertEqual(os.path.normpath(response.headers.get("X-Sendfile")), dest_filepath)
 
     mock_logger.info.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_SUCCESS'), filename)
 

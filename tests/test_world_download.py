@@ -36,6 +36,5 @@ class TestWorldDownload(TestBase):
 
     self.assertEqual(response.headers.get("Content-Disposition"), "attachment; filename={}".format(self.FILE_NAME))
     self.assertEqual(int(response.headers.get("Content-Length")), self.FILE_SIZE_IN_BYTES)
-    self.assertEqual(os.path.normpath(response.headers.get("X-Sendfile")), self.FILE_PATH)
 
     mock_logger.info.assert_called_with(self.get_log_message('WORLD_DOWNLOAD_SUCCESS'), self.FILE_NAME)
