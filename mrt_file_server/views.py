@@ -89,33 +89,34 @@ def download_schematic():
     return render_template('schematic/download/index.html', home = False)
 
 def download_schematic_post():
-  filename = request.form['fileName']
+  file_root = request.form['fileRoot']
   file_extension = request.form['fileExtension']
+  file_name = "{}.{}".format(file_root, file_extension)
   downloads_dir = app.config['SCHEMATIC_DOWNLOADS_DIR']
 
-  if filename == "":
+  if file_root == "":
     flash_by_key(app, 'SCHEMATIC_DOWNLOAD_FILENAME_EMPTY')
     log_warn('SCHEMATIC_DOWNLOAD_FILENAME_EMPTY')
     return
 
   if file_extension not in ["schem", "schematic"]:
-    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_INVALID_EXTENSION')
-    log_warn('SCHEMATIC_DOWNLOAD_INVALID_EXTENSION', filename + "." + file_extension)
+    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_INVALID_EXTENSION', file_name)
+    log_warn('SCHEMATIC_DOWNLOAD_INVALID_EXTENSION', file_name)
     return
 
-  if str_contains_whitespace(filename):
-    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE')
-    log_warn('SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE', filename + "." + file_extension)
+  if str_contains_whitespace(file_root):
+    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE', file_name)
+    log_warn('SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE', file_name)
     return
 
-  full_filename = "{}.{}".format(secure_filename(filename), file_extension)
+  secure_file_name = "{}.{}".format(secure_filename(file_root), file_extension)
 
-  if file_exists_in_dir(downloads_dir, full_filename):
-    log_info('SCHEMATIC_DOWNLOAD_SUCCESS', full_filename)
-    return send_from_directory(downloads_dir, full_filename, as_attachment = True)
+  if file_exists_in_dir(downloads_dir, secure_file_name):
+    log_info('SCHEMATIC_DOWNLOAD_SUCCESS', secure_file_name)
+    return send_from_directory(downloads_dir, secure_file_name, as_attachment = True)
   else:
-    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', full_filename)
-    log_warn('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', full_filename)
+    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', secure_file_name)
+    log_warn('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', secure_file_name)
     return
 
 @app.route("/world/download/terms")
