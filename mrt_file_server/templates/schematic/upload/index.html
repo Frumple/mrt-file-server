@@ -5,7 +5,7 @@
 
 <span>Upload your schematic files directly to the Minecraft server here. After you have successfully uploaded your files, take note of the filenames and ask a staff member in-game to paste them using WorldEdit.</span>
 
-<form method="post" enctype="multipart/form-data" action="{{ url_for('upload_schematics') }}">
+<form method="post" enctype="multipart/form-data" action="{{ url_for('route_schematic_upload') }}">
   <h2>1. Enter your Minecraft Username</h2>
   <span>Username:</span>
   <input type="text" id="userName" name="userName" oninput="handleFiles(fileInput.files)" />

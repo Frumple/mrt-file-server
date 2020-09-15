@@ -3,7 +3,7 @@
 {% block body %}
 <span>Download schematic files directly from the Minecraft server here. After a staff member has created the schematic for you, ask them for the name of the file that you can enter below.</span>
 
-<form method="post" action-{{ url_for('download_schematic') }}>
+<form method="post" action="{{ url_for('route_schematic_download') }}">
   <h2>Enter the name of the schematic file:</h2>
   <span>Filename:</span>
   <input type="text" id="fileRoot" name="fileRoot" />
@@ -13,6 +13,6 @@
   </select>
   <br />
   <br />
-  <input type="submit" value="Download" name="submit" />
+  <input type="submit" value="Create Download Link" name="submit" />
 </form>
 {% endblock %}

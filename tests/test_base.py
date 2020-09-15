@@ -42,7 +42,7 @@ class TestBase:
 
   def verify_flash_message(self, expected_message, expected_category, response_data, filename = None):
     if filename:
-      expected_message_html = self.flash_message_html("{}: {}".format(filename, expected_message), expected_category)
+      expected_message_html = self.flash_message_html("{}: {}".format(filename, expected_message.format(filename)), expected_category)
     else:
       expected_message_html = self.flash_message_html(expected_message, expected_category)
     assert bytes(expected_message_html, encoding = "utf-8") in response_data

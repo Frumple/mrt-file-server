@@ -1,4 +1,4 @@
-from flask import flash, request, render_template, send_from_directory
+from flask import flash, Markup, request, render_template, send_from_directory
 from werkzeug.utils import secure_filename
 
 from mrt_file_server import app, schematics, logger
@@ -16,13 +16,13 @@ def index():
   return render_template('index.html', home = True)
 
 @app.route("/schematic/upload", methods = ['GET', 'POST'])
-def upload_schematics():
+def route_schematic_upload():
   if request.method == 'POST':
-    upload_schematics_post()
+    upload_schematics()
 
   return render_template('schematic/upload/index.html', home = False)
 
-def upload_schematics_post():
+def upload_schematics():
   if 'userName' not in request.form or request.form['userName'] == "":
     flash_by_key(app, 'SCHEMATIC_UPLOAD_USERNAME_EMPTY')
     log_warn('SCHEMATIC_UPLOAD_USERNAME_EMPTY')
@@ -77,47 +77,53 @@ def upload_single_schematic(file):
       log_error('SCHEMATIC_UPLOAD_FAILURE', file.filename, e)
 
 @app.route("/schematic/download", methods = ['GET', 'POST'])
-def download_schematic():
+def route_schematic_download():
   response = False
 
   if request.method == 'POST':
-    response = download_schematic_post()
+    response = create_schematic_download_link()
 
   if response:
     return response
   else:
     return render_template('schematic/download/index.html', home = False)
 
-def download_schematic_post():
+def create_schematic_download_link():
   file_root = request.form['fileRoot']
   file_extension = request.form['fileExtension']
   file_name = "{}.{}".format(file_root, file_extension)
   downloads_dir = app.config['SCHEMATIC_DOWNLOADS_DIR']
 
   if file_root == "":
-    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_FILENAME_EMPTY')
-    log_warn('SCHEMATIC_DOWNLOAD_FILENAME_EMPTY')
+    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_EMPTY')
+    log_warn('SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_EMPTY')
     return
 
   if file_extension not in ["schem", "schematic"]:
-    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_INVALID_EXTENSION', file_name)
-    log_warn('SCHEMATIC_DOWNLOAD_INVALID_EXTENSION', file_name)
+    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_LINK_CREATION_INVALID_EXTENSION', file_name)
+    log_warn('SCHEMATIC_DOWNLOAD_LINK_CREATION_INVALID_EXTENSION', file_name)
     return
 
   if str_contains_whitespace(file_root):
-    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE', file_name)
-    log_warn('SCHEMATIC_DOWNLOAD_FILENAME_WHITESPACE', file_name)
+    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_WHITESPACE', file_name)
+    log_warn('SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_WHITESPACE', file_name)
     return
 
   secure_file_name = "{}.{}".format(secure_filename(file_root), file_extension)
 
   if file_exists_in_dir(downloads_dir, secure_file_name):
-    log_info('SCHEMATIC_DOWNLOAD_SUCCESS', secure_file_name)
-    return send_from_directory(downloads_dir, secure_file_name, as_attachment = True)
-  else:
-    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', secure_file_name)
-    log_warn('SCHEMATIC_DOWNLOAD_FILE_NOT_FOUND', secure_file_name)
+    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_LINK_CREATION_SUCCESS', secure_file_name)
+    log_info('SCHEMATIC_DOWNLOAD_LINK_CREATION_SUCCESS', secure_file_name)
     return
+  else:
+    flash_by_key(app, 'SCHEMATIC_DOWNLOAD_LINK_CREATION_FILE_NOT_FOUND', secure_file_name)
+    log_warn('SCHEMATIC_DOWNLOAD_LINK_CREATION_FILE_NOT_FOUND', secure_file_name)
+    return
+
+@app.route("/schematic/download/<path:filename>")
+def download_schematic(filename):
+  log_info('SCHEMATIC_DOWNLOAD_SUCCESS', filename)
+  return send_from_directory(app.config['SCHEMATIC_DOWNLOADS_DIR'], filename, as_attachment = True)
 
 @app.route("/world/download/terms")
 def show_world_downloads_terms():
@@ -156,9 +162,9 @@ def flash_by_key(app, key, filename = None):
   flash_message = get_flash_message(app, key)
 
   if filename:
-    flash("{}: {}".format(filename, flash_message.message), flash_message.category)
+    flash(Markup("{}: {}".format(filename, flash_message.message.format(filename))), flash_message.category)
   else:
-    flash(flash_message.message, flash_message.category)
+    flash(Markup(flash_message.message), flash_message.category)
 
 def get_filesize(file):
   file.seek(0, os.SEEK_END)
