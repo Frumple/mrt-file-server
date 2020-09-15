@@ -21,9 +21,9 @@ def configure_logger(app, mode):
     logger.setLevel(logging.DEBUG)
 
   formatter = logging.Formatter(
-    fmt = '{asctime} {name:12} {levelname:8} {message}',
-    datefmt = '%y-%m-%d %H:%M',
-    style = '{')
+    fmt = "{asctime} {name:12} {levelname:8} {message}",
+    datefmt = "%y-%m-%d %H:%M",
+    style = "{")
 
   log_file_path = prepare_log_file(app, mode)
   file_handler = logging.FileHandler(log_file_path)
@@ -69,28 +69,28 @@ def configure_log_messages(app):
     "WORLD_DOWNLOAD_SUCCESS":                               "World download initiated: '%s'",
   }
 
-  app.config['LOG_MESSAGES'] = messages
+  app.config["LOG_MESSAGES"] = messages
   logger.info("Log messages configured.")
 
 def configure_flash_messages(app):
   messages = {
-    "SCHEMATIC_UPLOAD_SUCCESS":                             FlashMessage("Upload Successful!", 'success'),
-    "SCHEMATIC_UPLOAD_FAILURE":                             FlashMessage("Upload Failed! Please contact the admins for assistance.", 'failure'),
-    "SCHEMATIC_UPLOAD_USERNAME_EMPTY":                      FlashMessage("Upload Failed! Username must not be empty.", 'failure'),
-    "SCHEMATIC_UPLOAD_USERNAME_WHITESPACE":                 FlashMessage("Upload Failed! Username must not contain spaces.", 'failure'),
-    "SCHEMATIC_UPLOAD_NO_FILES":                            FlashMessage("Upload Failed! No files selected.", 'failure'),
+    "SCHEMATIC_UPLOAD_SUCCESS":                             FlashMessage("Upload Successful!", "success"),
+    "SCHEMATIC_UPLOAD_FAILURE":                             FlashMessage("Upload Failed! Please contact the admins for assistance.", "failure"),
+    "SCHEMATIC_UPLOAD_USERNAME_EMPTY":                      FlashMessage("Upload Failed! Username must not be empty.", "failure"),
+    "SCHEMATIC_UPLOAD_USERNAME_WHITESPACE":                 FlashMessage("Upload Failed! Username must not contain spaces.", "failure"),
+    "SCHEMATIC_UPLOAD_NO_FILES":                            FlashMessage("Upload Failed! No files selected.", "failure"),
     "SCHEMATIC_UPLOAD_TOO_MANY_FILES":                      FlashMessage("Upload Failed! A maximum of {} files can be uploaded at one time.".format( \
-                                                              app.config['MAX_NUMBER_OF_UPLOAD_FILES']), 'failure'),
+                                                              app.config["MAX_NUMBER_OF_UPLOAD_FILES"]), "failure"),
     "SCHEMATIC_UPLOAD_FILE_TOO_LARGE":                      FlashMessage("Upload Failed! File size is larger than the allowed maximum of {} kilobytes.".format( \
-                                                              int(app.config['MAX_UPLOAD_FILE_SIZE'] / 1024)), 'failure'),
-    "SCHEMATIC_UPLOAD_FILE_EXISTS":                         FlashMessage("Upload Failed! File with same name already exists on the server.", 'failure'),
-    "SCHEMATIC_UPLOAD_FILENAME_WHITESPACE":                 FlashMessage("Upload Failed! File name must not contain spaces.", 'failure'),
-    "SCHEMATIC_UPLOAD_FILENAME_EXTENSION":                  FlashMessage("Upload Failed! File must end with the .schematic or .schem extension.", 'failure'),
-    "SCHEMATIC_DOWNLOAD_LINK_CREATION_SUCCESS":             FlashMessage("Download Link Creation Successful! <a href='download/{}'>Click here to begin download.</a>", 'success'),
-    "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_EMPTY":      FlashMessage("Download Link Creation Failed! Filename must not be empty.", 'failure'),
-    "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_WHITESPACE": FlashMessage("Download Link Creation Failed! Filename must not contain spaces.", 'failure'),
-    "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILE_NOT_FOUND":      FlashMessage("Download Link Creation Failed! File does not exist.", 'failure'),
-    "SCHEMATIC_DOWNLOAD_LINK_CREATION_INVALID_EXTENSION":   FlashMessage("Download Link Creation Failed! Invalid file extension.", 'failure')
+                                                              int(app.config["MAX_UPLOAD_FILE_SIZE"] / 1024)), "failure"),
+    "SCHEMATIC_UPLOAD_FILE_EXISTS":                         FlashMessage("Upload Failed! File with same name already exists on the server.", "failure"),
+    "SCHEMATIC_UPLOAD_FILENAME_WHITESPACE":                 FlashMessage("Upload Failed! File name must not contain spaces.", "failure"),
+    "SCHEMATIC_UPLOAD_FILENAME_EXTENSION":                  FlashMessage("Upload Failed! File must end with the .schematic or .schem extension.", "failure"),
+    "SCHEMATIC_DOWNLOAD_LINK_CREATION_SUCCESS":             FlashMessage("Download Link Creation Successful! <a href=\"download/{}\">Click here to begin download.</a>", "success"),
+    "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_EMPTY":      FlashMessage("Download Link Creation Failed! Filename must not be empty.", "failure"),
+    "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_WHITESPACE": FlashMessage("Download Link Creation Failed! Filename must not contain spaces.", "failure"),
+    "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILE_NOT_FOUND":      FlashMessage("Download Link Creation Failed! File does not exist.", "failure"),
+    "SCHEMATIC_DOWNLOAD_LINK_CREATION_INVALID_EXTENSION":   FlashMessage("Download Link Creation Failed! Invalid file extension.", "failure")
   }
 
   app.config['FLASH_MESSAGES'] = messages
@@ -116,27 +116,27 @@ def configure_instance_folders(app, mode):
   os.makedirs(schematic_downloads_dir, exist_ok = True)
   os.makedirs(schematic_uploads_dir, exist_ok = True)
 
-  set_config_variable('DOWNLOADS_DIR', downloads_dir)
-  set_config_variable('WORLD_DOWNLOADS_DIR', world_downloads_dir)
-  set_config_variable('SCHEMATIC_DOWNLOADS_DIR', schematic_downloads_dir)
-  set_config_variable('UPLOADS_DIR', uploads_dir)
-  set_config_variable('SCHEMATIC_UPLOADS_DIR', schematic_uploads_dir)
+  set_config_variable("DOWNLOADS_DIR", downloads_dir)
+  set_config_variable("WORLD_DOWNLOADS_DIR", world_downloads_dir)
+  set_config_variable("SCHEMATIC_DOWNLOADS_DIR", schematic_downloads_dir)
+  set_config_variable("UPLOADS_DIR", uploads_dir)
+  set_config_variable("SCHEMATIC_UPLOADS_DIR", schematic_uploads_dir)
 
   # Used by Flask-Uploads to determine where to upload schematics
-  set_config_variable('UPLOADED_SCHEMATICS_DEST', schematic_uploads_dir)
+  set_config_variable("UPLOADED_SCHEMATICS_DEST", schematic_uploads_dir)
 
 def set_config_variable(name, value):
   app.config[name] = value
   logger.info("Config variable '%s' set to: '%s'", name, value)
 
 def configure_schematic_uploads(app):
-  schematics = UploadSet('schematics', extensions = ['schematic', 'schem'])
+  schematics = UploadSet("schematics", extensions = ["schematic", "schem"])
   configure_uploads(app, schematics)
   logger.info("Schematic uploads configured.")
   return schematics
 
 app = Flask(__name__, instance_relative_config = True)
-app.config.from_object('mrt_file_server.default_config')
+app.config.from_object("mrt_file_server.default_config")
 
 mode = os.environ.get(modes.ENVIRONMENT_VARIABLE, modes.DEVELOPMENT)
 

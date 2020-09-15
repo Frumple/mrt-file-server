@@ -11,7 +11,7 @@ import pytest
 class TestSchematicUpload(TestBase):
   def setup(self):
     TestBase.setup(self)
-    self.uploads_dir = self.app.config['SCHEMATIC_UPLOADS_DIR']
+    self.uploads_dir = self.app.config["SCHEMATIC_UPLOADS_DIR"]
     self.clean_schematic_uploads_dir()
 
   def teardown(self):
@@ -21,9 +21,9 @@ class TestSchematicUpload(TestBase):
   # Tests
 
   @patch("mrt_file_server.views.log_adapter")
-  @pytest.mark.parametrize('filename', [
-    ('mrt_v5_final_elevated_centre_station.schem'),
-    ('mrt_v5_final_elevated_centre_station.schematic')
+  @pytest.mark.parametrize("filename", [
+    ("mrt_v5_final_elevated_centre_station.schem"),
+    ("mrt_v5_final_elevated_centre_station.schematic")
   ])
   def test_upload_single_file_should_be_successful(self, mock_logger, filename):
     username = "Frumple"
@@ -39,10 +39,10 @@ class TestSchematicUpload(TestBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_SUCCESS', response.data, uploaded_filename)
+    self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_SUCCESS", response.data, uploaded_filename)
     self.verify_uploaded_file_content(original_file_content, uploaded_filename)
 
-    mock_logger.info.assert_called_with(self.get_log_message('SCHEMATIC_UPLOAD_SUCCESS'), uploaded_filename)
+    mock_logger.info.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_SUCCESS"), uploaded_filename)
 
   @patch("mrt_file_server.views.log_adapter")
   def test_upload_multiple_files_should_be_successful(self, mock_logger):
@@ -74,10 +74,10 @@ class TestSchematicUpload(TestBase):
     for filename in original_files:
       uploaded_filename = self.uploaded_filename(username, filename)
 
-      self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_SUCCESS', response.data, uploaded_filename)
+      self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_SUCCESS", response.data, uploaded_filename)
       self.verify_uploaded_file_content(original_files[filename], uploaded_filename)
 
-      logger_calls.append(call(self.get_log_message('SCHEMATIC_UPLOAD_SUCCESS'), uploaded_filename))
+      logger_calls.append(call(self.get_log_message("SCHEMATIC_UPLOAD_SUCCESS"), uploaded_filename))
 
     mock_logger.info.assert_has_calls(logger_calls, any_order = True)
 
@@ -142,10 +142,10 @@ class TestSchematicUpload(TestBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_NO_FILES', response.data)
+    self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_NO_FILES", response.data)
     self.verify_schematic_uploads_dir_is_empty()
 
-    mock_logger.warn.assert_called_with(self.get_log_message('SCHEMATIC_UPLOAD_NO_FILES'))
+    mock_logger.warn.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_NO_FILES"))
 
   @patch("mrt_file_server.views.log_adapter")
   def test_upload_with_too_many_files_should_fail(self, mock_logger):
@@ -179,10 +179,10 @@ class TestSchematicUpload(TestBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_TOO_MANY_FILES', response.data)
+    self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_TOO_MANY_FILES", response.data)
     self.verify_schematic_uploads_dir_is_empty()
 
-    mock_logger.warn.assert_called_with(self.get_log_message('SCHEMATIC_UPLOAD_TOO_MANY_FILES'))
+    mock_logger.warn.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_TOO_MANY_FILES"))
 
   @patch("mrt_file_server.views.log_adapter")
   def test_upload_file_that_already_exists_should_fail(self, mock_logger):
@@ -207,7 +207,7 @@ class TestSchematicUpload(TestBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    self.verify_flash_message_by_key('SCHEMATIC_UPLOAD_FILE_EXISTS', response.data, uploaded_filename)
+    self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_FILE_EXISTS", response.data, uploaded_filename)
 
     # Verify that the uploads directory has only the impostor file, and the file has not been modified
     files = os.listdir(self.uploads_dir)
@@ -216,12 +216,12 @@ class TestSchematicUpload(TestBase):
     impostor_file_content = self.load_file(impostor_filename)
     self.verify_uploaded_file_content(impostor_file_content, uploaded_filename)
 
-    mock_logger.warn.assert_called_with(self.get_log_message('SCHEMATIC_UPLOAD_FILE_EXISTS'), uploaded_filename)
+    mock_logger.warn.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_FILE_EXISTS"), uploaded_filename)
 
   # Helper Functions
 
   def perform_upload(self, data):
-    return self.client.post('/schematic/upload', content_type = 'multipart/form-data', data = data)
+    return self.client.post("/schematic/upload", content_type = "multipart/form-data", data = data)
 
   def clean_schematic_uploads_dir(self):
     self.remove_files(self.uploads_dir, "schematic")

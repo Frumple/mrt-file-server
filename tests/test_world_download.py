@@ -11,7 +11,7 @@ class TestWorldDownload(TestBase):
     self.FILE_SIZE_IN_BYTES = 1073741824
 
     self.FILE_PATH = os.path.join(
-      self.app.config['WORLD_DOWNLOADS_DIR'],
+      self.app.config["WORLD_DOWNLOADS_DIR"],
       self.FILE_NAME)
 
     # Actual Minecraft world files are too large to use as test data.
@@ -37,4 +37,4 @@ class TestWorldDownload(TestBase):
     assert response.headers.get("Content-Disposition") == "attachment; filename={}".format(self.FILE_NAME)
     assert int(response.headers.get("Content-Length")) == self.FILE_SIZE_IN_BYTES
 
-    mock_logger.info.assert_called_with(self.get_log_message('WORLD_DOWNLOAD_SUCCESS'), self.FILE_NAME)
+    mock_logger.info.assert_called_with(self.get_log_message("WORLD_DOWNLOAD_SUCCESS"), self.FILE_NAME)

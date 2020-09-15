@@ -6,4 +6,4 @@ class RequestLogAdapter(LoggerAdapter):
     self.request = request
 
   def process(self, msg, kwargs):
-    return '[%s] %s' % (self.request.remote_addr, msg), kwargs
+    return "[%s] %s" % (self.request.remote_addr, msg), kwargs

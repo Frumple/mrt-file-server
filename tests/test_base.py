@@ -31,10 +31,10 @@ class TestBase:
     return files
 
   def get_log_message(self, key):
-    return self.app.config['LOG_MESSAGES'][key]
+    return self.app.config["LOG_MESSAGES"][key]
 
   def get_flash_message(self, key):
-    return self.app.config['FLASH_MESSAGES'][key]
+    return self.app.config["FLASH_MESSAGES"][key]
 
   def verify_flash_message_by_key(self, key, response_data, filename = None):
     flash_message = self.get_flash_message(key)
@@ -48,7 +48,7 @@ class TestBase:
     assert bytes(expected_message_html, encoding = "utf-8") in response_data
 
   def flash_message_html(self, message, category):
-    return '<li class="flash-{}" name="flash_message">{}</li>'.format(category, message)
+    return "<li class=\"flash-{}\" name=\"flash_message\">{}</li>".format(category, message)
 
   def read_data_file(self, filepath):
     with open(filepath, "r+b") as file:

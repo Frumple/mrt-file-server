@@ -10,7 +10,7 @@ import pytest
 class TestSchematicDownload(TestBase):
   def setup(self):
     TestBase.setup(self)
-    self.downloads_dir = self.app.config['SCHEMATIC_DOWNLOADS_DIR']
+    self.downloads_dir = self.app.config["SCHEMATIC_DOWNLOADS_DIR"]
     self.clean_schematic_downloads_dir()
 
   def teardown(self):
@@ -84,7 +84,7 @@ class TestSchematicDownload(TestBase):
     assert response.headers.get("Content-Disposition") == "attachment; filename={}".format(filename)
     assert int(response.headers.get("Content-Length")) == len(original_file_content)
 
-    mock_logger.info.assert_called_with(self.get_log_message('SCHEMATIC_DOWNLOAD_SUCCESS'), filename)
+    mock_logger.info.assert_called_with(self.get_log_message("SCHEMATIC_DOWNLOAD_SUCCESS"), filename)
 
   # Helper Functions
 
