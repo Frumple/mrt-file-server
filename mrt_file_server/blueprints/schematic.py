@@ -1,19 +1,13 @@
-from flask import flash, Markup, request, render_template, send_from_directory
+from flask import Blueprint, render_template, request, send_from_directory
 from werkzeug.utils import secure_filename
 
-from mrt_file_server import app, schematics, logger
-from mrt_file_server.request_log_adapter import RequestLogAdapter
+from mrt_file_server import app, schematics
+from mrt_file_server.utils.file_utils import get_filesize, split_file_root_and_extension, file_exists_in_dir
+from mrt_file_server.utils.flash_utils import flash_by_key
+from mrt_file_server.utils.log_utils import log_info, log_warn, log_error
+from mrt_file_server.utils.string_utils import str_contains_whitespace
 
-import os
-import re
-
-log_adapter = RequestLogAdapter(logger, request)
-
-# Routes
-
-@app.route("/")
-def index():
-  return render_template("index.html", home = True)
+schematic_blueprint = Blueprint("schematic", __name__, url_prefix="/schematic")
 
 @app.route("/schematic/upload", methods = ["GET", "POST"])
 def route_schematic_upload():
@@ -53,17 +47,18 @@ def upload_single_schematic(file):
     return
 
   file.filename = secure_filename(file.filename)
-  filesize = get_filesize(file)
-  file_extension = get_file_extension(file.filename)
-  filename_without_extension = get_filename_without_extension(file.filename)
+  file_size = get_filesize(file)
+  file_pair = split_file_root_and_extension(file.filename)
+  file_root = file_pair[0]
+  file_extension = file_pair[1]
 
   if file_extension != ".schematic" and file_extension != ".schem":
     flash_by_key(app, "SCHEMATIC_UPLOAD_FILENAME_EXTENSION", file.filename)
     log_warn("SCHEMATIC_UPLOAD_FILENAME_EXTENSION", file.filename)
-  elif filesize > app.config["MAX_UPLOAD_FILE_SIZE"]:
+  elif file_size > app.config["MAX_UPLOAD_FILE_SIZE"]:
     flash_by_key(app, "SCHEMATIC_UPLOAD_FILE_TOO_LARGE", file.filename)
     log_warn("SCHEMATIC_UPLOAD_FILE_TOO_LARGE", file.filename)
-  elif file_exists_in_dir(uploads_dir, filename_without_extension + ".schematic") or file_exists_in_dir(uploads_dir, filename_without_extension + ".schem"):
+  elif file_exists_in_dir(uploads_dir, file_root + ".schematic") or file_exists_in_dir(uploads_dir, file_root + ".schem"):
     flash_by_key(app, "SCHEMATIC_UPLOAD_FILE_EXISTS", file.filename)
     log_warn("SCHEMATIC_UPLOAD_FILE_EXISTS", file.filename)
   else:
@@ -124,63 +119,3 @@ def create_schematic_download_link():
 def download_schematic(filename):
   log_info("SCHEMATIC_DOWNLOAD_SUCCESS", filename)
   return send_from_directory(app.config["SCHEMATIC_DOWNLOADS_DIR"], filename, as_attachment = True)
-
-@app.route("/world/download/terms")
-def show_world_downloads_terms():
-  return render_template("world/download/terms.html", home = False)
-
-@app.route("/world/download")
-def list_world_downloads():
-  return render_template("world/download/index.html", home = False)
-
-@app.route("/world/download/<path:filename>")
-def download_world(filename):
-  log_info("WORLD_DOWNLOAD_SUCCESS", filename)
-  return send_from_directory(app.config["WORLD_DOWNLOADS_DIR"], filename, as_attachment = True)
-
-# Helper Functions
-
-def get_log_message(app, key):
-  return app.config["LOG_MESSAGES"][key]
-
-def log_info(key, *args, **kwargs):
-  log(log_adapter.info, key, *args, **kwargs)
-
-def log_warn(key, *args, **kwargs):
-  log(log_adapter.warn, key, *args, **kwargs)
-
-def log_error(key, *args, **kwargs):
-  log(log_adapter.error, key, *args, **kwargs)
-
-def log(log_function, key, *args, **kwargs):
-  log_function(get_log_message(app, key), *args, **kwargs)
-
-def get_flash_message(app, key):
-  return app.config["FLASH_MESSAGES"][key]
-
-def flash_by_key(app, key, filename = None):
-  flash_message = get_flash_message(app, key)
-
-  if filename:
-    flash(Markup("{}: {}".format(filename, flash_message.message.format(filename))), flash_message.category)
-  else:
-    flash(Markup(flash_message.message), flash_message.category)
-
-def get_filesize(file):
-  file.seek(0, os.SEEK_END)
-  filesize = file.tell()
-  file.seek(0)
-  return filesize
-
-def get_file_extension(filename):
-  return os.path.splitext(filename)[1]
-
-def get_filename_without_extension(filename):
-  return os.path.splitext(filename)[0]
-
-def file_exists_in_dir(dir, filename):
-  filepath = os.path.join(dir, filename)
-  return os.path.isfile(filepath)
-
-def str_contains_whitespace(str):
-  return bool(re.search(r"\s", str))

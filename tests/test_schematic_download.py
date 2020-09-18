@@ -19,7 +19,7 @@ class TestSchematicDownload(TestBase):
 
   # Tests
 
-  @patch("mrt_file_server.views.log_adapter")
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
   @pytest.mark.parametrize("filename", [
     ("mrt_v5_final_elevated_centre_station.schem"),
     ("mrt_v5_final_elevated_centre_station.schematic")
@@ -42,7 +42,7 @@ class TestSchematicDownload(TestBase):
     self.verify_flash_message_by_key(message_key, response.data, filename)
     mock_logger.info.assert_called_with(self.get_log_message(message_key), filename)
 
-  @patch("mrt_file_server.views.log_adapter")
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
   @pytest.mark.parametrize("filename, message_key", [
     ("",                                               "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_EMPTY"),
     ("this file has spaces.schematic",                 "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_WHITESPACE"),
@@ -63,7 +63,7 @@ class TestSchematicDownload(TestBase):
       self.verify_flash_message_by_key(message_key, response.data)
       mock_logger.warn.assert_called_with(self.get_log_message(message_key))
 
-  @patch("mrt_file_server.views.log_adapter")
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
   @pytest.mark.parametrize("filename", [
     ("mrt_v5_final_elevated_centre_station.schem"),
     ("mrt_v5_final_elevated_centre_station.schematic")

@@ -25,7 +25,7 @@ class TestWorldDownload(TestBase):
     TestBase.teardown(self)
     os.remove(self.file.name)
 
-  @patch("mrt_file_server.views.log_adapter")
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_world_download(self, mock_logger):
     route_to_file = "/world/download/{}".format(self.FILE_NAME)
 

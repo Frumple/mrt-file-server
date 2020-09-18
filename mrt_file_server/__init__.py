@@ -1,6 +1,8 @@
-from flask import Flask
+from flask import Flask, render_template, request
 from flask_uploads import UploadSet, configure_uploads
 from flask_basicauth import BasicAuth
+
+from mrt_file_server.request_log_adapter import RequestLogAdapter
 
 import logging
 import modes
@@ -141,6 +143,7 @@ app.config.from_object("mrt_file_server.default_config")
 mode = os.environ.get(modes.ENVIRONMENT_VARIABLE, modes.DEVELOPMENT)
 
 logger = configure_logger(app, mode)
+log_adapter = RequestLogAdapter(logger, request)
 configure_log_messages(app)
 configure_flash_messages(app)
 load_environment_config(app, mode)
@@ -149,7 +152,15 @@ schematics = configure_schematic_uploads(app)
 
 basic_auth = BasicAuth(app)
 
-import mrt_file_server.views
+@app.route("/")
+def index():
+  return render_template("index.html", home = True)
+
+from .blueprints import schematic
+from .blueprints import world
+
+app.register_blueprint(schematic.schematic_blueprint)
+app.register_blueprint(world.world_blueprint)
 
 if __name__ == "__main__":
   app.run()

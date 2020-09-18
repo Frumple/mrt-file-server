@@ -20,7 +20,7 @@ class TestSchematicUpload(TestBase):
 
   # Tests
 
-  @patch("mrt_file_server.views.log_adapter")
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
   @pytest.mark.parametrize("filename", [
     ("mrt_v5_final_elevated_centre_station.schem"),
     ("mrt_v5_final_elevated_centre_station.schematic")
@@ -44,7 +44,7 @@ class TestSchematicUpload(TestBase):
 
     mock_logger.info.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_SUCCESS"), uploaded_filename)
 
-  @patch("mrt_file_server.views.log_adapter")
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_multiple_files_should_be_successful(self, mock_logger):
     username = "Frumple"
 
@@ -81,7 +81,7 @@ class TestSchematicUpload(TestBase):
 
     mock_logger.info.assert_has_calls(logger_calls, any_order = True)
 
-  @patch("mrt_file_server.views.log_adapter")
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
   @pytest.mark.parametrize("username, message_key", [
     ("",               "SCHEMATIC_UPLOAD_USERNAME_EMPTY"),
     ("Eris The Eagle", "SCHEMATIC_UPLOAD_USERNAME_WHITESPACE")
@@ -107,7 +107,7 @@ class TestSchematicUpload(TestBase):
     else:
       mock_logger.warn.assert_called_with(self.get_log_message(message_key))
 
-  @patch("mrt_file_server.views.log_adapter")
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
   @pytest.mark.parametrize("filename, message_key", [
     ("admod.schematic",                       "SCHEMATIC_UPLOAD_FILE_TOO_LARGE"),
     ("this file has spaces.schematic",        "SCHEMATIC_UPLOAD_FILENAME_WHITESPACE"),
@@ -132,7 +132,7 @@ class TestSchematicUpload(TestBase):
 
     mock_logger.warn.assert_called_with(self.get_log_message(message_key), uploaded_filename)
 
-  @patch("mrt_file_server.views.log_adapter")
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_with_no_files_should_fail(self, mock_logger):
     data = OrderedMultiDict()
     data.add("userName", "Frumple")
@@ -147,7 +147,7 @@ class TestSchematicUpload(TestBase):
 
     mock_logger.warn.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_NO_FILES"))
 
-  @patch("mrt_file_server.views.log_adapter")
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_with_too_many_files_should_fail(self, mock_logger):
     username = "Frumple"
 
@@ -184,7 +184,7 @@ class TestSchematicUpload(TestBase):
 
     mock_logger.warn.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_TOO_MANY_FILES"))
 
-  @patch("mrt_file_server.views.log_adapter")
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_file_that_already_exists_should_fail(self, mock_logger):
     username = "Frumple"
     filename = "mrt_v5_final_elevated_centre_station.schematic"
