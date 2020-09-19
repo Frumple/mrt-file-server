@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
-{% block title %}Schematic Uploader{% endblock %}
+{% block title %}Upload Schematics{% endblock %}
 {% block body %}
-<script type="text/javascript" src="{{ url_for('static', filename = 'scripts/schematic-uploader.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('static', filename = 'scripts/file-upload.js') }}" defer></script>
 
 <span>Upload your schematic files directly to the Minecraft server here. After you have successfully uploaded your files, take note of the filenames and ask a staff member in-game to paste them using WorldEdit.</span>
 
@@ -17,6 +17,7 @@
     <li>Maximum size per file is 100 kilobytes.</li>
     <li>File names must end with the .schematic or .schem extension.</li>
     <li>File names must not contain spaces.</li>
+    <li>File names must not match a schematic file that already exists on the server.</li>
     <li>File names will be automatically prepended with your username when uploaded to the server.</li>
   </ul>
   <span>File name example:</span>

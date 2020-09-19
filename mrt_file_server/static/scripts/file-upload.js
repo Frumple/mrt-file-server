@@ -20,7 +20,7 @@ function handleFiles(files) {
       list.appendChild(li);
 
       const span = document.createElement("span");
-      span.classList.add("schematic");
+      span.classList.add("file");
       span.innerHTML = userName + "-" + file.name + ": " + (file.size / 1024).toFixed(2) + " kilobytes";
       li.appendChild(span);
     }

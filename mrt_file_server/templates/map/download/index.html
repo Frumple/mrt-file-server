@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block title %}Download Maps{% endblock %}
+{% block body %}
+<span>Download map item files directly from the Minecraft server here.</span>
+
+<form method="post" action="{{ url_for('route_schematic_download') }}">
+  <h2>Enter the numerical ID of the map file:</h2>
+  <span>Filename: map_</span>
+  <input type="text" id="mapId" name="mapId" />
+  <span>.dat</span>
+  <br />
+  <br />
+  <input type="submit" value="Create Download Link" name="submit" />
+{% endblock %}

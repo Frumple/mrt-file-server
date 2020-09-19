@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block title %}Upload Maps{% endblock %}
+{% block body %}
+<script type="text/javascript" src="{{ url_for('static', filename = 'scripts/file-upload.js') }}" defer></script>
+
+<span>Upload your map .dat files to the Minecraft server here. Note that any uploaded changes will not take effect until the next server restart, which is scheduled daily at 5:00 AM UTC.</span>
+
+<form method="post" enctype="multipart/form-data" action="{{ url_for('route_map_upload') }}">
+  <h2>1. Enter your Minecraft Username</h2>
+  <span>Username:</span>
+  <input type="text" id="userName" name="userName" oninput="handleFiles(fileInput.files)" />
+  <br />
+  <h2>2. Select maps to upload</h2>
+  <span>Please note:</span>
+  <ul>
+    <li>Maximum of 10 files can be uploaded at one time.</li>
+    <li>Maximum size per file is 100 kilobytes.</li>
+    <li>Each file must have a valid <a href="https://minecraft.gamepedia.com/Map_item_format" target="_blank">NBT map item format</a>. Instructions on how to make these files can be found on the <a href="https://www.minecartrapidtransit.net/policies-procedures/#Map_Uploads" target="_blank">Policies &amp; Procedures</a> page on the MRT website.</li>
+    <li>File names must have the following format: <code>map_#####.dat</code></li>
+    <li>Map IDs must be within the last 1000 recently created maps (currently from <strong>IDs X to Y</strong>). To upload maps outside this range, send an <a href="mailto:admin@minecartrapidtransit.net">email to the admins</a> with the attached maps.</li>
+  </ul>
+  <span>Note about map locking:</span>
+  <ul>
+    <li>All maps uploaded through this page will be automatically locked to prevent further modification.</li>
+    <li>This page will NOT upload a map if the existing map on the server is already locked.</li>
+    <li><strong>Therefore when uploading a map, make sure it is correct the first time.</strong> To upload maps that are already locked, send an <a href="mailto:admin@minecartrapidtransit.net">email to the admins</a> with the IDs of the maps you would like to be unlocked.</li>
+  </ul>
+  <input type="file" id="fileInput" name="map" multiple accept=".dat" onchange="handleFiles(this.files)">
+  <br />
+  <br />
+  <span>Maps to upload:</span>
+  <div id="fileList">
+    <ul>
+      <li>No files selected.</li>
+    </ul>
+  </div>
+  <input type="submit" value="Upload" name="submit" />
+</form>
+{% endblock %}

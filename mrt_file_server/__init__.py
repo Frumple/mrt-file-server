@@ -62,12 +62,33 @@ def configure_log_messages(app):
     "SCHEMATIC_UPLOAD_FILE_EXISTS":                         "Schematic upload failed. File already exists: '%s'",
     "SCHEMATIC_UPLOAD_FILENAME_WHITESPACE":                 "Schematic upload failed. Filename contains whitespace: '%s'",
     "SCHEMATIC_UPLOAD_FILENAME_EXTENSION":                  "Schematic upload failed. Filename has invalid extension: '%s'",
+
     "SCHEMATIC_DOWNLOAD_SUCCESS":                           "Schematic download initiated: '%s'",
     "SCHEMATIC_DOWNLOAD_LINK_CREATION_SUCCESS":             "Schematic download link created: '%s'",
     "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_EMPTY":      "Schematic download link creation failed. Filename is empty.",
     "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_WHITESPACE": "Schematic download link creation failed. Filename contains whitespace: '%s'",
     "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILE_NOT_FOUND":      "Schematic download link creation failed. File does not exist: '%s'",
     "SCHEMATIC_DOWNLOAD_LINK_CREATION_INVALID_EXTENSION":   "Schematic download link creation failed. Invalid file extension: '%s'",
+
+    "MAP_UPLOAD_SUCCESS":                                   "Map upload successful: '%s'",
+    "MAP_UPLOAD_FAILURE":                                   "Map upload failed: '%s', Exception: '%s'",
+    "MAP_UPLOAD_USERNAME_EMPTY":                            "Map upload failed. Username is empty.",
+    "MAP_UPLOAD_USERNAME_WHITESPACE":                       "Map upload failed. Username contains whitespace: '%s'",
+    "MAP_UPLOAD_NO_FILES":                                  "Map upload failed. No files specified.",
+    "MAP_UPLOAD_TOO_MANY_FILES":                            "Map upload failed. Too many files.",
+    "MAP_UPLOAD_FILE_TOO_LARGE":                            "Map upload failed. File too large: '%s'",
+    "MAP_UPLOAD_FILENAME_INVALID":                          "Map upload failed. Filename is not of the format 'map_#####.dat': '%s'",
+    "MAP_UPLOAD_MAP_ID_OUT_OF_RANGE":                       "Map upload failed. Map ID is out of range: '%s'",
+    "MAP_UPLOAD_MAP_FORMAT_INVALID":                        "Map upload failed. File is not a valid map format: '%s'",
+    "MAP_UPLOAD_MAP_LOCKED":                                "Map upload failed. Existing map file is locked. Contact an admin for assistance: '%s'",
+
+    "MAP_DOWNLOAD_SUCCESS":                                 "Schematic download initiated: '%s'",
+    "MAP_DOWNLOAD_LINK_CREATION_SUCCESS":                   "Schematic download link created: '%s'",
+    "MAP_DOWNLOAD_LINK_CREATION_MAP_ID_EMPTY":              "Schematic download link creation failed. Map ID is empty.",
+    "MAP_DOWNLOAD_LINK_CREATION_MAP_ID_INVALID":            "Schematic download link creation failed. Map ID is invalid: '%s'",
+    "MAP_DOWNLOAD_LINK_CREATION_MAP_ID_OUT_OF_RANGE":       "Schematic download link creation failed. Map ID is out of range: '%s'",
+    "MAP_DOWNLOAD_LINK_CREATION_FILE_NOT_FOUND":            "Schematic download link creation failed. File does not exist: '%s'",
+
     "WORLD_DOWNLOAD_SUCCESS":                               "World download initiated: '%s'",
   }
 
@@ -88,6 +109,7 @@ def configure_flash_messages(app):
     "SCHEMATIC_UPLOAD_FILE_EXISTS":                         FlashMessage("Upload Failed! File with same name already exists on the server.", "failure"),
     "SCHEMATIC_UPLOAD_FILENAME_WHITESPACE":                 FlashMessage("Upload Failed! File name must not contain spaces.", "failure"),
     "SCHEMATIC_UPLOAD_FILENAME_EXTENSION":                  FlashMessage("Upload Failed! File must end with the .schematic or .schem extension.", "failure"),
+
     "SCHEMATIC_DOWNLOAD_LINK_CREATION_SUCCESS":             FlashMessage("Download Link Creation Successful! <a href=\"download/{}\">Click here to begin download.</a>", "success"),
     "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_EMPTY":      FlashMessage("Download Link Creation Failed! Filename must not be empty.", "failure"),
     "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_WHITESPACE": FlashMessage("Download Link Creation Failed! Filename must not contain spaces.", "failure"),
@@ -157,9 +179,11 @@ def index():
   return render_template("index.html", home = True)
 
 from .blueprints import schematic
+from .blueprints import map
 from .blueprints import world
 
 app.register_blueprint(schematic.schematic_blueprint)
+app.register_blueprint(map.map_blueprint)
 app.register_blueprint(world.world_blueprint)
 
 if __name__ == "__main__":
