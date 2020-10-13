@@ -29,7 +29,7 @@ def upload_schematics():
   else:
     files = request.files.getlist("schematic")
 
-    if len(files) > app.config["MAX_NUMBER_OF_UPLOAD_FILES"]:
+    if len(files) > app.config["SCHEMATIC_UPLOAD_MAX_NUMBER_OF_FILES"]:
       flash_by_key(app, "SCHEMATIC_UPLOAD_TOO_MANY_FILES")
       log_warn("SCHEMATIC_UPLOAD_TOO_MANY_FILES")
     else:
@@ -55,7 +55,7 @@ def upload_single_schematic(file):
   if file_extension != ".schematic" and file_extension != ".schem":
     flash_by_key(app, "SCHEMATIC_UPLOAD_FILENAME_EXTENSION", file.filename)
     log_warn("SCHEMATIC_UPLOAD_FILENAME_EXTENSION", file.filename)
-  elif file_size > app.config["MAX_UPLOAD_FILE_SIZE"]:
+  elif file_size > app.config["SCHEMATIC_UPLOAD_MAX_FILE_SIZE"]:
     flash_by_key(app, "SCHEMATIC_UPLOAD_FILE_TOO_LARGE", file.filename)
     log_warn("SCHEMATIC_UPLOAD_FILE_TOO_LARGE", file.filename)
   elif file_exists_in_dir(uploads_dir, file_root + ".schematic") or file_exists_in_dir(uploads_dir, file_root + ".schem"):

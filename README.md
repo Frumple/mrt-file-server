@@ -2,7 +2,7 @@
 
 # MRT File Server
 
-A simple Flask web application that allows players to upload and download WorldEdit schematics to a Minecraft server. This application also hosts world download files for players to use in their own offline single-player games.
+A simple Flask web application that allows players to upload and download map item .dat files and WorldEdit schematics to a Minecraft server. This application also hosts world download files for players to use in their own offline single-player games.
 
 This application was built for the **[Minecart Rapid Transit (MRT) Minecraft Server](https://www.minecartrapidtransit.net)**.
 
@@ -46,8 +46,11 @@ If you want both of the schematic upload and download directories to point to yo
 
 `SECRET_KEY` is the only mandatory configuration setting in config.py. You may choose to set other optional settings:
 
-- **`MAX_NUMBER_OF_UPLOAD_FILES`** - Maximum number of files that can be uploaded at one time. (Default: 10)
-- **`MAX_UPLOAD_FILE_SIZE`** - Maximum number of bytes that can be uploaded per file. (Default: 100 kilobytes)
+- **`SCHEMATIC_UPLOAD_MAX_NUMBER_OF_FILES`** - Maximum number of schematic files that can be uploaded at one time. (Default: 10)
+- **`SCHEMATIC_UPLOAD_MAX_FILE_SIZE`** - Maximum number of bytes that can be uploaded per schematic file. (Default: 100 kilobytes)
+
+- **`MAP_UPLOAD_MAX_NUMBER_OF_FILES`** - Maximum number of map files that can be uploaded at one time. (Default: 10)
+- **`MAP_UPLOAD_MAX_FILE_SIZE`** - Maximum number of bytes that can be uploaded per map file. (Default: 100 kilobytes)
 
 These basic authentication settings are from the **[Flask-BasicAuth](https://github.com/jpvanhal/flask-basicauth)** extension:
 - **`BASIC_AUTH_FORCE`** - Set to True to enable basic authentication on the whole application. (Default: False in development and test environments, True in production)

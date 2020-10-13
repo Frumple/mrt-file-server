@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from shutil import copyfile
 
 import glob
 import modes
@@ -8,7 +9,7 @@ class TestBase:
   def setup(self):
     os.environ[modes.ENVIRONMENT_VARIABLE] = modes.TEST
 
-    self.TEST_DATA_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")
+    self.TEST_DATA_ROOT = os.path.dirname(os.path.realpath(__file__))
 
     import mrt_file_server
     self.app = mrt_file_server.app
@@ -18,17 +19,37 @@ class TestBase:
   def teardown(self):
     pass
 
-  def load_file(self, filename):
+  def load_test_data_file(self, filename):
     filepath = os.path.join(self.TEST_DATA_DIR, filename)
-    return self.read_data_file(filepath)
+    return self.read_file(filepath)
 
-  def load_files(self, filenames):
+  def load_test_data_files(self, filenames):
     files = OrderedDict()
     for filename in filenames:
-      file_content = self.load_file(filename)
+      file_content = self.load_test_data_file(filename)
       files[filename] = file_content
-
     return files
+
+  def copy_test_data_file(self, src_filename, dest_dir, dest_filename = None):
+    dest_filename = src_filename if dest_filename is None else dest_filename
+
+    src_filepath = os.path.join(self.TEST_DATA_DIR, src_filename)
+    dest_filepath = os.path.join(dest_dir, dest_filename)
+    copyfile(src_filepath, dest_filepath)
+
+  def read_file(self, filepath):
+    with open(filepath, "r+b") as file:
+      return file.read()
+
+  def remove_files(self, dir, extension):
+    path = "{}/*.{}".format(dir, extension)
+    for file in glob.glob(path):
+      os.remove(file)
+
+  def verify_file_content(self, directory, filename, expected_file_content):
+    filepath = os.path.join(directory, filename)
+    actual_file_content = self.read_file(filepath)
+    assert actual_file_content == expected_file_content
 
   def get_log_message(self, key):
     return self.app.config["LOG_MESSAGES"][key]
@@ -49,12 +70,3 @@ class TestBase:
 
   def flash_message_html(self, message, category):
     return "<li class=\"flash-{}\" name=\"flash_message\">{}</li>".format(category, message)
-
-  def read_data_file(self, filepath):
-    with open(filepath, "r+b") as file:
-      return file.read()
-
-  def remove_files(self, dir, extension):
-    path = "{}/*.{}".format(dir, extension)
-    for file in glob.glob(path):
-      os.remove(file)

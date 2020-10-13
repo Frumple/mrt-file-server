@@ -8,7 +8,7 @@
 <form method="post" enctype="multipart/form-data" action="{{ url_for('route_schematic_upload') }}">
   <h2>1. Enter your Minecraft Username</h2>
   <span>Username:</span>
-  <input type="text" id="userName" name="userName" oninput="handleFiles(fileInput.files)" />
+  <input type="text" id="userName" name="userName" oninput="handleFiles(fileInput.files, true)" />
   <br />
   <h2>2. Select schematics to upload</h2>
   <span>Please note:</span>
@@ -26,7 +26,7 @@
     <li>Local File = "taco.schematic"</li>
     <li>Uploaded File = "Frumple-taco.schematic"</li>
   </ul>
-  <input type="file" id="fileInput" name="schematic" multiple accept=".schematic,.schem" onchange="handleFiles(this.files)">
+  <input type="file" id="fileInput" name="schematic" multiple accept=".schematic,.schem" onchange="handleFiles(this.files, true)">
   <br />
   <br />
   <span>Schematics to upload:</span>

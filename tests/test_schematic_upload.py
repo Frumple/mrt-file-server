@@ -1,21 +1,20 @@
-from test_base import TestBase
+from test_schematic_base import TestSchematicBase
 from unittest.mock import call, patch
 
 from werkzeug.datastructures import OrderedMultiDict
 from io import BytesIO
-from shutil import copyfile
 
 import os
 import pytest
 
-class TestSchematicUpload(TestBase):
+class TestSchematicUpload(TestSchematicBase):
   def setup(self):
-    TestBase.setup(self)
+    TestSchematicBase.setup(self)
     self.uploads_dir = self.app.config["SCHEMATIC_UPLOADS_DIR"]
     self.clean_schematic_uploads_dir()
 
   def teardown(self):
-    TestBase.teardown(self)
+    TestSchematicBase.teardown(self)
     self.clean_schematic_uploads_dir()
 
   # Tests
@@ -28,7 +27,7 @@ class TestSchematicUpload(TestBase):
   def test_upload_single_file_should_be_successful(self, mock_logger, filename):
     username = "Frumple"
     uploaded_filename = self.uploaded_filename(username, filename)
-    original_file_content = self.load_file(filename)
+    original_file_content = self.load_test_data_file(filename)
 
     data = OrderedMultiDict()
     data.add("userName", username)
@@ -40,7 +39,7 @@ class TestSchematicUpload(TestBase):
     assert response.mimetype == "text/html"
 
     self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_SUCCESS", response.data, uploaded_filename)
-    self.verify_uploaded_file_content(original_file_content, uploaded_filename)
+    self.verify_file_content(self.uploads_dir, uploaded_filename, original_file_content)
 
     mock_logger.info.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_SUCCESS"), uploaded_filename)
 
@@ -56,7 +55,7 @@ class TestSchematicUpload(TestBase):
       "mrt_v5_final_elevated_double_track.schematic",
       "mrt_v5_final_elevated_double_curve.schematic"]
 
-    original_files = self.load_files(filenames)
+    original_files = self.load_test_data_files(filenames)
 
     data = OrderedMultiDict()
     data.add("userName", username)
@@ -75,7 +74,7 @@ class TestSchematicUpload(TestBase):
       uploaded_filename = self.uploaded_filename(username, filename)
 
       self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_SUCCESS", response.data, uploaded_filename)
-      self.verify_uploaded_file_content(original_files[filename], uploaded_filename)
+      self.verify_file_content(self.uploads_dir, uploaded_filename, original_files[filename])
 
       logger_calls.append(call(self.get_log_message("SCHEMATIC_UPLOAD_SUCCESS"), uploaded_filename))
 
@@ -88,7 +87,7 @@ class TestSchematicUpload(TestBase):
   ])
   def test_upload_with_invalid_username_should_fail(self, mock_logger, username, message_key):
     filename = "mrt_v5_final_elevated_centre_station.schematic"
-    original_file_content = self.load_file(filename)
+    original_file_content = self.load_test_data_file(filename)
 
     data = OrderedMultiDict()
     data.add("userName", username)
@@ -116,7 +115,7 @@ class TestSchematicUpload(TestBase):
   def test_upload_with_invalid_file_should_fail(self, mock_logger, filename, message_key):
     username = "Frumple"
     uploaded_filename = self.uploaded_filename(username, filename)
-    original_file_content = self.load_file(filename)
+    original_file_content = self.load_test_data_file(filename)
 
     data = OrderedMultiDict()
     data.add("userName", username)
@@ -166,7 +165,7 @@ class TestSchematicUpload(TestBase):
       "mrt_v5_final_subground_centre_station.schematic",
       "mrt_v5_final_subground_side_station.schematic"]
 
-    original_files = self.load_files(filenames)
+    original_files = self.load_test_data_files(filenames)
 
     data = OrderedMultiDict()
     data.add("userName", username)
@@ -192,11 +191,9 @@ class TestSchematicUpload(TestBase):
     impostor_filename = "mrt_v5_final_underground_single_track.schematic"
 
     # Copy an impostor file with different content to the uploads directory with the same name as the file to upload
-    src_filepath = os.path.join(self.TEST_DATA_DIR, impostor_filename)
-    dest_filepath = os.path.join(self.uploads_dir, uploaded_filename)
-    copyfile(src_filepath, dest_filepath)
+    self.copy_test_data_file(impostor_filename, self.uploads_dir, uploaded_filename)
 
-    original_file_content = self.load_file(filename)
+    original_file_content = self.load_test_data_file(filename)
 
     data = OrderedMultiDict()
     data.add("userName", username)
@@ -213,8 +210,8 @@ class TestSchematicUpload(TestBase):
     files = os.listdir(self.uploads_dir)
     assert len(files) == 1
 
-    impostor_file_content = self.load_file(impostor_filename)
-    self.verify_uploaded_file_content(impostor_file_content, uploaded_filename)
+    impostor_file_content = self.load_test_data_file(impostor_filename)
+    self.verify_file_content(self.uploads_dir, uploaded_filename, impostor_file_content)
 
     mock_logger.warn.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_FILE_EXISTS"), uploaded_filename)
 
@@ -232,8 +229,3 @@ class TestSchematicUpload(TestBase):
 
   def verify_schematic_uploads_dir_is_empty(self):
     assert os.listdir(self.uploads_dir) == []
-
-  def verify_uploaded_file_content(self, original_file_content, filename):
-    uploaded_filepath = os.path.join(self.uploads_dir, filename)
-    uploaded_file_content = self.read_data_file(uploaded_filepath)
-    assert uploaded_file_content == original_file_content

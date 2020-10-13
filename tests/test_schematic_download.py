@@ -1,20 +1,19 @@
-from test_base import TestBase
+from test_schematic_base import TestSchematicBase
 from unittest.mock import patch
 
 from werkzeug.datastructures import OrderedMultiDict
-from shutil import copyfile
 
 import os
 import pytest
 
-class TestSchematicDownload(TestBase):
+class TestSchematicDownload(TestSchematicBase):
   def setup(self):
-    TestBase.setup(self)
+    TestSchematicBase.setup(self)
     self.downloads_dir = self.app.config["SCHEMATIC_DOWNLOADS_DIR"]
     self.clean_schematic_downloads_dir()
 
   def teardown(self):
-    TestBase.teardown(self)
+    TestSchematicBase.teardown(self)
     self.clean_schematic_downloads_dir()
 
   # Tests
@@ -26,12 +25,10 @@ class TestSchematicDownload(TestBase):
   ])
   def test_create_download_link_should_be_successful(self, mock_logger, filename):
     message_key = "SCHEMATIC_DOWNLOAD_LINK_CREATION_SUCCESS"
-    original_file_content = self.load_file(filename)
+    original_file_content = self.load_test_data_file(filename)
 
     # Copy the schematic to the download folder
-    src_filepath = os.path.join(self.TEST_DATA_DIR, filename)
-    dest_filepath = os.path.join(self.downloads_dir, filename)
-    copyfile(src_filepath, dest_filepath)
+    self.copy_test_data_file(filename, self.downloads_dir)
 
     data = self.createRequestData(filename)
     response = self.create_download_link(data)
@@ -69,12 +66,10 @@ class TestSchematicDownload(TestBase):
     ("mrt_v5_final_elevated_centre_station.schematic")
   ])
   def test_download_should_be_successful(self, mock_logger, filename):
-    original_file_content = self.load_file(filename)
+    original_file_content = self.load_test_data_file(filename)
 
     # Copy the schematic to the download folder
-    src_filepath = os.path.join(self.TEST_DATA_DIR, filename)
-    dest_filepath = os.path.join(self.downloads_dir, filename)
-    copyfile(src_filepath, dest_filepath)
+    self.copy_test_data_file(filename, self.downloads_dir)
 
     response = self.start_download(filename)
 

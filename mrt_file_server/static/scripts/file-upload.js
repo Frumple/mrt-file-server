@@ -4,25 +4,41 @@ const userNameElement = document.getElementById("userName"),
       fileInputElement = document.getElementById("fileInput"),
       fileListElement = document.getElementById("fileList");
 
-function handleFiles(files) {
+function handleFiles(files, prependUserName = false) {
   const userName = userNameElement.value;
 
-  if (!files.length) {
-    fileListElement.innerHTML = "<ul><li>No files selected.</li></ul>";
+  removeAllChildElements(fileListElement);
+
+  const list = document.createElement("ul");
+  fileListElement.appendChild(list);
+
+  if (files.length === 0) {
+    const li = document.createElement("li");
+    list.appendChild(li);
+
+    const span = document.createElement("span");
+    span.textContent = "No files selected."
+    li.appendChild(span);
   } else {
-    fileListElement.innerHTML = "";
-
-    const list = document.createElement("ul");
-    fileListElement.appendChild(list);
-
     for (const file of files) {
       const li = document.createElement("li");
       list.appendChild(li);
 
       const span = document.createElement("span");
       span.classList.add("file");
-      span.innerHTML = userName + "-" + file.name + ": " + (file.size / 1024).toFixed(2) + " kilobytes";
+
+      let text = file.name.concat(": ", (file.size / 1024).toFixed(2), " kilobytes");
+      if (prependUserName) {
+        text = userName.concat("-", text);
+      }
+      span.textContent = text;
       li.appendChild(span);
     }
+  }
+}
+
+function removeAllChildElements(element) {
+  while (element.firstChild) {
+    element.firstChild.remove();
   }
 }
