@@ -48,6 +48,110 @@ class TestMapUpload(TestMapBase):
     self.verify_flash_message_by_key("MAP_UPLOAD_SUCCESS", response.data, filename)
     mock_logger.info.assert_called_with(self.get_log_message("MAP_UPLOAD_SUCCESS"), filename, username)
 
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
+  def test_upload_multiple_files_should_be_successful(self, mock_logger):
+    username = "Frumple"
+
+    # Upload 7 files
+    filenames = [
+      "map_1500.dat",
+      "map_2000.dat",
+      "map_1501.dat",
+      "map_1502.dat",
+      "map_1000.dat",
+      "map_1503.dat",
+      "map_1504.dat"]
+
+    for filename in filenames:
+      self.copy_test_data_file("existing_unlocked.dat", self.uploads_dir, filename)
+
+    original_files = self.load_test_data_files(filenames)
+
+    data = OrderedMultiDict()
+    data.add("userName", username)
+
+    for filename in original_files:
+      data.add("map", (BytesIO(original_files[filename]), filename))
+
+    response = self.perform_upload(data)
+
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
+
+    logger_calls = []
+
+    for filename in original_files:
+      expected_nbt_file = self.load_test_data_nbt_file(filename)
+      uploaded_nbt_file = self.load_uploaded_nbt_file(filename)
+
+      self.verify_matching_nbt_values(expected_nbt_file, uploaded_nbt_file)
+
+      assert get_nbt_map_value(uploaded_nbt_file, "locked") == 1
+
+      self.verify_flash_message_by_key("MAP_UPLOAD_SUCCESS", response.data, filename)
+      logger_calls.append(call(self.get_log_message("MAP_UPLOAD_SUCCESS"), filename, username))
+
+    mock_logger.info.assert_has_calls(logger_calls, any_order = True)
+
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
+  @pytest.mark.parametrize("filename", [
+    ("1510.dat"),      # Does not start with map_
+    ("map_.dat"),      # No Map ID
+    ("map_1510a.dat"), # Invalid Map ID
+    ("map_1510.png")   # Wrong extension
+  ])
+  def test_upload_with_invalid_filename_should_fail(self, mock_logger, filename):
+    username = "Frumple"
+
+    original_file_content = self.load_test_data_file(filename)
+
+    data = OrderedMultiDict()
+    data.add("userName", username)
+    data.add("map", (BytesIO(original_file_content), filename))
+
+    response = self.perform_upload(data)
+
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
+
+    # Verify file was NOT uploaded
+    uploaded_file_path = os.path.join(self.uploads_dir, filename)
+    assert os.path.isfile(uploaded_file_path) == False
+
+    self.verify_flash_message_by_key("MAP_UPLOAD_FILENAME_INVALID", response.data, filename)
+    mock_logger.warn.assert_called_with(self.get_log_message("MAP_UPLOAD_FILENAME_INVALID"), filename, username)
+
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
+  @pytest.mark.parametrize("filename", [
+    ("idcounts.dat"),
+    ("raids.dat"),
+    ("scoreboard.dat"),
+    ("villages.dat")
+  ])
+  def test_upload_with_invalid_filename_and_file_already_exists_should_fail(self, mock_logger, filename):
+    username = "Frumple"
+
+    self.copy_test_data_file(filename, self.uploads_dir)
+    existing_file_content = self.load_test_data_file(filename)
+
+    # Upload a valid map file, but rename it to the existing filename
+    file_content = self.load_test_data_file("map_1500.dat")
+
+    data = OrderedMultiDict()
+    data.add("userName", username)
+    data.add("map", (BytesIO(file_content), filename))
+
+    response = self.perform_upload(data)
+
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
+
+    # Verify existing file was NOT overwritten
+    self.verify_file_content(self.uploads_dir, filename, existing_file_content)
+
+    self.verify_flash_message_by_key("MAP_UPLOAD_FILENAME_INVALID", response.data, filename)
+    mock_logger.warn.assert_called_with(self.get_log_message("MAP_UPLOAD_FILENAME_INVALID"), filename, username)
+
   # Helper Functions
 
   def perform_upload(self, data):

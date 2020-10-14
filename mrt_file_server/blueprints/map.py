@@ -9,6 +9,7 @@ from mrt_file_server.utils.string_utils import str_contains_whitespace
 from mrt_file_server.utils.nbt_utils import load_nbt_file, save_nbt_file, set_nbt_map_byte_value
 
 import os
+import re
 
 map_blueprint = Blueprint("map", __name__, url_prefix="/map")
 
@@ -52,7 +53,11 @@ def upload_maps():
 def upload_single_map(username, file):
   uploads_dir = app.config["MAP_UPLOADS_DIR"]
 
-  # TODO: Check for valid filename
+  filename_regex = re.compile("^map_\d+\.dat$")
+  if not filename_regex.fullmatch(file.filename):
+    flash_by_key(app, "MAP_UPLOAD_FILENAME_INVALID", file.filename)
+    log_warn("MAP_UPLOAD_FILENAME_INVALID", file.filename, username)
+    return
 
   file.filename = secure_filename(file.filename)
   file_size = get_filesize(file)

@@ -7,7 +7,6 @@ from mrt_file_server.request_log_adapter import RequestLogAdapter
 import logging
 import modes
 import os
-import re
 
 class FlashMessage:
   def __init__(self, message, category):
