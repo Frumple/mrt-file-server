@@ -24,28 +24,20 @@ def upload_maps():
   username = request.form["userName"] if "userName" in request.form else None
 
   if username == None or username == "":
-    pass
-    # TODO
-    # flash_by_key(app, "MAP_UPLOAD_USERNAME_EMPTY")
-    # log_warn("MAP_UPLOAD_USERNAME_EMPTY")
+    flash_by_key(app, "MAP_UPLOAD_USERNAME_EMPTY")
+    log_warn("MAP_UPLOAD_USERNAME_EMPTY")
   elif str_contains_whitespace(request.form["userName"]):
-    pass
-    # TODO
-    # flash_by_key(app, "MAP_UPLOAD_USERNAME_WHITESPACE")
-    # log_warn("MAP_UPLOAD_USERNAME_WHITESPACE")
+    flash_by_key(app, "MAP_UPLOAD_USERNAME_WHITESPACE")
+    log_warn("MAP_UPLOAD_USERNAME_WHITESPACE", username)
   elif "map" not in request.files:
-    pass
-    # TODO
-    # flash_by_key(app, "MAP_UPLOAD_NO_FILES")
-    # log_warn("MAP_UPLOAD_NO_FILES")
+    flash_by_key(app, "MAP_UPLOAD_NO_FILES")
+    log_warn("MAP_UPLOAD_NO_FILES", username)
   else:
     files = request.files.getlist("map")
 
     if len(files) > app.config["MAP_UPLOAD_MAX_NUMBER_OF_FILES"]:
-      pass
-      # TODO
-      # flash_by_key(app, "MAP_UPLOAD_TOO_MANY_FILES")
-      # log_warn("MAP_UPLOAD_TOO_MANY_FILES")
+      flash_by_key(app, "MAP_UPLOAD_TOO_MANY_FILES")
+      log_warn("MAP_UPLOAD_TOO_MANY_FILES", username)
     else:
       for file in files:
         upload_single_map(username, file)

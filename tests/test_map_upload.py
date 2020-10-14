@@ -94,6 +94,96 @@ class TestMapUpload(TestMapBase):
     mock_logger.info.assert_has_calls(logger_calls, any_order = True)
 
   @patch("mrt_file_server.utils.log_utils.log_adapter")
+  @pytest.mark.parametrize("username, message_key", [
+    ("",               "MAP_UPLOAD_USERNAME_EMPTY"),
+    ("Eris The Eagle", "MAP_UPLOAD_USERNAME_WHITESPACE")
+  ])
+  def test_upload_with_invalid_username_should_fail(self, mock_logger, username, message_key):
+    filename = "map_1500.dat"
+
+    self.copy_test_data_file("existing_unlocked.dat", self.uploads_dir, filename)
+    existing_file_content = self.load_test_data_file("existing_unlocked.dat")
+
+    upload_file_content = self.load_test_data_file(filename)
+
+    data = OrderedMultiDict()
+    data.add("userName", username)
+    data.add("map", (BytesIO(upload_file_content), filename))
+
+    response = self.perform_upload(data)
+
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
+
+    # Verify existing file was NOT overwritten
+    self.verify_file_content(self.uploads_dir, filename, existing_file_content)
+
+    self.verify_flash_message_by_key(message_key, response.data)
+
+    if username:
+      mock_logger.warn.assert_called_with(self.get_log_message(message_key), username)
+    else:
+      mock_logger.warn.assert_called_with(self.get_log_message(message_key))
+
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
+  def test_upload_with_no_files_should_fail(self, mock_logger):
+    username = "Frumple"
+
+    data = OrderedMultiDict()
+    data.add("userName", username)
+
+    response = self.perform_upload(data)
+
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
+
+    self.verify_flash_message_by_key("MAP_UPLOAD_NO_FILES", response.data)
+    mock_logger.warn.assert_called_with(self.get_log_message("MAP_UPLOAD_NO_FILES"), username)
+
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
+  def test_upload_with_too_many_files_should_fail(self, mock_logger):
+    username = "Frumple"
+
+    # Upload 11 files, over the limit of 10.
+    filenames = [
+      "map_1000.dat",
+      "map_1500.dat",
+      "map_1501.dat",
+      "map_1502.dat",
+      "map_1503.dat",
+      "map_1504.dat",
+      "map_1505.dat",
+      "map_1506.dat",
+      "map_1507.dat",
+      "map_1508.dat",
+      "map_2000.dat"]
+
+    for filename in filenames:
+      self.copy_test_data_file("existing_unlocked.dat", self.uploads_dir, filename)
+
+    existing_file_content = self.load_test_data_file("existing_unlocked.dat")
+
+    upload_files = self.load_test_data_files(filenames)
+
+    data = OrderedMultiDict()
+    data.add("userName", username)
+
+    for filename in upload_files:
+      data.add("map", (BytesIO(upload_files[filename]), filename))
+
+    response = self.perform_upload(data)
+
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
+
+    # Verify none of the existing files were overwritten
+    for filename in filenames:
+      self.verify_file_content(self.uploads_dir, filename, existing_file_content)
+
+    self.verify_flash_message_by_key("MAP_UPLOAD_TOO_MANY_FILES", response.data)
+    mock_logger.warn.assert_called_with(self.get_log_message("MAP_UPLOAD_TOO_MANY_FILES"), username)
+
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
   @pytest.mark.parametrize("filename", [
     ("1510.dat"),      # Does not start with map_
     ("map_.dat"),      # No Map ID
@@ -103,11 +193,11 @@ class TestMapUpload(TestMapBase):
   def test_upload_with_invalid_filename_should_fail(self, mock_logger, filename):
     username = "Frumple"
 
-    original_file_content = self.load_test_data_file(filename)
+    upload_file_content = self.load_test_data_file(filename)
 
     data = OrderedMultiDict()
     data.add("userName", username)
-    data.add("map", (BytesIO(original_file_content), filename))
+    data.add("map", (BytesIO(upload_file_content), filename))
 
     response = self.perform_upload(data)
 
@@ -135,11 +225,11 @@ class TestMapUpload(TestMapBase):
     existing_file_content = self.load_test_data_file(filename)
 
     # Upload a valid map file, but rename it to the existing filename
-    file_content = self.load_test_data_file("map_1500.dat")
+    upload_file_content = self.load_test_data_file("map_1500.dat")
 
     data = OrderedMultiDict()
     data.add("userName", username)
-    data.add("map", (BytesIO(file_content), filename))
+    data.add("map", (BytesIO(upload_file_content), filename))
 
     response = self.perform_upload(data)
 
