@@ -20,7 +20,9 @@ def route_map_upload():
   return render_template("map/upload/index.html", home = False)
 
 def upload_maps():
-  if "userName" not in request.form or request.form["userName"] == "":
+  username = request.form["userName"] if "userName" in request.form else None
+
+  if username == None or username == "":
     pass
     # TODO
     # flash_by_key(app, "MAP_UPLOAD_USERNAME_EMPTY")
@@ -45,10 +47,9 @@ def upload_maps():
       # log_warn("MAP_UPLOAD_TOO_MANY_FILES")
     else:
       for file in files:
-        upload_single_map(file)
+        upload_single_map(username, file)
 
-def upload_single_map(file):
-  username = request.form["userName"]
+def upload_single_map(username, file):
   uploads_dir = app.config["MAP_UPLOADS_DIR"]
 
   # TODO: Check for valid filename
@@ -85,10 +86,10 @@ def upload_single_map(file):
       save_nbt_file(nbt_file)
 
       message = flash_by_key(app, "MAP_UPLOAD_SUCCESS", file.filename)
-      log_info("MAP_UPLOAD_SUCCESS", file.filename)
+      log_info("MAP_UPLOAD_SUCCESS", file.filename, username)
     except Exception as e:
       message = flash_by_key(app, "MAP_UPLOAD_FAILURE", file.filename)
-      log_info("MAP_UPLOAD_FAILURE", file.filename, e)
+      log_info("MAP_UPLOAD_FAILURE", file.filename, username, e)
 
 @app.route("/map/download", methods = ["GET", "POST"])
 def route_map_download():

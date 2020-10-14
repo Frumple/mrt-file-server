@@ -46,7 +46,7 @@ class TestMapUpload(TestMapBase):
     assert get_nbt_map_value(uploaded_nbt_file, "locked") == 1
 
     self.verify_flash_message_by_key("MAP_UPLOAD_SUCCESS", response.data, filename)
-    mock_logger.info.assert_called_with(self.get_log_message("MAP_UPLOAD_SUCCESS"), filename)
+    mock_logger.info.assert_called_with(self.get_log_message("MAP_UPLOAD_SUCCESS"), filename, username)
 
   # Helper Functions
 

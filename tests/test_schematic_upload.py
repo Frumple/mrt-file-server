@@ -41,7 +41,7 @@ class TestSchematicUpload(TestSchematicBase):
     self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_SUCCESS", response.data, uploaded_filename)
     self.verify_file_content(self.uploads_dir, uploaded_filename, original_file_content)
 
-    mock_logger.info.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_SUCCESS"), uploaded_filename)
+    mock_logger.info.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_SUCCESS"), uploaded_filename, username)
 
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_multiple_files_should_be_successful(self, mock_logger):
@@ -76,7 +76,7 @@ class TestSchematicUpload(TestSchematicBase):
       self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_SUCCESS", response.data, uploaded_filename)
       self.verify_file_content(self.uploads_dir, uploaded_filename, original_files[filename])
 
-      logger_calls.append(call(self.get_log_message("SCHEMATIC_UPLOAD_SUCCESS"), uploaded_filename))
+      logger_calls.append(call(self.get_log_message("SCHEMATIC_UPLOAD_SUCCESS"), uploaded_filename, username))
 
     mock_logger.info.assert_has_calls(logger_calls, any_order = True)
 
@@ -129,12 +129,14 @@ class TestSchematicUpload(TestSchematicBase):
     self.verify_flash_message_by_key(message_key, response.data, uploaded_filename)
     self.verify_schematic_uploads_dir_is_empty()
 
-    mock_logger.warn.assert_called_with(self.get_log_message(message_key), uploaded_filename)
+    mock_logger.warn.assert_called_with(self.get_log_message(message_key), uploaded_filename, username)
 
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_with_no_files_should_fail(self, mock_logger):
+    username = "Frumple"
+
     data = OrderedMultiDict()
-    data.add("userName", "Frumple")
+    data.add("userName", username)
 
     response = self.perform_upload(data)
 
@@ -144,7 +146,7 @@ class TestSchematicUpload(TestSchematicBase):
     self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_NO_FILES", response.data)
     self.verify_schematic_uploads_dir_is_empty()
 
-    mock_logger.warn.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_NO_FILES"))
+    mock_logger.warn.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_NO_FILES"), username)
 
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_with_too_many_files_should_fail(self, mock_logger):
@@ -181,7 +183,7 @@ class TestSchematicUpload(TestSchematicBase):
     self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_TOO_MANY_FILES", response.data)
     self.verify_schematic_uploads_dir_is_empty()
 
-    mock_logger.warn.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_TOO_MANY_FILES"))
+    mock_logger.warn.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_TOO_MANY_FILES"), username)
 
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_file_that_already_exists_should_fail(self, mock_logger):
@@ -213,7 +215,7 @@ class TestSchematicUpload(TestSchematicBase):
     impostor_file_content = self.load_test_data_file(impostor_filename)
     self.verify_file_content(self.uploads_dir, uploaded_filename, impostor_file_content)
 
-    mock_logger.warn.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_FILE_EXISTS"), uploaded_filename)
+    mock_logger.warn.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_FILE_EXISTS"), uploaded_filename, username)
 
   # Helper Functions
 

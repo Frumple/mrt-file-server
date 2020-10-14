@@ -17,33 +17,34 @@ def route_schematic_upload():
   return render_template("schematic/upload/index.html", home = False)
 
 def upload_schematics():
-  if "userName" not in request.form or request.form["userName"] == "":
+  username = request.form["userName"] if "userName" in request.form else None
+
+  if username == None or username == "":
     flash_by_key(app, "SCHEMATIC_UPLOAD_USERNAME_EMPTY")
     log_warn("SCHEMATIC_UPLOAD_USERNAME_EMPTY")
-  elif str_contains_whitespace(request.form["userName"]):
+  elif str_contains_whitespace(username):
     flash_by_key(app, "SCHEMATIC_UPLOAD_USERNAME_WHITESPACE")
-    log_warn("SCHEMATIC_UPLOAD_USERNAME_WHITESPACE", request.form["userName"])
+    log_warn("SCHEMATIC_UPLOAD_USERNAME_WHITESPACE", username)
   elif "schematic" not in request.files:
     flash_by_key(app, "SCHEMATIC_UPLOAD_NO_FILES")
-    log_warn("SCHEMATIC_UPLOAD_NO_FILES")
+    log_warn("SCHEMATIC_UPLOAD_NO_FILES", username)
   else:
     files = request.files.getlist("schematic")
 
     if len(files) > app.config["SCHEMATIC_UPLOAD_MAX_NUMBER_OF_FILES"]:
       flash_by_key(app, "SCHEMATIC_UPLOAD_TOO_MANY_FILES")
-      log_warn("SCHEMATIC_UPLOAD_TOO_MANY_FILES")
+      log_warn("SCHEMATIC_UPLOAD_TOO_MANY_FILES", username)
     else:
       for file in files:
-        upload_single_schematic(file)
+        upload_single_schematic(username, file)
 
-def upload_single_schematic(file):
-  username = request.form["userName"]
+def upload_single_schematic(username, file):
   file.filename = "{}-{}".format(username, file.filename)
   uploads_dir = app.config["SCHEMATIC_UPLOADS_DIR"]
 
   if str_contains_whitespace(file.filename):
     flash_by_key(app, "SCHEMATIC_UPLOAD_FILENAME_WHITESPACE", file.filename)
-    log_warn("SCHEMATIC_UPLOAD_FILENAME_WHITESPACE", file.filename)
+    log_warn("SCHEMATIC_UPLOAD_FILENAME_WHITESPACE", file.filename, username)
     return
 
   file.filename = secure_filename(file.filename)
@@ -54,22 +55,22 @@ def upload_single_schematic(file):
 
   if file_extension != ".schematic" and file_extension != ".schem":
     flash_by_key(app, "SCHEMATIC_UPLOAD_FILENAME_EXTENSION", file.filename)
-    log_warn("SCHEMATIC_UPLOAD_FILENAME_EXTENSION", file.filename)
+    log_warn("SCHEMATIC_UPLOAD_FILENAME_EXTENSION", file.filename, username)
   elif file_size > app.config["SCHEMATIC_UPLOAD_MAX_FILE_SIZE"]:
     flash_by_key(app, "SCHEMATIC_UPLOAD_FILE_TOO_LARGE", file.filename)
-    log_warn("SCHEMATIC_UPLOAD_FILE_TOO_LARGE", file.filename)
+    log_warn("SCHEMATIC_UPLOAD_FILE_TOO_LARGE", file.filename, username)
   elif file_exists_in_dir(uploads_dir, file_root + ".schematic") or file_exists_in_dir(uploads_dir, file_root + ".schem"):
     flash_by_key(app, "SCHEMATIC_UPLOAD_FILE_EXISTS", file.filename)
-    log_warn("SCHEMATIC_UPLOAD_FILE_EXISTS", file.filename)
+    log_warn("SCHEMATIC_UPLOAD_FILE_EXISTS", file.filename, username)
   else:
     try:
       schematics.save(file)
 
       message = flash_by_key(app, "SCHEMATIC_UPLOAD_SUCCESS", file.filename)
-      log_info("SCHEMATIC_UPLOAD_SUCCESS", file.filename)
+      log_info("SCHEMATIC_UPLOAD_SUCCESS", file.filename, username)
     except Exception as e:
       message = flash_by_key(app, "SCHEMATIC_UPLOAD_FAILURE", file.filename)
-      log_error("SCHEMATIC_UPLOAD_FAILURE", file.filename, e)
+      log_error("SCHEMATIC_UPLOAD_FAILURE", file.filename, username, e)
 
 @app.route("/schematic/download", methods = ["GET", "POST"])
 def route_schematic_download():
