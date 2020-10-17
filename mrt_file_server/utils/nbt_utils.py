@@ -1,13 +1,26 @@
 from nbt.nbt import *
 
-def load_nbt_file(filename):
-  return NBTFile(filename, "rb")
+import io
+import gzip
 
-def save_nbt_file(nbt):
+def load_compressed_nbt_file(filename):
+  return NBTFile(filename)
+
+def load_compressed_nbt_buffer(compressed_buffer):
+  uncompresssed_buffer = gzip.decompress(compressed_buffer)
+  bytes_io = io.BytesIO(uncompresssed_buffer)
+  return load_uncompressed_nbt_buffer(bytes_io)
+
+def load_uncompressed_nbt_buffer(uncompresssed_buffer):
+  return NBTFile(buffer=uncompresssed_buffer)
+
+def save_compressed_nbt_file(nbt):
   nbt.write_file()
 
 def get_nbt_map_value(nbt, tag_name):
   data = get_nbt_tag(nbt, "data")
+  if data is None:
+    return None
   tag = get_nbt_tag(data, tag_name)
   return tag.value if tag is not None else None
 

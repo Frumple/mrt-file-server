@@ -6,7 +6,7 @@ from mrt_file_server.utils.file_utils import get_filesize, split_file_root_and_e
 from mrt_file_server.utils.flash_utils import flash_by_key
 from mrt_file_server.utils.log_utils import log_info, log_warn, log_error
 from mrt_file_server.utils.string_utils import str_contains_whitespace
-from mrt_file_server.utils.nbt_utils import load_nbt_file, save_nbt_file, set_nbt_map_byte_value
+from mrt_file_server.utils.nbt_utils import load_compressed_nbt_file, load_compressed_nbt_buffer, save_compressed_nbt_file, get_nbt_map_value, set_nbt_map_byte_value
 
 import os
 import re
@@ -44,27 +44,30 @@ def upload_maps():
 
 def upload_single_map(username, file):
   uploads_dir = app.config["MAP_UPLOADS_DIR"]
+  last_allowed_map_id_range = app.config["MAP_UPLOAD_LAST_ALLOWED_ID_RANGE"]
+  last_map_id = get_last_map_id()
+  file_map_id = get_file_map_id(file.filename)
 
-  filename_regex = re.compile("^map_\d+\.dat$")
-  if not filename_regex.fullmatch(file.filename):
+  if file_map_id is None:
     flash_by_key(app, "MAP_UPLOAD_FILENAME_INVALID", file.filename)
     log_warn("MAP_UPLOAD_FILENAME_INVALID", file.filename, username)
+    return
+  elif file_map_id <= (last_map_id - last_allowed_map_id_range) or file_map_id > last_map_id:
+    flash_by_key(app, "MAP_UPLOAD_MAP_ID_OUT_OF_RANGE", file.filename)
+    log_warn("MAP_UPLOAD_MAP_ID_OUT_OF_RANGE", file.filename, username)
     return
 
   file.filename = secure_filename(file.filename)
   file_size = get_filesize(file)
 
   if file_size > app.config["MAP_UPLOAD_MAX_FILE_SIZE"]:
-    pass
-    # TODO
-    # flash_by_key(app, "MAP_UPLOAD_FILE_TOO_LARGE", file.filename)
-    # log_warn("MAP_UPLOAD_FILE_TOO_LARGE", file.filename)
+    flash_by_key(app, "MAP_UPLOAD_FILE_TOO_LARGE", file.filename)
+    log_warn("MAP_UPLOAD_FILE_TOO_LARGE", file.filename, username)
+  elif not is_valid_map_format(file):
+    flash_by_key(app, "MAP_UPLOAD_MAP_FORMAT_INVALID", file.filename)
+    log_warn("MAP_UPLOAD_MAP_FORMAT_INVALID", file.filename, username)
 
-  # TODO: Check if map ID is within range
-
-  # TODO: Check if map format is invalid
-
-  # TODO: Check if map is locked
+  # TODO: Check if existing map is locked
 
   else:
     try:
@@ -77,16 +80,42 @@ def upload_single_map(username, file):
       # Upload the new map file
       maps.save(file)
 
-      # Set the "locked" flag on the new map file to 1 (true)
-      nbt_file = load_nbt_file(existing_file_path)
+      # Lock the new map file
+      nbt_file = load_compressed_nbt_file(existing_file_path)
       set_nbt_map_byte_value(nbt_file, "locked", 1)
-      save_nbt_file(nbt_file)
+      save_compressed_nbt_file(nbt_file)
 
       message = flash_by_key(app, "MAP_UPLOAD_SUCCESS", file.filename)
       log_info("MAP_UPLOAD_SUCCESS", file.filename, username)
     except Exception as e:
       message = flash_by_key(app, "MAP_UPLOAD_FAILURE", file.filename)
       log_info("MAP_UPLOAD_FAILURE", file.filename, username, e)
+
+def get_last_map_id():
+  uploads_dir = app.config["MAP_UPLOADS_DIR"]
+  idcounts_file_path = os.path.join(uploads_dir, "idcounts.dat")
+  idcounts_nbt = load_compressed_nbt_file(idcounts_file_path)
+  return get_nbt_map_value(idcounts_nbt, "map")
+
+def get_file_map_id(filename):
+  match = re.search(r"(?<=^map_)\d+(?=\.dat$)", filename)
+  if match:
+    return int(match.group())
+  return None
+
+def is_valid_map_format(file):
+  # Check that the NBT map fields in the uploaded file exist before saving the file to disk
+  compressed_buffer = file.getvalue()
+  nbt_file = load_compressed_nbt_buffer(compressed_buffer)
+
+  return \
+    get_nbt_map_value(nbt_file, "dimension") is not None and \
+    get_nbt_map_value(nbt_file, "locked") is not None and \
+    get_nbt_map_value(nbt_file, "colors") is not None and \
+    get_nbt_map_value(nbt_file, "scale") is not None and \
+    get_nbt_map_value(nbt_file, "trackingPosition") is not None and \
+    get_nbt_map_value(nbt_file, "xCenter") is not None and \
+    get_nbt_map_value(nbt_file, "zCenter") is not None
 
 @app.route("/map/download", methods = ["GET", "POST"])
 def route_map_download():

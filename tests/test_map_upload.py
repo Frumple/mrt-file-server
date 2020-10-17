@@ -3,7 +3,7 @@ from unittest.mock import call, patch
 
 from werkzeug.datastructures import OrderedMultiDict
 from io import BytesIO
-from mrt_file_server.utils.nbt_utils import load_nbt_file, get_nbt_map_value
+from mrt_file_server.utils.nbt_utils import load_compressed_nbt_file, get_nbt_map_value
 
 import os
 import pytest
@@ -58,7 +58,7 @@ class TestMapUpload(TestMapBase):
       "map_2000.dat",
       "map_1501.dat",
       "map_1502.dat",
-      "map_1000.dat",
+      "map_1001.dat",
       "map_1503.dat",
       "map_1504.dat"]
 
@@ -146,7 +146,7 @@ class TestMapUpload(TestMapBase):
 
     # Upload 11 files, over the limit of 10.
     filenames = [
-      "map_1000.dat",
+      "map_1001.dat",
       "map_1500.dat",
       "map_1501.dat",
       "map_1502.dat",
@@ -242,6 +242,45 @@ class TestMapUpload(TestMapBase):
     self.verify_flash_message_by_key("MAP_UPLOAD_FILENAME_INVALID", response.data, filename)
     mock_logger.warn.assert_called_with(self.get_log_message("MAP_UPLOAD_FILENAME_INVALID"), filename, username)
 
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
+  @pytest.mark.parametrize("filename, message_key", [
+    ("map_1520.dat", "MAP_UPLOAD_FILE_TOO_LARGE"),      # File size too large
+    ("map_1000.dat", "MAP_UPLOAD_MAP_ID_OUT_OF_RANGE"), # Map ID too low
+    ("map_2001.dat", "MAP_UPLOAD_MAP_ID_OUT_OF_RANGE"), # Map ID too high
+    ("map_1530.dat", "MAP_UPLOAD_MAP_FORMAT_INVALID"),  # idcounts.dat
+    ("map_1531.dat", "MAP_UPLOAD_MAP_FORMAT_INVALID"),  # Player .dat file
+    ("map_1532.dat", "MAP_UPLOAD_MAP_FORMAT_INVALID"),  # Empty .dat file
+    ("map_1533.dat", "MAP_UPLOAD_MAP_FORMAT_INVALID"),  # Without dimension tag
+    ("map_1534.dat", "MAP_UPLOAD_MAP_FORMAT_INVALID"),  # Without locked tag
+    ("map_1535.dat", "MAP_UPLOAD_MAP_FORMAT_INVALID"),  # Without colors tag
+    ("map_1536.dat", "MAP_UPLOAD_MAP_FORMAT_INVALID"),  # Without scale tag
+    ("map_1537.dat", "MAP_UPLOAD_MAP_FORMAT_INVALID"),  # Without trackingPosition tag
+    ("map_1538.dat", "MAP_UPLOAD_MAP_FORMAT_INVALID"),  # Without xCenter tag
+    ("map_1539.dat", "MAP_UPLOAD_MAP_FORMAT_INVALID"),  # Without zCenter tag
+  ])
+  def test_upload_with_invalid_file_should_fail(self, mock_logger, filename, message_key):
+    username = "Frumple"
+
+    self.copy_test_data_file("existing_unlocked.dat", self.uploads_dir, filename)
+    existing_file_content = self.load_test_data_file("existing_unlocked.dat")
+
+    upload_file_content = self.load_test_data_file(filename)
+
+    data = OrderedMultiDict()
+    data.add("userName", username)
+    data.add("map", (BytesIO(upload_file_content), filename))
+
+    response = self.perform_upload(data)
+
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
+
+    # Verify existing file was NOT overwritten
+    self.verify_file_content(self.uploads_dir, filename, existing_file_content)
+
+    self.verify_flash_message_by_key(message_key, response.data, filename)
+    mock_logger.warn.assert_called_with(self.get_log_message(message_key), filename, username)
+
   # Helper Functions
 
   def perform_upload(self, data):
@@ -252,10 +291,10 @@ class TestMapUpload(TestMapBase):
     self.copy_test_data_file("idcounts.dat", self.uploads_dir)
 
   def load_test_data_nbt_file(self, filename):
-    return load_nbt_file(os.path.join(self.TEST_DATA_DIR, filename))
+    return load_compressed_nbt_file(os.path.join(self.TEST_DATA_DIR, filename))
 
   def load_uploaded_nbt_file(self, filename):
-    return load_nbt_file(os.path.join(self.uploads_dir, filename))
+    return load_compressed_nbt_file(os.path.join(self.uploads_dir, filename))
 
   def verify_matching_nbt_values(self, expected_nbt_file, actual_nbt_file):
     assert get_nbt_map_value(actual_nbt_file, "scale") == get_nbt_map_value(expected_nbt_file, "scale")
