@@ -66,7 +66,7 @@ class TestBase:
       expected_message_html = self.flash_message_html("{}: {}".format(filename, expected_message.format(filename)), expected_category)
     else:
       expected_message_html = self.flash_message_html(expected_message, expected_category)
-    assert bytes(expected_message_html, encoding = "utf-8") in response_data
+    assert expected_message_html in response_data.decode("utf-8")
 
   def flash_message_html(self, message, category):
     return "<li class=\"flash-{}\" name=\"flash_message\">{}</li>".format(category, message)

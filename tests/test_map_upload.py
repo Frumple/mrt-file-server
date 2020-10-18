@@ -20,6 +20,16 @@ class TestMapUpload(TestMapBase):
 
   # Tests
 
+  def test_upload_page_should_show_valid_map_id_range(self):
+    response = self.client.get("/map/upload")
+
+    last_allowed_id_range = 1000
+    last_map_id = 2000
+    expected_html = "Map IDs must be within the last {} maps recently created on the server, currently from IDs <strong>{}</strong> to <strong>{}</strong>." \
+      .format(last_allowed_id_range, last_map_id - last_allowed_id_range + 1, last_map_id)
+
+    assert expected_html in response.data.decode('utf-8')
+
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_single_file_should_be_successful(self, mock_logger):
     username = "Frumple"

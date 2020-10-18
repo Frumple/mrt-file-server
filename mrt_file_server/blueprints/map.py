@@ -18,7 +18,10 @@ def route_map_upload():
   if request.method == "POST":
     upload_maps()
 
-  return render_template("map/upload/index.html", home = False)
+  last_allowed_id_range = app.config["MAP_UPLOAD_LAST_ALLOWED_ID_RANGE"]
+  last_map_id = get_last_map_id()
+
+  return render_template("map/upload/index.html", home = False, last_allowed_id_range = last_allowed_id_range, last_map_id = last_map_id)
 
 def upload_maps():
   username = request.form["userName"] if "userName" in request.form else None
