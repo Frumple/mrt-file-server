@@ -281,6 +281,66 @@ class TestMapUpload(TestMapBase):
     self.verify_flash_message_by_key(message_key, response.data, filename)
     mock_logger.warn.assert_called_with(self.get_log_message(message_key), filename, username)
 
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
+  def test_upload_where_existing_file_is_already_locked_should_fail(self, mock_logger):
+    username = "Frumple"
+    filename = "map_1500.dat"
+
+    self.copy_test_data_file("existing_locked.dat", self.uploads_dir, filename)
+    existing_file_content = self.load_test_data_file("existing_locked.dat")
+
+    upload_file_content = self.load_test_data_file(filename)
+
+    data = OrderedMultiDict()
+    data.add("userName", username)
+    data.add("map", (BytesIO(upload_file_content), filename))
+
+    response = self.perform_upload(data)
+
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
+
+    # Verify existing file was NOT overwritten
+    self.verify_file_content(self.uploads_dir, filename, existing_file_content)
+
+    self.verify_flash_message_by_key("MAP_UPLOAD_EXISTING_MAP_LOCKED", response.data, filename)
+    mock_logger.warn.assert_called_with(self.get_log_message("MAP_UPLOAD_EXISTING_MAP_LOCKED"), filename, username)
+
+  @patch("mrt_file_server.utils.log_utils.log_adapter")
+  def test_upload_same_file_twice_should_fail(self, mock_logger):
+    username = "Frumple"
+    filename = "map_1500.dat"
+
+    self.copy_test_data_file("existing_unlocked.dat", self.uploads_dir, filename)
+
+    original_file_content = self.load_test_data_file(filename)
+
+    first_data = OrderedMultiDict()
+    first_data.add("userName", username)
+    first_data.add("map", (BytesIO(original_file_content), filename))
+
+    first_response = self.perform_upload(first_data)
+
+    second_data = OrderedMultiDict()
+    second_data.add("userName", username)
+    second_data.add("map", (BytesIO(original_file_content), filename))
+
+    second_response = self.perform_upload(second_data)
+
+    assert second_response.status_code == 200
+    assert second_response.mimetype == "text/html"
+
+    # Verify file was uploaded, but "existing file locked" error message appears after second upload
+    expected_nbt_file = self.load_test_data_nbt_file(filename)
+    uploaded_nbt_file = self.load_uploaded_nbt_file(filename)
+
+    self.verify_matching_nbt_values(expected_nbt_file, uploaded_nbt_file)
+
+    assert get_nbt_map_value(uploaded_nbt_file, "locked") == 1
+
+    self.verify_flash_message_by_key("MAP_UPLOAD_EXISTING_MAP_LOCKED", second_response.data, filename)
+    mock_logger.warn.assert_called_with(self.get_log_message("MAP_UPLOAD_EXISTING_MAP_LOCKED"), filename, username)
+
   # Helper Functions
 
   def perform_upload(self, data):

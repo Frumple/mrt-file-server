@@ -63,12 +63,12 @@ def upload_single_map(username, file):
   if file_size > app.config["MAP_UPLOAD_MAX_FILE_SIZE"]:
     flash_by_key(app, "MAP_UPLOAD_FILE_TOO_LARGE", file.filename)
     log_warn("MAP_UPLOAD_FILE_TOO_LARGE", file.filename, username)
-  elif not is_valid_map_format(file):
+  elif is_invalid_map_format(file):
     flash_by_key(app, "MAP_UPLOAD_MAP_FORMAT_INVALID", file.filename)
     log_warn("MAP_UPLOAD_MAP_FORMAT_INVALID", file.filename, username)
-
-  # TODO: Check if existing map is locked
-
+  elif is_existing_map_file_locked(file.filename):
+    flash_by_key(app, "MAP_UPLOAD_EXISTING_MAP_LOCKED", file.filename)
+    log_warn("MAP_UPLOAD_EXISTING_MAP_LOCKED", file.filename, username)
   else:
     try:
       existing_file_path = os.path.join(uploads_dir, file.filename)
@@ -103,19 +103,28 @@ def get_file_map_id(filename):
     return int(match.group())
   return None
 
-def is_valid_map_format(file):
+def is_invalid_map_format(file):
   # Check that the NBT map fields in the uploaded file exist before saving the file to disk
   compressed_buffer = file.getvalue()
   nbt_file = load_compressed_nbt_buffer(compressed_buffer)
 
   return \
-    get_nbt_map_value(nbt_file, "dimension") is not None and \
-    get_nbt_map_value(nbt_file, "locked") is not None and \
-    get_nbt_map_value(nbt_file, "colors") is not None and \
-    get_nbt_map_value(nbt_file, "scale") is not None and \
-    get_nbt_map_value(nbt_file, "trackingPosition") is not None and \
-    get_nbt_map_value(nbt_file, "xCenter") is not None and \
-    get_nbt_map_value(nbt_file, "zCenter") is not None
+    get_nbt_map_value(nbt_file, "dimension") is None or \
+    get_nbt_map_value(nbt_file, "locked") is None or \
+    get_nbt_map_value(nbt_file, "colors") is None or \
+    get_nbt_map_value(nbt_file, "scale") is None or \
+    get_nbt_map_value(nbt_file, "trackingPosition") is None or \
+    get_nbt_map_value(nbt_file, "xCenter") is None or \
+    get_nbt_map_value(nbt_file, "zCenter") is None
+
+def is_existing_map_file_locked(filename):
+  uploads_dir = app.config["MAP_UPLOADS_DIR"]
+  existing_file_path = os.path.join(uploads_dir, filename)
+  if os.path.isfile(existing_file_path):
+    existing_file_nbt = load_compressed_nbt_file(existing_file_path)
+    locked_value = get_nbt_map_value(existing_file_nbt, "locked")
+    return locked_value == 1
+  return False
 
 @app.route("/map/download", methods = ["GET", "POST"])
 def route_map_download():
