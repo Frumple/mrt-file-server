@@ -37,7 +37,7 @@ def configure_logger(app, mode):
     logger.addHandler(console_handler)
 
   logger.info("Logging configured.")
-  logger.info("Application mode is set to: '%s'", mode)
+  logger.info("Application mode is set to: '{}'", mode)
 
   return logger
 
@@ -51,44 +51,44 @@ def prepare_log_file(app, mode):
 
 def configure_log_messages(app):
   messages = {
-    "SCHEMATIC_UPLOAD_SUCCESS":                             "Schematic upload successful: '%s' (Username: '%s')",
-    "SCHEMATIC_UPLOAD_FAILURE":                             "Schematic upload failed: '%s' (Username: '%s', Exception: '%s')",
+    "SCHEMATIC_UPLOAD_SUCCESS":                             "Schematic upload successful: '{}' (Username: '{}')",
+    "SCHEMATIC_UPLOAD_FAILURE":                             "Schematic upload failed: '{}' (Username: '{}', Exception: '{}')",
     "SCHEMATIC_UPLOAD_USERNAME_EMPTY":                      "Schematic upload failed. Username is empty.",
-    "SCHEMATIC_UPLOAD_USERNAME_WHITESPACE":                 "Schematic upload failed. Username contains whitespace: '%s'",
-    "SCHEMATIC_UPLOAD_NO_FILES":                            "Schematic upload failed. No files specified. (Username: '%s')",
-    "SCHEMATIC_UPLOAD_TOO_MANY_FILES":                      "Schematic upload failed. Too many files. (Username: '%s')",
-    "SCHEMATIC_UPLOAD_FILE_TOO_LARGE":                      "Schematic upload failed. File too large: '%s' (Username: '%s')",
-    "SCHEMATIC_UPLOAD_FILE_EXISTS":                         "Schematic upload failed. File already exists: '%s' (Username: '%s')",
-    "SCHEMATIC_UPLOAD_FILENAME_WHITESPACE":                 "Schematic upload failed. Filename contains whitespace: '%s' (Username: '%s')",
-    "SCHEMATIC_UPLOAD_FILENAME_EXTENSION":                  "Schematic upload failed. Filename has invalid extension: '%s' (Username: '%s')",
+    "SCHEMATIC_UPLOAD_USERNAME_WHITESPACE":                 "Schematic upload failed. Username contains whitespace: '{}'",
+    "SCHEMATIC_UPLOAD_NO_FILES":                            "Schematic upload failed. No files specified. (Username: '{}')",
+    "SCHEMATIC_UPLOAD_TOO_MANY_FILES":                      "Schematic upload failed. Too many files. (Username: '{}')",
+    "SCHEMATIC_UPLOAD_FILE_TOO_LARGE":                      "Schematic upload failed. File too large: '{}' (Username: '{}')",
+    "SCHEMATIC_UPLOAD_FILE_EXISTS":                         "Schematic upload failed. File already exists: '{}' (Username: '{}')",
+    "SCHEMATIC_UPLOAD_FILENAME_WHITESPACE":                 "Schematic upload failed. Filename contains whitespace: '{}' (Username: '{}')",
+    "SCHEMATIC_UPLOAD_FILENAME_EXTENSION":                  "Schematic upload failed. Filename has invalid extension: '{}' (Username: '{}')",
 
-    "SCHEMATIC_DOWNLOAD_SUCCESS":                           "Schematic download initiated: '%s'",
-    "SCHEMATIC_DOWNLOAD_LINK_CREATION_SUCCESS":             "Schematic download link created: '%s'",
+    "SCHEMATIC_DOWNLOAD_SUCCESS":                           "Schematic download initiated: '{}'",
+    "SCHEMATIC_DOWNLOAD_LINK_CREATION_SUCCESS":             "Schematic download link created: '{}'",
     "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_EMPTY":      "Schematic download link creation failed. Filename is empty.",
-    "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_WHITESPACE": "Schematic download link creation failed. Filename contains whitespace: '%s'",
-    "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILE_NOT_FOUND":      "Schematic download link creation failed. File does not exist: '%s'",
-    "SCHEMATIC_DOWNLOAD_LINK_CREATION_INVALID_EXTENSION":   "Schematic download link creation failed. Invalid file extension: '%s'",
+    "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILENAME_WHITESPACE": "Schematic download link creation failed. Filename contains whitespace: '{}'",
+    "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILE_NOT_FOUND":      "Schematic download link creation failed. File does not exist: '{}'",
+    "SCHEMATIC_DOWNLOAD_LINK_CREATION_INVALID_EXTENSION":   "Schematic download link creation failed. Invalid file extension: '{}'",
 
-    "MAP_UPLOAD_SUCCESS":                                   "Map upload successful: '%s' (Username: '%s')",
-    "MAP_UPLOAD_FAILURE":                                   "Map upload failed: '%s' (Username: '%s', Exception: '%s')",
+    "MAP_UPLOAD_SUCCESS":                                   "Map upload successful: '{}' (Username: '{}')",
+    "MAP_UPLOAD_FAILURE":                                   "Map upload failed: '{}' (Username: '{}', Exception: '{}')",
     "MAP_UPLOAD_USERNAME_EMPTY":                            "Map upload failed. Username is empty.",
-    "MAP_UPLOAD_USERNAME_WHITESPACE":                       "Map upload failed. Username contains whitespace: '%s'",
-    "MAP_UPLOAD_NO_FILES":                                  "Map upload failed. No files specified. (Username: '%s')",
-    "MAP_UPLOAD_TOO_MANY_FILES":                            "Map upload failed. Too many files. (Username: '%s')",
-    "MAP_UPLOAD_FILE_TOO_LARGE":                            "Map upload failed. File too large: '%s' (Username: '%s')",
-    "MAP_UPLOAD_FILENAME_INVALID":                          "Map upload failed. File name is not of the format 'map_#####.dat': '%s' (Username: '%s')",
-    "MAP_UPLOAD_MAP_ID_OUT_OF_RANGE":                       "Map upload failed. Map ID is out of range: '%s' (Username: '%s')",
-    "MAP_UPLOAD_MAP_FORMAT_INVALID":                        "Map upload failed. File is not a valid map format: '%s' (Username: '%s')",
-    "MAP_UPLOAD_EXISTING_MAP_LOCKED":                                "Map upload failed. Existing map file is locked. Contact an admin for assistance: '%s' (Username: '%s')",
+    "MAP_UPLOAD_USERNAME_WHITESPACE":                       "Map upload failed. Username contains whitespace: '{}'",
+    "MAP_UPLOAD_NO_FILES":                                  "Map upload failed. No files specified. (Username: '{}')",
+    "MAP_UPLOAD_TOO_MANY_FILES":                            "Map upload failed. Too many files. (Username: '{}')",
+    "MAP_UPLOAD_FILE_TOO_LARGE":                            "Map upload failed. File too large: '{}' (Username: '{}')",
+    "MAP_UPLOAD_FILENAME_INVALID":                          "Map upload failed. File name is not of the format 'map_#####.dat': '{}' (Username: '{}')",
+    "MAP_UPLOAD_MAP_ID_OUT_OF_RANGE":                       "Map upload failed. Map ID is out of range: '{}' (Username: '{}')",
+    "MAP_UPLOAD_MAP_FORMAT_INVALID":                        "Map upload failed. File is not a valid map format: '{}' (Username: '{}')",
+    "MAP_UPLOAD_EXISTING_MAP_LOCKED":                                "Map upload failed. Existing map file is locked. Contact an admin for assistance: '{}' (Username: '{}')",
 
-    "MAP_DOWNLOAD_SUCCESS":                                 "Map download initiated: '%s'",
-    "MAP_DOWNLOAD_LINK_CREATION_SUCCESS":                   "Map download link created: '%s'",
+    "MAP_DOWNLOAD_SUCCESS":                                 "Map download initiated: '{}'",
+    "MAP_DOWNLOAD_LINK_CREATION_SUCCESS":                   "Map download link created: '{}'",
     "MAP_DOWNLOAD_LINK_CREATION_MAP_ID_EMPTY":              "Map download link creation failed. Map ID is empty.",
-    "MAP_DOWNLOAD_LINK_CREATION_MAP_ID_INVALID":            "Map download link creation failed. Map ID is invalid: '%s'",
-    "MAP_DOWNLOAD_LINK_CREATION_MAP_ID_OUT_OF_RANGE":       "Map download link creation failed. Map ID is out of range: '%s'",
-    "MAP_DOWNLOAD_LINK_CREATION_FILE_NOT_FOUND":            "Map download link creation failed. File does not exist: '%s'",
+    "MAP_DOWNLOAD_LINK_CREATION_MAP_ID_INVALID":            "Map download link creation failed. Map ID is invalid: '{}'",
+    "MAP_DOWNLOAD_LINK_CREATION_MAP_ID_OUT_OF_RANGE":       "Map download link creation failed. Map ID is out of range: '{}'",
+    "MAP_DOWNLOAD_LINK_CREATION_FILE_NOT_FOUND":            "Map download link creation failed. File does not exist: '{}'",
 
-    "WORLD_DOWNLOAD_SUCCESS":                               "World download initiated: '%s'",
+    "WORLD_DOWNLOAD_SUCCESS":                               "World download initiated: '{}'",
   }
 
   app.config["LOG_MESSAGES"] = messages
@@ -143,7 +143,7 @@ def configure_flash_messages(app):
 def load_environment_config(app, mode):
   Instance_relative_config_file_path = os.path.join(mode, "config.py")
   app.config.from_pyfile(Instance_relative_config_file_path)
-  logger.info("Environment config loaded from: '%s'", Instance_relative_config_file_path)
+  logger.info("Environment config loaded from: '{}'", Instance_relative_config_file_path)
 
 def configure_instance_folders(app, mode):
   instance_path = os.path.realpath(app.instance_path)
@@ -177,7 +177,7 @@ def configure_instance_folders(app, mode):
 
 def set_config_variable(name, value):
   app.config[name] = value
-  logger.info("Config variable '%s' set to: '%s'", name, value)
+  logger.info("Config variable '{}' set to: '{}'", name, value)
 
 def configure_schematic_uploads(app):
   schematics = UploadSet("schematics", extensions = ["schematic", "schem"])
