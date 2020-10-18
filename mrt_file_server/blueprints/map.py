@@ -120,10 +120,12 @@ def is_invalid_map_format(file):
 def is_existing_map_file_locked(filename):
   uploads_dir = app.config["MAP_UPLOADS_DIR"]
   existing_file_path = os.path.join(uploads_dir, filename)
+
   if os.path.isfile(existing_file_path):
     existing_file_nbt = load_compressed_nbt_file(existing_file_path)
     locked_value = get_nbt_map_value(existing_file_nbt, "locked")
     return locked_value == 1
+
   return False
 
 @app.route("/map/download", methods = ["GET", "POST"])

@@ -38,9 +38,9 @@ class TestMapUpload(TestMapBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
+    # Verify that the new map file was uploaded and locked
     expected_nbt_file = self.load_test_data_nbt_file(filename)
     uploaded_nbt_file = self.load_uploaded_nbt_file(filename)
-
     self.verify_matching_nbt_values(expected_nbt_file, uploaded_nbt_file)
 
     assert get_nbt_map_value(uploaded_nbt_file, "locked") == 1
@@ -81,9 +81,9 @@ class TestMapUpload(TestMapBase):
     logger_calls = []
 
     for filename in original_files:
+      # Verify that the new map files were uploaded and locked
       expected_nbt_file = self.load_test_data_nbt_file(filename)
       uploaded_nbt_file = self.load_uploaded_nbt_file(filename)
-
       self.verify_matching_nbt_values(expected_nbt_file, uploaded_nbt_file)
 
       assert get_nbt_map_value(uploaded_nbt_file, "locked") == 1
@@ -100,9 +100,10 @@ class TestMapUpload(TestMapBase):
   ])
   def test_upload_with_invalid_username_should_fail(self, mock_logger, username, message_key):
     filename = "map_1500.dat"
+    existing_filename = "existing_unlocked.dat"
 
-    self.copy_test_data_file("existing_unlocked.dat", self.uploads_dir, filename)
-    existing_file_content = self.load_test_data_file("existing_unlocked.dat")
+    self.copy_test_data_file(existing_filename, self.uploads_dir, filename)
+    existing_file_content = self.load_test_data_file(existing_filename)
 
     upload_file_content = self.load_test_data_file(filename)
 
@@ -115,7 +116,7 @@ class TestMapUpload(TestMapBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    # Verify existing file was NOT overwritten
+    # Verify that the existing map file was NOT overwritten
     self.verify_file_content(self.uploads_dir, filename, existing_file_content)
 
     self.verify_flash_message_by_key(message_key, response.data)
@@ -143,6 +144,7 @@ class TestMapUpload(TestMapBase):
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_with_too_many_files_should_fail(self, mock_logger):
     username = "Frumple"
+    existing_filename = "existing_unlocked.dat"
 
     # Upload 11 files, over the limit of 10.
     filenames = [
@@ -159,9 +161,9 @@ class TestMapUpload(TestMapBase):
       "map_2000.dat"]
 
     for filename in filenames:
-      self.copy_test_data_file("existing_unlocked.dat", self.uploads_dir, filename)
+      self.copy_test_data_file(existing_filename, self.uploads_dir, filename)
 
-    existing_file_content = self.load_test_data_file("existing_unlocked.dat")
+    existing_file_content = self.load_test_data_file(existing_filename)
 
     upload_files = self.load_test_data_files(filenames)
 
@@ -176,7 +178,7 @@ class TestMapUpload(TestMapBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    # Verify none of the existing files were overwritten
+    # Verify that none of the existing map files were overwritten
     for filename in filenames:
       self.verify_file_content(self.uploads_dir, filename, existing_file_content)
 
@@ -204,7 +206,7 @@ class TestMapUpload(TestMapBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    # Verify file was NOT uploaded
+    # Verify that the new map file was NOT uploaded
     uploaded_file_path = os.path.join(self.uploads_dir, filename)
     assert os.path.isfile(uploaded_file_path) == False
 
@@ -236,7 +238,7 @@ class TestMapUpload(TestMapBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    # Verify existing file was NOT overwritten
+    # Verify that the existing map file was NOT overwritten
     self.verify_file_content(self.uploads_dir, filename, existing_file_content)
 
     self.verify_flash_message_by_key("MAP_UPLOAD_FILENAME_INVALID", response.data, filename)
@@ -260,9 +262,10 @@ class TestMapUpload(TestMapBase):
   ])
   def test_upload_with_invalid_file_should_fail(self, mock_logger, filename, message_key):
     username = "Frumple"
+    existing_filename = "existing_unlocked.dat"
 
-    self.copy_test_data_file("existing_unlocked.dat", self.uploads_dir, filename)
-    existing_file_content = self.load_test_data_file("existing_unlocked.dat")
+    self.copy_test_data_file(existing_filename, self.uploads_dir, filename)
+    existing_file_content = self.load_test_data_file(existing_filename)
 
     upload_file_content = self.load_test_data_file(filename)
 
@@ -275,7 +278,7 @@ class TestMapUpload(TestMapBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    # Verify existing file was NOT overwritten
+    # Verify that the existing map file was NOT overwritten
     self.verify_file_content(self.uploads_dir, filename, existing_file_content)
 
     self.verify_flash_message_by_key(message_key, response.data, filename)
@@ -285,9 +288,10 @@ class TestMapUpload(TestMapBase):
   def test_upload_where_existing_file_is_already_locked_should_fail(self, mock_logger):
     username = "Frumple"
     filename = "map_1500.dat"
+    existing_filename = "existing_locked.dat"
 
-    self.copy_test_data_file("existing_locked.dat", self.uploads_dir, filename)
-    existing_file_content = self.load_test_data_file("existing_locked.dat")
+    self.copy_test_data_file(existing_filename, self.uploads_dir, filename)
+    existing_file_content = self.load_test_data_file(existing_filename)
 
     upload_file_content = self.load_test_data_file(filename)
 
@@ -300,7 +304,7 @@ class TestMapUpload(TestMapBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    # Verify existing file was NOT overwritten
+    # Verify that the existing map file was NOT overwritten
     self.verify_file_content(self.uploads_dir, filename, existing_file_content)
 
     self.verify_flash_message_by_key("MAP_UPLOAD_EXISTING_MAP_LOCKED", response.data, filename)
@@ -330,7 +334,8 @@ class TestMapUpload(TestMapBase):
     assert second_response.status_code == 200
     assert second_response.mimetype == "text/html"
 
-    # Verify file was uploaded, but "existing file locked" error message appears after second upload
+    # Verify that the new map file was uploaded and locked,
+    # but the "existing file locked" error message appears after second upload
     expected_nbt_file = self.load_test_data_nbt_file(filename)
     uploaded_nbt_file = self.load_uploaded_nbt_file(filename)
 
