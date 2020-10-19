@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, send_from_directory
+from flask import Blueprint, abort, render_template, request, send_from_directory
 from werkzeug.utils import secure_filename
 
 from mrt_file_server import app, maps
@@ -94,6 +94,67 @@ def upload_single_map(username, file):
       message = flash_by_key(app, "MAP_UPLOAD_FAILURE", file.filename)
       log_info("MAP_UPLOAD_FAILURE", file.filename, username, e)
 
+@app.route("/map/download", methods = ["GET", "POST"])
+def route_map_download():
+  response = False
+
+  if request.method == "POST":
+    create_map_download_link()
+
+  return render_template("map/download/index.html", home = False)
+
+def create_map_download_link():
+  map_id_as_str = request.form["mapId"]
+  file_name = "map_{}.dat".format(map_id_as_str)
+  downloads_dir = app.config["MAP_DOWNLOADS_DIR"]
+
+  if map_id_as_str == "":
+    flash_by_key(app, "MAP_DOWNLOAD_LINK_CREATION_MAP_ID_EMPTY")
+    log_warn("MAP_DOWNLOAD_LINK_CREATION_MAP_ID_EMPTY")
+    return
+
+  map_id_as_int = parse_map_id_as_integer(map_id_as_str)
+
+  if map_id_as_int is None:
+    flash_by_key(app, "MAP_DOWNLOAD_LINK_CREATION_MAP_ID_INVALID", file_name)
+    log_warn("MAP_DOWNLOAD_LINK_CREATION_MAP_ID_INVALID", file_name)
+    return
+
+  last_map_id = get_last_map_id()
+
+  if map_id_as_int < 0 or map_id_as_int > last_map_id:
+    flash_by_key(app, "MAP_DOWNLOAD_LINK_CREATION_MAP_ID_OUT_OF_RANGE", file_name)
+    log_warn("MAP_DOWNLOAD_LINK_CREATION_MAP_ID_OUT_OF_RANGE", file_name)
+    return
+
+  secure_file_name = secure_filename(file_name)
+
+  if file_exists_in_dir(downloads_dir, secure_file_name):
+    flash_by_key(app, "MAP_DOWNLOAD_LINK_CREATION_SUCCESS", secure_file_name)
+    log_info("MAP_DOWNLOAD_LINK_CREATION_SUCCESS", secure_file_name)
+  else:
+    flash_by_key(app, "MAP_DOWNLOAD_LINK_CREATION_FILE_NOT_FOUND", secure_file_name)
+    log_warn("MAP_DOWNLOAD_LINK_CREATION_FILE_NOT_FOUND", secure_file_name)
+
+def parse_map_id_as_integer(map_id_as_str):
+  try:
+    return int(map_id_as_str)
+  except ValueError:
+    return None
+
+@app.route("/map/download/<path:filename>")
+def download_map(filename):
+  downloads_dir = app.config["MAP_DOWNLOADS_DIR"]
+  file_map_id = get_file_map_id(filename)
+
+  if file_map_id is None:
+    log_warn("MAP_DOWNLOAD_FORBIDDEN", filename)
+    abort(403)
+
+  response = send_from_directory(downloads_dir, filename, as_attachment = True)
+  log_info("MAP_DOWNLOAD_SUCCESS", filename)
+  return response
+
 def get_last_map_id():
   uploads_dir = app.config["MAP_UPLOADS_DIR"]
   idcounts_file_path = os.path.join(uploads_dir, "idcounts.dat")
@@ -130,22 +191,3 @@ def is_existing_map_file_locked(filename):
     return locked_value == 1
 
   return False
-
-@app.route("/map/download", methods = ["GET", "POST"])
-def route_map_download():
-  response = False
-
-  if request.method == "POST":
-    response = create_map_download_link()
-
-  if response:
-    return response
-  else:
-    return render_template("map/download/index.html", home = False)
-
-def create_map_download_link():
-  return
-
-@app.route("/map/download/<path:filename>")
-def download_map(filename):
-  return

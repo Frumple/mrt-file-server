@@ -3,7 +3,7 @@
 {% block body %}
 <span>Download map item files directly from the Minecraft server here.</span>
 
-<form method="post" action="{{ url_for('route_schematic_download') }}">
+<form method="post" action="{{ url_for('route_map_download') }}">
   <h2>Enter the numerical ID of the map file:</h2>
   <span>Filename: map_</span>
   <input type="text" id="mapId" name="mapId" />

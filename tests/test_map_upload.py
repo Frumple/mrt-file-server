@@ -34,6 +34,7 @@ class TestMapUpload(TestMapBase):
   def test_upload_single_file_should_be_successful(self, mock_logger):
     username = "Frumple"
     filename = "map_1500.dat"
+    message_key = "MAP_UPLOAD_SUCCESS"
 
     self.copy_test_data_file("existing_unlocked.dat", self.uploads_dir, filename)
 
@@ -55,12 +56,13 @@ class TestMapUpload(TestMapBase):
 
     assert get_nbt_map_value(uploaded_nbt_file, "locked") == 1
 
-    self.verify_flash_message_by_key("MAP_UPLOAD_SUCCESS", response.data, filename)
-    mock_logger.info.assert_called_with(self.get_log_message("MAP_UPLOAD_SUCCESS"), filename, username)
+    self.verify_flash_message_by_key(message_key, response.data, filename)
+    mock_logger.info.assert_called_with(self.get_log_message(message_key), filename, username)
 
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_multiple_files_should_be_successful(self, mock_logger):
     username = "Frumple"
+    message_key = "MAP_UPLOAD_SUCCESS"
 
     # Upload 7 files
     filenames = [
@@ -98,8 +100,8 @@ class TestMapUpload(TestMapBase):
 
       assert get_nbt_map_value(uploaded_nbt_file, "locked") == 1
 
-      self.verify_flash_message_by_key("MAP_UPLOAD_SUCCESS", response.data, filename)
-      logger_calls.append(call(self.get_log_message("MAP_UPLOAD_SUCCESS"), filename, username))
+      self.verify_flash_message_by_key(message_key, response.data, filename)
+      logger_calls.append(call(self.get_log_message(message_key), filename, username))
 
     mock_logger.info.assert_has_calls(logger_calls, any_order = True)
 
@@ -139,6 +141,7 @@ class TestMapUpload(TestMapBase):
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_with_no_files_should_fail(self, mock_logger):
     username = "Frumple"
+    message_key = "MAP_UPLOAD_NO_FILES"
 
     data = OrderedMultiDict()
     data.add("userName", username)
@@ -148,13 +151,14 @@ class TestMapUpload(TestMapBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    self.verify_flash_message_by_key("MAP_UPLOAD_NO_FILES", response.data)
-    mock_logger.warn.assert_called_with(self.get_log_message("MAP_UPLOAD_NO_FILES"), username)
+    self.verify_flash_message_by_key(message_key, response.data)
+    mock_logger.warn.assert_called_with(self.get_log_message(message_key), username)
 
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_with_too_many_files_should_fail(self, mock_logger):
     username = "Frumple"
     existing_filename = "existing_unlocked.dat"
+    message_key = "MAP_UPLOAD_TOO_MANY_FILES"
 
     # Upload 11 files, over the limit of 10.
     filenames = [
@@ -192,8 +196,8 @@ class TestMapUpload(TestMapBase):
     for filename in filenames:
       self.verify_file_content(self.uploads_dir, filename, existing_file_content)
 
-    self.verify_flash_message_by_key("MAP_UPLOAD_TOO_MANY_FILES", response.data)
-    mock_logger.warn.assert_called_with(self.get_log_message("MAP_UPLOAD_TOO_MANY_FILES"), username)
+    self.verify_flash_message_by_key(message_key, response.data)
+    mock_logger.warn.assert_called_with(self.get_log_message(message_key), username)
 
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   @pytest.mark.parametrize("filename", [
@@ -204,6 +208,7 @@ class TestMapUpload(TestMapBase):
   ])
   def test_upload_with_invalid_filename_should_fail(self, mock_logger, filename):
     username = "Frumple"
+    message_key = "MAP_UPLOAD_FILENAME_INVALID"
 
     upload_file_content = self.load_test_data_file(filename)
 
@@ -220,8 +225,8 @@ class TestMapUpload(TestMapBase):
     uploaded_file_path = os.path.join(self.uploads_dir, filename)
     assert os.path.isfile(uploaded_file_path) == False
 
-    self.verify_flash_message_by_key("MAP_UPLOAD_FILENAME_INVALID", response.data, filename)
-    mock_logger.warn.assert_called_with(self.get_log_message("MAP_UPLOAD_FILENAME_INVALID"), filename, username)
+    self.verify_flash_message_by_key(message_key, response.data, filename)
+    mock_logger.warn.assert_called_with(self.get_log_message(message_key), filename, username)
 
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   @pytest.mark.parametrize("filename", [
@@ -232,6 +237,7 @@ class TestMapUpload(TestMapBase):
   ])
   def test_upload_with_invalid_filename_and_file_already_exists_should_fail(self, mock_logger, filename):
     username = "Frumple"
+    message_key = "MAP_UPLOAD_FILENAME_INVALID"
 
     self.copy_test_data_file(filename, self.uploads_dir)
     existing_file_content = self.load_test_data_file(filename)
@@ -251,8 +257,8 @@ class TestMapUpload(TestMapBase):
     # Verify that the existing map file was NOT overwritten
     self.verify_file_content(self.uploads_dir, filename, existing_file_content)
 
-    self.verify_flash_message_by_key("MAP_UPLOAD_FILENAME_INVALID", response.data, filename)
-    mock_logger.warn.assert_called_with(self.get_log_message("MAP_UPLOAD_FILENAME_INVALID"), filename, username)
+    self.verify_flash_message_by_key(message_key, response.data, filename)
+    mock_logger.warn.assert_called_with(self.get_log_message(message_key), filename, username)
 
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   @pytest.mark.parametrize("filename, message_key", [
@@ -299,6 +305,7 @@ class TestMapUpload(TestMapBase):
     username = "Frumple"
     filename = "map_1500.dat"
     existing_filename = "existing_locked.dat"
+    message_key = "MAP_UPLOAD_EXISTING_MAP_LOCKED"
 
     self.copy_test_data_file(existing_filename, self.uploads_dir, filename)
     existing_file_content = self.load_test_data_file(existing_filename)
@@ -317,13 +324,14 @@ class TestMapUpload(TestMapBase):
     # Verify that the existing map file was NOT overwritten
     self.verify_file_content(self.uploads_dir, filename, existing_file_content)
 
-    self.verify_flash_message_by_key("MAP_UPLOAD_EXISTING_MAP_LOCKED", response.data, filename)
-    mock_logger.warn.assert_called_with(self.get_log_message("MAP_UPLOAD_EXISTING_MAP_LOCKED"), filename, username)
+    self.verify_flash_message_by_key(message_key, response.data, filename)
+    mock_logger.warn.assert_called_with(self.get_log_message(message_key), filename, username)
 
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_same_file_twice_should_fail(self, mock_logger):
     username = "Frumple"
     filename = "map_1500.dat"
+    message_key = "MAP_UPLOAD_EXISTING_MAP_LOCKED"
 
     self.copy_test_data_file("existing_unlocked.dat", self.uploads_dir, filename)
 
@@ -353,8 +361,8 @@ class TestMapUpload(TestMapBase):
 
     assert get_nbt_map_value(uploaded_nbt_file, "locked") == 1
 
-    self.verify_flash_message_by_key("MAP_UPLOAD_EXISTING_MAP_LOCKED", second_response.data, filename)
-    mock_logger.warn.assert_called_with(self.get_log_message("MAP_UPLOAD_EXISTING_MAP_LOCKED"), filename, username)
+    self.verify_flash_message_by_key(message_key, second_response.data, filename)
+    mock_logger.warn.assert_called_with(self.get_log_message(message_key), filename, username)
 
   # Helper Functions
 

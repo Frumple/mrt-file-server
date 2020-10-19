@@ -25,12 +25,10 @@ class TestSchematicDownload(TestSchematicBase):
   ])
   def test_create_download_link_should_be_successful(self, mock_logger, filename):
     message_key = "SCHEMATIC_DOWNLOAD_LINK_CREATION_SUCCESS"
-    original_file_content = self.load_test_data_file(filename)
 
-    # Copy the schematic to the download folder
     self.copy_test_data_file(filename, self.downloads_dir)
 
-    data = self.createRequestData(filename)
+    data = self.create_request_data(filename)
     response = self.create_download_link(data)
 
     assert response.status_code == 200
@@ -47,7 +45,7 @@ class TestSchematicDownload(TestSchematicBase):
     ("mrt_v5_final_elevated_centre_station.txt",       "SCHEMATIC_DOWNLOAD_LINK_CREATION_INVALID_EXTENSION")
   ])
   def test_create_download_link_should_fail(self, mock_logger, filename, message_key):
-    data = self.createRequestData(filename)
+    data = self.create_request_data(filename)
     response = self.create_download_link(data)
 
     assert response.status_code == 200
@@ -68,7 +66,6 @@ class TestSchematicDownload(TestSchematicBase):
   def test_download_should_be_successful(self, mock_logger, filename):
     original_file_content = self.load_test_data_file(filename)
 
-    # Copy the schematic to the download folder
     self.copy_test_data_file(filename, self.downloads_dir)
 
     response = self.start_download(filename)
@@ -93,7 +90,7 @@ class TestSchematicDownload(TestSchematicBase):
   def start_download(self, filename):
     return self.client.get("/schematic/download/{}".format(filename))
 
-  def createRequestData(self, filename):
+  def create_request_data(self, filename):
     pair = os.path.splitext(filename)
 
     data = OrderedMultiDict()

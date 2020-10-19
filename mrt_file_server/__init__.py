@@ -82,6 +82,7 @@ def configure_log_messages(app):
     "MAP_UPLOAD_EXISTING_MAP_LOCKED":                                "Map upload failed. Existing map file is locked. Contact an admin for assistance: '{}' (Username: '{}')",
 
     "MAP_DOWNLOAD_SUCCESS":                                 "Map download initiated: '{}'",
+    "MAP_DOWNLOAD_FORBIDDEN":                               "Map download forbidden: '{}'",
     "MAP_DOWNLOAD_LINK_CREATION_SUCCESS":                   "Map download link created: '{}'",
     "MAP_DOWNLOAD_LINK_CREATION_MAP_ID_EMPTY":              "Map download link creation failed. Map ID is empty.",
     "MAP_DOWNLOAD_LINK_CREATION_MAP_ID_INVALID":            "Map download link creation failed. Map ID is invalid: '{}'",

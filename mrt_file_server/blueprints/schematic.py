@@ -77,12 +77,9 @@ def route_schematic_download():
   response = False
 
   if request.method == "POST":
-    response = create_schematic_download_link()
+    create_schematic_download_link()
 
-  if response:
-    return response
-  else:
-    return render_template("schematic/download/index.html", home = False)
+  return render_template("schematic/download/index.html", home = False)
 
 def create_schematic_download_link():
   file_root = request.form["fileRoot"]
@@ -110,13 +107,14 @@ def create_schematic_download_link():
   if file_exists_in_dir(downloads_dir, secure_file_name):
     flash_by_key(app, "SCHEMATIC_DOWNLOAD_LINK_CREATION_SUCCESS", secure_file_name)
     log_info("SCHEMATIC_DOWNLOAD_LINK_CREATION_SUCCESS", secure_file_name)
-    return
   else:
     flash_by_key(app, "SCHEMATIC_DOWNLOAD_LINK_CREATION_FILE_NOT_FOUND", secure_file_name)
     log_warn("SCHEMATIC_DOWNLOAD_LINK_CREATION_FILE_NOT_FOUND", secure_file_name)
-    return
 
 @app.route("/schematic/download/<path:filename>")
 def download_schematic(filename):
+  downloads_dir = app.config["SCHEMATIC_DOWNLOADS_DIR"]
+
+  response = send_from_directory(downloads_dir, filename, as_attachment = True)
   log_info("SCHEMATIC_DOWNLOAD_SUCCESS", filename)
-  return send_from_directory(app.config["SCHEMATIC_DOWNLOADS_DIR"], filename, as_attachment = True)
+  return response

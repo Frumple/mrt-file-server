@@ -28,6 +28,7 @@ class TestSchematicUpload(TestSchematicBase):
     username = "Frumple"
     uploaded_filename = self.uploaded_filename(username, filename)
     original_file_content = self.load_test_data_file(filename)
+    message_key = "SCHEMATIC_UPLOAD_SUCCESS"
 
     data = OrderedMultiDict()
     data.add("userName", username)
@@ -38,14 +39,15 @@ class TestSchematicUpload(TestSchematicBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_SUCCESS", response.data, uploaded_filename)
     self.verify_file_content(self.uploads_dir, uploaded_filename, original_file_content)
 
-    mock_logger.info.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_SUCCESS"), uploaded_filename, username)
+    self.verify_flash_message_by_key(message_key, response.data, uploaded_filename)
+    mock_logger.info.assert_called_with(self.get_log_message(message_key), uploaded_filename, username)
 
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_multiple_files_should_be_successful(self, mock_logger):
     username = "Frumple"
+    message_key = "SCHEMATIC_UPLOAD_SUCCESS"
 
     # Upload 5 files
     filenames = [
@@ -73,10 +75,10 @@ class TestSchematicUpload(TestSchematicBase):
     for filename in original_files:
       uploaded_filename = self.uploaded_filename(username, filename)
 
-      self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_SUCCESS", response.data, uploaded_filename)
       self.verify_file_content(self.uploads_dir, uploaded_filename, original_files[filename])
 
-      logger_calls.append(call(self.get_log_message("SCHEMATIC_UPLOAD_SUCCESS"), uploaded_filename, username))
+      self.verify_flash_message_by_key(message_key, response.data, uploaded_filename)
+      logger_calls.append(call(self.get_log_message(message_key), uploaded_filename, username))
 
     mock_logger.info.assert_has_calls(logger_calls, any_order = True)
 
@@ -98,8 +100,9 @@ class TestSchematicUpload(TestSchematicBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    self.verify_flash_message_by_key(message_key, response.data)
     self.verify_schematic_uploads_dir_is_empty()
+
+    self.verify_flash_message_by_key(message_key, response.data)
 
     if username:
       mock_logger.warn.assert_called_with(self.get_log_message(message_key), username)
@@ -126,14 +129,15 @@ class TestSchematicUpload(TestSchematicBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    self.verify_flash_message_by_key(message_key, response.data, uploaded_filename)
     self.verify_schematic_uploads_dir_is_empty()
 
+    self.verify_flash_message_by_key(message_key, response.data, uploaded_filename)
     mock_logger.warn.assert_called_with(self.get_log_message(message_key), uploaded_filename, username)
 
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_with_no_files_should_fail(self, mock_logger):
     username = "Frumple"
+    message_key = "SCHEMATIC_UPLOAD_NO_FILES"
 
     data = OrderedMultiDict()
     data.add("userName", username)
@@ -143,14 +147,15 @@ class TestSchematicUpload(TestSchematicBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_NO_FILES", response.data)
     self.verify_schematic_uploads_dir_is_empty()
 
-    mock_logger.warn.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_NO_FILES"), username)
+    self.verify_flash_message_by_key(message_key, response.data)
+    mock_logger.warn.assert_called_with(self.get_log_message(message_key), username)
 
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_with_too_many_files_should_fail(self, mock_logger):
     username = "Frumple"
+    message_key = "SCHEMATIC_UPLOAD_TOO_MANY_FILES"
 
     # Upload 12 files, over the limit of 10.
     filenames = [
@@ -180,10 +185,10 @@ class TestSchematicUpload(TestSchematicBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_TOO_MANY_FILES", response.data)
     self.verify_schematic_uploads_dir_is_empty()
 
-    mock_logger.warn.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_TOO_MANY_FILES"), username)
+    self.verify_flash_message_by_key(message_key, response.data)
+    mock_logger.warn.assert_called_with(self.get_log_message(message_key), username)
 
   @patch("mrt_file_server.utils.log_utils.log_adapter")
   def test_upload_file_that_already_exists_should_fail(self, mock_logger):
@@ -191,6 +196,7 @@ class TestSchematicUpload(TestSchematicBase):
     filename = "mrt_v5_final_elevated_centre_station.schematic"
     uploaded_filename = self.uploaded_filename(username, filename)
     impostor_filename = "mrt_v5_final_underground_single_track.schematic"
+    message_key = "SCHEMATIC_UPLOAD_FILE_EXISTS"
 
     # Copy an impostor file with different content to the uploads directory with the same name as the file to upload
     self.copy_test_data_file(impostor_filename, self.uploads_dir, uploaded_filename)
@@ -206,8 +212,6 @@ class TestSchematicUpload(TestSchematicBase):
     assert response.status_code == 200
     assert response.mimetype == "text/html"
 
-    self.verify_flash_message_by_key("SCHEMATIC_UPLOAD_FILE_EXISTS", response.data, uploaded_filename)
-
     # Verify that the uploads directory has only the impostor file, and the file has not been modified
     files = os.listdir(self.uploads_dir)
     assert len(files) == 1
@@ -215,7 +219,8 @@ class TestSchematicUpload(TestSchematicBase):
     impostor_file_content = self.load_test_data_file(impostor_filename)
     self.verify_file_content(self.uploads_dir, uploaded_filename, impostor_file_content)
 
-    mock_logger.warn.assert_called_with(self.get_log_message("SCHEMATIC_UPLOAD_FILE_EXISTS"), uploaded_filename, username)
+    self.verify_flash_message_by_key(message_key, response.data, uploaded_filename)
+    mock_logger.warn.assert_called_with(self.get_log_message(message_key), uploaded_filename, username)
 
   # Helper Functions
 
