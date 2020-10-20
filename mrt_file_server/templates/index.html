@@ -2,12 +2,37 @@
 {% block title %}Home{% endblock %}
 {% block body %}
 <h2>Welcome to the Minecart Rapid Transit File Server!</h2>
-<span>This server currently provides the following functions for MRT members:</span>
-<ul>
-  <li><a href="{{ url_for('route_schematic_upload') }}">Schematic Uploader</a> - Upload WorldEdit schematic files to the Minecraft server.</li>
-  <li><a href="{{ url_for('route_schematic_download') }}">Schematic Downloader</a> - Download WorldEdit schematic files from the Minecraft server.</li>
-  <li><a href="{{ url_for('route_map_upload') }}">Map Uploader</a> - Upload map item files to the Minecraft server.</li>
-  <li><a href="{{ url_for('route_map_download') }}">Map Downloader</a> - Download map item files from the Minecraft server.</li>
-  <li><a href="{{ url_for('show_world_downloads_terms') }}">World Downloads</a> - Download archives of the MRT worlds to your local computer.</li>
-</ul>
+<span>This server provides the following functions for MRT members:</span>
+<div class="home">
+  <div class="home__schematic-upload">
+    <a href="{{ url_for('route_schematic_upload') }}" class="home__link">
+      <img src="{{ url_for('static', filename='images/schematic-upload.png') }}" alt="Upload Schematics" />
+      <span>Upload Schematics</span>
+    </a>
+  </div>
+
+  <div class="home__map-upload">
+    <a href="{{ url_for('route_map_upload') }}"  class="home__link">
+      <img src="{{ url_for('static', filename='images/map-upload.png') }}" alt="Upload Maps" />Upload Maps
+    </a>
+  </div>
+
+  <div class="home__schematic-download">
+    <a href="{{ url_for('route_schematic_download') }}"  class="home__link">
+      <img src="{{ url_for('static', filename='images/schematic-download.png') }}" alt="Download Schematics" />Download Schematics
+    </a>
+  </div>
+
+  <div class="home__map-download">
+    <a href="{{ url_for('route_map_download') }}"  class="home__link">
+      <img src="{{ url_for('static', filename='images/map-download.png') }}" alt="Download Maps" />Download Maps
+    </a>
+  </div>
+
+  <div class="home__world-download">
+    <a href="{{ url_for('show_world_downloads_terms') }}"  class="home__link">
+      <img src="{{ url_for('static', filename='images/world-download.png') }}" alt="Download Worlds" />Download Worlds
+    </a>
+  </div>
+</div>
 {% endblock %}

@@ -8,7 +8,7 @@ This application was built for the **[Minecart Rapid Transit (MRT) Minecraft Ser
 
 ## Prerequisites
 
-This application uses **Python 3.8.0 or higher**. Install it from **[https://www.python.org](https://www.python.org/)**.
+This application uses **Python 3.8.0 only**. Install it from **[https://www.python.org](https://www.python.org/)**. Python 3.9.0 or higher will currently not work due to an unresolved deprecation in the NBT package.
 
 After installing Python, install the required packages by navigating to the application root directory and running **pip** with the provided requirements file:
 
@@ -48,9 +48,10 @@ If you want both of the schematic upload and download directories to point to yo
 
 - **`SCHEMATIC_UPLOAD_MAX_NUMBER_OF_FILES`** - Maximum number of schematic files that can be uploaded at one time. (Default: 10)
 - **`SCHEMATIC_UPLOAD_MAX_FILE_SIZE`** - Maximum number of bytes that can be uploaded per schematic file. (Default: 100 kilobytes)
-
 - **`MAP_UPLOAD_MAX_NUMBER_OF_FILES`** - Maximum number of map files that can be uploaded at one time. (Default: 10)
 - **`MAP_UPLOAD_MAX_FILE_SIZE`** - Maximum number of bytes that can be uploaded per map file. (Default: 100 kilobytes)
+- **`MAX_UPLOAD_LAST_ALLOWED_ID_RANGE`** - Number of last map IDs that are allowed to be uploaded. (Default: 1000) 
+  - Example: If last map ID in `idcounts.dat` is 2500, and `MAX_UPLOAD_LAST_ALLOWED_ID_RANGE` is 1000, then the range of allowed map IDs is 1501 to 2500.
 
 These basic authentication settings are from the **[Flask-BasicAuth](https://github.com/jpvanhal/flask-basicauth)** extension:
 - **`BASIC_AUTH_FORCE`** - Set to True to enable basic authentication on the whole application. (Default: False in development and test environments, True in production)

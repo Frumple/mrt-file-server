@@ -11,6 +11,41 @@
   margin-right: 10px;
 }
 
+.home {
+  display: grid;
+  grid-template:
+    [row1-start] "schematic-upload map-upload ." [row1-end]
+    [row2-start] "schematic-download map-download world-download" [row2-end]
+    / auto auto;
+  width: 800px;
+}
+
+.home__schematic-upload {
+  grid-area: schematic-upload;
+}
+
+.home__map-upload {
+  grid-area: map-upload;
+}
+
+.home__schematic-download {
+  grid-area: schematic-download;
+}
+
+.home__map-download {
+  grid-area: map-download;
+}
+
+.home__world-download {
+  grid-area: world-download;
+}
+
+.home__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .credits {
     font-size: small;
     font-style: italic;
