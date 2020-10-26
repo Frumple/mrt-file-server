@@ -203,6 +203,7 @@ class TestMapUpload(TestMapBase):
   @pytest.mark.parametrize("filename", [
     ("1510.dat"),      # Does not start with map_
     ("map_.dat"),      # No Map ID
+    ("map_-1.dat"),    # Negative Map ID
     ("map_1510a.dat"), # Invalid Map ID
     ("map_1510.png")   # Wrong extension
   ])
