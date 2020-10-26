@@ -6,9 +6,13 @@ A simple Flask web application that allows players to upload and download map it
 
 This application was built for the **[Minecart Rapid Transit (MRT) Minecraft Server](https://www.minecartrapidtransit.net)**.
 
+<div align="center">
+  <img src="https://github.com/Frumple/mrt-file-server/blob/master/homepage.png" />
+</div>
+
 ## Prerequisites
 
-This application uses **Python 3.8.0 only**. Install it from **[https://www.python.org](https://www.python.org/)**. Python 3.9.0 or higher will currently not work due to an unresolved deprecation in the NBT package.
+This application uses **[Python 3.8.6](https://www.python.org/downloads/release/python-386/)**. Python 3.9.0 or higher currently does not work due to an unresolved deprecation in the NBT package.
 
 After installing Python, install the required packages by navigating to the application root directory and running **pip** with the provided requirements file:
 
