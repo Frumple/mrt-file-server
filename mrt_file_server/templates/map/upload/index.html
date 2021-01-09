@@ -3,22 +3,43 @@
 {% block body %}
 <script type="text/javascript" src="{{ url_for('static', filename = 'scripts/file-upload.js') }}" defer></script>
 
-<span>Upload your map .dat files to the Minecraft server here. Note that any uploaded changes will not take effect until the next server restart, which is scheduled daily at 5:00 AM UTC.</span>
+<span>Upload your map .dat files to the Minecraft server here.</span>
 
 <form method="post" enctype="multipart/form-data" action="{{ url_for('route_map_upload') }}">
-  <h2>1. Enter your Minecraft Username</h2>
+  <h2>1. Create the map .dat files</h2>
+  <span style="color: red;"><strong>PLEASE READ ALL OF THE FOLLOWING INSTRUCTIONS CAREFULLY:</strong></span>
+  <ol>
+    <li>On the Minecraft server, put the <strong>"Empty Map"</strong> item into your hand and right-click it to generate a new map. Mouse over the map and take note of its numerical ID.
+      <ol type="a">
+        <li>If you want to split your image into multiple maps, generate additional maps in-game as needed. (i.e. if you want a 2x2 pattern of maps, generate 4 maps in total. For 3x3, generate 9 maps in total.)</li>
+      </ol>
+    </li>
+    <li>Find the image files that you want to upload (in png, jpg, or gif format), and resize or crop them to square dimensions (width = height) using your favourite image-editing software.</li>
+    <li>Go to <strong><a href="https://mc-map.djfun.de">https://mc-map.djfun.de</a></strong> and follow these steps:
+      <ol type="a">
+        <li>Go to the <strong>"Settings"</strong> tab, and change the <strong>"Color scheme"</strong> field to <strong>"Version 1.12 (2017)"</strong>. Click <strong>"Save Settings"</strong>.</li>
+        <li>Go back to the <strong>"Main"</strong> tab and select the image file to upload.</li>
+        <li>On Step 2, if you are splitting your image into multiple maps, set the horizontal and vertical dimensions here. Otherwise, just use the default values of "1".</li>
+        <li>On Step 3, check that the resulting colors of the map(s). If they are acceptable to you, click "Adjust colors".</li>
+        <li>On Step 4, enter the numerical ID of the map noted down in Step 1. For multiple maps, enter the lowest of these IDs, and the maps will be named sequentially. (i.e. For 4 maps with IDs 1000, 1001, 1002, 1003, enter in 1000.)</li>
+        <li>On Step 5, download the .dat files when they are ready.</li>
+      </ol>
+    </li>
+    <li>Upload the .dat files below, then <strong>check the maps in-game after the next server restart, scheduled daily at 5:00 AM UTC.</strong></li>
+  </ol>
+  <h2>2. Enter your Minecraft Username</h2>
   <span>Username:</span>
   <input type="text" id="userName" name="userName" oninput="handleFiles(fileInput.files)" />
   <br />
-  <h2>2. Select maps to upload</h2>
+  <h2>3. Select maps to upload</h2>
   <span>Please note:</span>
   <ul>
     <li>Maximum of 10 files can be uploaded at one time.</li>
     <li>Maximum size per file is 100 kilobytes.</li>
-    <li>Each file must have a valid <a href="https://minecraft.gamepedia.com/Map_item_format" target="_blank">NBT map item format</a>. Instructions on how to make these files can be found on the <a href="https://www.minecartrapidtransit.net/policies-procedures/#Map_Uploads" target="_blank">Policies &amp; Procedures</a> page on the MRT website.</li>
+    <li>Each file must have a valid <a href="https://minecraft.gamepedia.com/Map_item_format" target="_blank">NBT map item format</a>.</li>
     <li>File names must have the following format: <strong>map_#####.dat</strong>, where ##### is the map ID.</li>
     <li>Map IDs must be within the last {{ last_allowed_id_range }} maps recently created on the server, currently from IDs <strong>{{ last_map_id - last_allowed_id_range + 1 }}</strong> to <strong>{{ last_map_id }}</strong>. To upload maps outside this range, send an <a href="mailto:admin@minecartrapidtransit.net">email to the admins</a> with the attached maps.</li>
-    <li>If you have created a new map item on the Minecraft server within the last 15 minutes, the valid map ID range may not have been updated here yet. Please wait for the next world save, which will update the range.</li>
+    <li>If you have created a new map item on the Minecraft server within the last 15 minutes, the valid map ID range may not have been updated here yet. Please wait for the next world save and refresh this page to update the range.</li>
   </ul>
   <span>Note about map locking:</span>
   <ul>
