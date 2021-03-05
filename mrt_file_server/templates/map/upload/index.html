@@ -6,16 +6,23 @@
 <span>Upload your map .dat files to the Minecraft server here.</span>
 
 <form method="post" enctype="multipart/form-data" action="{{ url_for('route_map_upload') }}">
-  <h2>1. Create the map .dat files</h2>
+  <div style="text-align: center;"">
+    <h2 style="border: solid; padding: 1em;">
+      Current range of Map IDs that can be uploaded via the file server:<br \>
+      <span style="color: green;">{{ last_map_id - last_allowed_id_range + 1 }}</span> to <span style="color: green;">{{ last_map_id }}</span>
+    </h2>
+  </div>
+   <h2>1. Create the map .dat files</h2>
   <span style="color: red;"><strong>PLEASE READ ALL OF THE FOLLOWING INSTRUCTIONS CAREFULLY:</strong></span>
   <ol>
+    <li>Find the image files that you want to upload (in png, jpg, or gif format), and resize or crop them to square dimensions (width = height) using your favourite image-editing software.</li>
     <li>On the Minecraft server, put the <strong>"Empty Map"</strong> item into your hand and right-click it to generate a new map. Mouse over the map and take note of its numerical ID.
       <ol type="a">
         <li>If you want to split your image into multiple maps, generate additional maps in-game as needed. (i.e. if you want a 2x2 pattern of maps, generate 4 maps in total. For 3x3, generate 9 maps in total.)</li>
       </ol>
     </li>
-    <li>Find the image files that you want to upload (in png, jpg, or gif format), and resize or crop them to square dimensions (width = height) using your favourite image-editing software.</li>
-    <li>Go to <strong><a href="https://mc-map.djfun.de">https://mc-map.djfun.de</a></strong> and follow these steps:
+    <li>Once you have created your in-game maps, <strong>wait for the next world save to finish</strong> (runs every 15 minutes), then <strong>refresh this page</strong> to ensure that map ID range at the top of this page includes the maps you have just created.</li>
+    <li>Go to <strong><a href="https://mc-map.djfun.de" target="_blank">https://mc-map.djfun.de</a></strong> and follow these steps:
       <ol type="a">
         <li>Go to the <strong>"Settings"</strong> tab, and change the <strong>"Color scheme"</strong> field to <strong>"Version 1.12 (2017)"</strong>. Click <strong>"Save Settings"</strong>.</li>
         <li>Go back to the <strong>"Main"</strong> tab and select the image file to upload.</li>
@@ -38,7 +45,7 @@
     <li>Maximum size per file is 100 kilobytes.</li>
     <li>Each file must have a valid <a href="https://minecraft.gamepedia.com/Map_item_format" target="_blank">NBT map item format</a>.</li>
     <li>File names must have the following format: <strong>map_#####.dat</strong>, where ##### is the map ID.</li>
-    <li>Map IDs must be within the last {{ last_allowed_id_range }} maps recently created on the server, currently from IDs <strong>{{ last_map_id - last_allowed_id_range + 1 }}</strong> to <strong>{{ last_map_id }}</strong>. To upload maps outside this range, send an <a href="mailto:admin@minecartrapidtransit.net">email to the admins</a> with the attached maps.</li>
+    <li>Map IDs must be within the last {{ last_allowed_id_range }} maps recently created on the server. To upload maps outside this range, send an <a href="mailto:admin@minecartrapidtransit.net">email to the admins</a> with the attached maps.</li>
     <li>If you have created a new map item on the Minecraft server within the last 15 minutes, the valid map ID range may not have been updated here yet. Please wait for the next world save and refresh this page to update the range.</li>
   </ul>
   <span>Note about map locking:</span>
