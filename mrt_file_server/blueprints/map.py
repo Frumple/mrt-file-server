@@ -168,18 +168,24 @@ def get_file_map_id(filename):
   return None
 
 def is_invalid_map_format(file):
-  # Check that the NBT map fields in the uploaded file exist before saving the file to disk
-  compressed_buffer = file.getvalue()
-  nbt_file = load_compressed_nbt_buffer(compressed_buffer)
+  try:
+    # Check that all the required NBT map fields in the file exist
+    compressed_buffer = file.getvalue()
+    nbt_file = load_compressed_nbt_buffer(compressed_buffer)
 
-  return \
-    get_nbt_map_value(nbt_file, "dimension") is None or \
-    get_nbt_map_value(nbt_file, "locked") is None or \
-    get_nbt_map_value(nbt_file, "colors") is None or \
-    get_nbt_map_value(nbt_file, "scale") is None or \
-    get_nbt_map_value(nbt_file, "trackingPosition") is None or \
-    get_nbt_map_value(nbt_file, "xCenter") is None or \
-    get_nbt_map_value(nbt_file, "zCenter") is None
+    is_invalid = get_nbt_map_value(nbt_file, "dimension") is None or \
+      get_nbt_map_value(nbt_file, "locked") is None or \
+      get_nbt_map_value(nbt_file, "colors") is None or \
+      get_nbt_map_value(nbt_file, "scale") is None or \
+      get_nbt_map_value(nbt_file, "trackingPosition") is None or \
+      get_nbt_map_value(nbt_file, "xCenter") is None or \
+      get_nbt_map_value(nbt_file, "zCenter") is None
+
+    return is_invalid
+
+  # If there are any errors loading the file as an NBT, then the file is invalid
+  except Exception as e:
+    return True
 
 def is_existing_map_file_locked(filename):
   uploads_dir = app.config["MAP_UPLOADS_DIR"]

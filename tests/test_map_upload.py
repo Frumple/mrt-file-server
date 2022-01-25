@@ -280,6 +280,7 @@ class TestMapUpload(TestMapBase):
     ("map_1537.dat", "MAP_UPLOAD_MAP_FORMAT_INVALID"),  # Without trackingPosition tag
     ("map_1538.dat", "MAP_UPLOAD_MAP_FORMAT_INVALID"),  # Without xCenter tag
     ("map_1539.dat", "MAP_UPLOAD_MAP_FORMAT_INVALID"),  # Without zCenter tag
+    ("map_1540.dat", "MAP_UPLOAD_MAP_FORMAT_INVALID")   # PNG with extension renamed to .dat
   ])
   def test_upload_with_invalid_file_should_fail(self, mock_logger, filename, message_key):
     username = "Frumple"
