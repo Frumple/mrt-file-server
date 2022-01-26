@@ -1,2 +1,2 @@
 -r common.txt
-pytest==6.0.1
+pytest==6.2.5

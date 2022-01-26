@@ -12,7 +12,7 @@ This application was built for the **[Minecart Rapid Transit (MRT) Minecraft Ser
 
 ## Prerequisites
 
-This application uses **[Python 3.8.6](https://www.python.org/downloads/release/python-386/)**. Python 3.9.0 or higher currently does not work due to an unresolved deprecation in the NBT package.
+This application uses **[Python 3.10.2](https://www.python.org/downloads/release/python-3102/)**.
 
 After installing Python, install the required packages by navigating to the application root directory and running **pip** with the provided requirements file:
 
@@ -54,7 +54,7 @@ If you want both of the schematic upload and download directories to point to yo
 - **`SCHEMATIC_UPLOAD_MAX_FILE_SIZE`** - Maximum number of bytes that can be uploaded per schematic file. (Default: 100 kilobytes)
 - **`MAP_UPLOAD_MAX_NUMBER_OF_FILES`** - Maximum number of map files that can be uploaded at one time. (Default: 10)
 - **`MAP_UPLOAD_MAX_FILE_SIZE`** - Maximum number of bytes that can be uploaded per map file. (Default: 100 kilobytes)
-- **`MAX_UPLOAD_LAST_ALLOWED_ID_RANGE`** - Number of last map IDs that are allowed to be uploaded. (Default: 1000) 
+- **`MAX_UPLOAD_LAST_ALLOWED_ID_RANGE`** - Number of last map IDs that are allowed to be uploaded. (Default: 1000)
   - Example: If last map ID in `idcounts.dat` is 2500, and `MAX_UPLOAD_LAST_ALLOWED_ID_RANGE` is 1000, then the range of allowed map IDs is 1501 to 2500.
 
 These basic authentication settings are from the **[Flask-BasicAuth](https://github.com/jpvanhal/flask-basicauth)** extension:

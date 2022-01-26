@@ -1,8 +1,6 @@
-Flask==1.1.2
-Flask-Uploads==0.2.1
+Flask==2.0.2
 Flask-BasicAuth==0.2.0
-nbt==1.5.0
+nbt==1.5.1
 
-# Flask-Uploads 0.2.1 uses deprecated imports that have been removed in Werkzeug 1.0.1.
-# Therefore, use Werkzeug 0.16.0 for now until Flask-Uploads is updated.
-Werkzeug==0.16.0
+# Get Flask-Uploads directly from GitHub because the maintainer hasn't uploaded their latest changes to PyPI.
+git+https://github.com/maxcountryman/flask-uploads
