@@ -2,7 +2,7 @@ from flask import Blueprint, abort, render_template, request, send_from_director
 from werkzeug.utils import secure_filename
 
 from mrt_file_server import app, maps
-from mrt_file_server.utils.file_utils import get_filesize, split_file_root_and_extension, file_exists_in_dir
+from mrt_file_server.utils.file_utils import get_filesize, file_exists_in_dir
 from mrt_file_server.utils.flash_utils import flash_by_key
 from mrt_file_server.utils.log_utils import log_info, log_warn, log_error
 from mrt_file_server.utils.string_utils import str_contains_whitespace
@@ -72,13 +72,12 @@ def upload_single_map(username, file):
   elif is_existing_map_file_locked(file.filename):
     flash_by_key(app, "MAP_UPLOAD_EXISTING_MAP_LOCKED", file.filename)
     log_warn("MAP_UPLOAD_EXISTING_MAP_LOCKED", file.filename, username)
+  elif is_map_already_uploaded(file.filename):
+    flash_by_key(app, "MAP_UPLOAD_MAP_ALREADY_UPLOADED", file.filename)
+    log_warn("MAP_UPLOAD_MAP_ALREADY_UPLOADED", file.filename, username)
   else:
     try:
       existing_file_path = os.path.join(uploads_dir, file.filename)
-
-      # Delete the existing map file, if it exists
-      if os.path.isfile(existing_file_path):
-        os.remove(existing_file_path)
 
       # Upload the new map file
       maps.save(file)
@@ -156,8 +155,9 @@ def download_map(filename):
   return response
 
 def get_last_map_id():
-  uploads_dir = app.config["MAP_UPLOADS_DIR"]
-  idcounts_file_path = os.path.join(uploads_dir, "idcounts.dat")
+  # idcounts.dat will be in the map downloads directory, which should map to the data directory of the Minecraft server.
+  downloads_dir = app.config["MAP_DOWNLOADS_DIR"]
+  idcounts_file_path = os.path.join(downloads_dir, "idcounts.dat")
   idcounts_nbt = load_compressed_nbt_file(idcounts_file_path)
   return get_nbt_map_value(idcounts_nbt, "map")
 
@@ -188,8 +188,9 @@ def is_invalid_map_format(file):
     return True
 
 def is_existing_map_file_locked(filename):
-  uploads_dir = app.config["MAP_UPLOADS_DIR"]
-  existing_file_path = os.path.join(uploads_dir, filename)
+  # The existing file should be in the map downloads directory, which should map to the actual data directory on the Minecraft server.
+  downloads_dir = app.config["MAP_DOWNLOADS_DIR"]
+  existing_file_path = os.path.join(downloads_dir, filename)
 
   if os.path.isfile(existing_file_path):
     existing_file_nbt = load_compressed_nbt_file(existing_file_path)
@@ -197,3 +198,9 @@ def is_existing_map_file_locked(filename):
     return locked_value == 1
 
   return False
+
+def is_map_already_uploaded(filename):
+  uploads_dir = app.config["MAP_UPLOADS_DIR"]
+  existing_file_path = os.path.join(uploads_dir, filename)
+
+  return os.path.isfile(existing_file_path)

@@ -3,7 +3,6 @@ from unittest.mock import patch
 
 from werkzeug.datastructures import OrderedMultiDict
 
-import os
 import pytest
 
 class TestMapDownload(TestMapBase):
@@ -112,6 +111,7 @@ class TestMapDownload(TestMapBase):
 
   def clean_map_downloads_dir(self):
     self.remove_files(self.downloads_dir, "dat")
+    self.copy_test_data_file("idcounts.dat", self.downloads_dir)
 
   def create_download_link(self, data):
     return self.client.post("/map/download", data = data)

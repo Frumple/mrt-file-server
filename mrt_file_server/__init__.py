@@ -79,7 +79,8 @@ def configure_log_messages(app):
     "MAP_UPLOAD_FILENAME_INVALID":                          "Map upload failed. File name is not of the format 'map_#####.dat': '%s' (Username: '%s')",
     "MAP_UPLOAD_MAP_ID_OUT_OF_RANGE":                       "Map upload failed. Map ID is out of range: '%s' (Username: '%s')",
     "MAP_UPLOAD_MAP_FORMAT_INVALID":                        "Map upload failed. File is not a valid map format: '%s' (Username: '%s')",
-    "MAP_UPLOAD_EXISTING_MAP_LOCKED":                       "Map upload failed. Existing map file is locked. Contact an admin for assistance: '%s' (Username: '%s')",
+    "MAP_UPLOAD_EXISTING_MAP_LOCKED":                       "Map upload failed. Existing map file is locked. '%s' (Username: '%s')",
+    "MAP_UPLOAD_MAP_ALREADY_UPLOADED":                      "Map upload failed. Map already uploaded. '%s' (Username: '%s')",
 
     "MAP_DOWNLOAD_SUCCESS":                                 "Map download initiated: '%s'",
     "MAP_DOWNLOAD_FORBIDDEN":                               "Map download forbidden: '%s'",
@@ -130,6 +131,7 @@ def configure_flash_messages(app):
 
     "MAP_UPLOAD_MAP_FORMAT_INVALID":                        FlashMessage("Upload Failed! File is not a valid map format.", "failure"),
     "MAP_UPLOAD_EXISTING_MAP_LOCKED":                       FlashMessage("Upload Failed! Existing map file is locked. Contact an admin for assistance.", "failure"),
+    "MAP_UPLOAD_MAP_ALREADY_UPLOADED":                      FlashMessage("Upload Failed! Map file has already been uploaded.", "failure"),
 
     "MAP_DOWNLOAD_LINK_CREATION_SUCCESS":                   FlashMessage("Download Link Creation Successful! <a href=\"download/{}\">Click here to begin download.</a>", "success"),
     "MAP_DOWNLOAD_LINK_CREATION_MAP_ID_EMPTY":              FlashMessage("Download Link Creation Failed! Map ID is empty.", "failure"),

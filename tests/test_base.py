@@ -46,6 +46,10 @@ class TestBase:
     for file in glob.glob(path):
       os.remove(file)
 
+  def verify_file_does_not_exist(self, directory, filename):
+    file_path = os.path.join(directory, filename)
+    assert not os.path.isfile(file_path)
+
   def verify_file_content(self, directory, filename, expected_file_content):
     filepath = os.path.join(directory, filename)
     actual_file_content = self.read_file(filepath)

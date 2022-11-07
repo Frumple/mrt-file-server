@@ -2,9 +2,9 @@
 
 # MRT File Server
 
-A simple Flask web application that allows players to upload and download map item .dat files and WorldEdit schematics to a Minecraft server. This application also hosts world download files for players to use in their own offline single-player games.
+A Flask web application that allows players to upload/download WorldEdit schematics and NBT map .dat files to a Minecraft server. This application also hosts world download files for players to use in their own offline single-player games.
 
-This application was built for the **[Minecart Rapid Transit (MRT) Minecraft Server](https://www.minecartrapidtransit.net)**.
+This application was built and is currently in use for the **[Minecart Rapid Transit (MRT) Minecraft Server](https://www.minecartrapidtransit.net)**.
 
 <div align="center">
   <img src="https://github.com/Frumple/mrt-file-server/blob/master/homepage.png" />
@@ -18,12 +18,12 @@ After installing Python, install the required packages by navigating to the appl
 
     pip install -r requirements/development.txt
 
-Then, copy the contents of the **instance_template** directory into a new directory named **instance**:
+Next, copy the contents of the **instance_template** directory into a new directory named **instance**:
 
     cp -R instance_template instance
 
-Finally in **config.py**:
-- You must set **`SECRET_KEY`** to a unique and random phrase. For more details on how to generate a good secret key, see **[the "Sessions" section in the Flask quickstart documentation](http://flask.pocoo.org/docs/1.0/quickstart/#sessions)**.
+Then in **config.py**:
+- You must set **`SECRET_KEY`** to a unique and random phrase. For more details on how to generate a good secret key, see **[the "Sessions" section in the Flask quickstart documentation](https://flask.palletsprojects.com/en/2.2.x/quickstart/#sessions)**.
 - If you are running your production server with basic authentication enabled, set the basic auth username and password in **`BASIC_AUTH_USERNAME`** and **`BASIC_AUTH_PASSWORD`**. Otherwise, basic authentication can be disabled by setting **`BASIC_AUTH_FORCE`** to `False`.
 
 ## Application Mode
@@ -38,13 +38,18 @@ In the **instance** directory, there are three subdirectories each corresponding
 
 - **config.py** - The main configuration file
 - **logs** - Where all log files are written
-- **uploads** - Where all schematics are uploaded
-- **downloads** - Where all schematics and worlds are downloaded
+- **uploads/schematics** - Where all schematics are uploaded to
+- **uploads/maps** - Where all maps are uploaded to
+- **downloads/schematics** - Where all schematics are downloaded from
+- **downloads/maps** - Where all maps are donwnloaded from
+- **downloads/worlds** - Where all worlds are downloaded from
 
-If you want both of the schematic upload and download directories to point to your WorldEdit schematics directory on your Minecraft server so that schematics are immediately available, you have a couple of options to achieve this:
+Your upload and download directories should point directly to your WorldEdit /schematics directory and world /data directory (for maps). For this you have a couple options:
 
-- Use symbolic links to point both directories to the schematic directory.
-- Deploy this application within a Docker container and use Docker volumes to map both directories to the schematic directory.
+- Use symbolic links.
+- Deploy this application within a Docker container and use Docker volumes.
+
+**The one exception is that you should NOT point the map upload directory directly to the world /data directory containing all your map .dat files.** Uploading .dat files directly while a Minecraft server running tends to cause the uploaded map file to not persist when the server restarts. You should instead have map files uploaded to the file server's upload directory as normal, and then have a separate script that moves these files to the /data directory when the server is shut down (usually as part of a daily restart script).
 
 ## Configuration
 
