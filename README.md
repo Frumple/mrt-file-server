@@ -66,7 +66,7 @@ These basic authentication settings are from the **[Flask-BasicAuth](https://git
 
 Run the tests by navigating to the project root directory and running the following command:
 
-    pytest
+    python -m pytest
 
 ## Running the Application
 
