@@ -15,25 +15,31 @@
    <h2>1. Create the map .dat files</h2>
   <span style="color: red;"><strong>PLEASE READ ALL OF THE FOLLOWING INSTRUCTIONS CAREFULLY:</strong></span>
   <ol>
-    <li>Find the image files that you want to upload (in png, jpg, or gif format), and resize or crop them to square dimensions (width = height) using your favourite image-editing software.</li>
+    <li>Find the image files that you want to upload, and if necessary resize or crop them to square dimensions (width = height) using your favourite image-editing software.</li>
     <li>On the Minecraft server, put the <strong>"Empty Map"</strong> item into your hand and right-click it to generate a new map. Mouse over the map and take note of its numerical ID.
       <ol type="a">
         <li>If you want to split your image into multiple maps, generate additional maps in-game as needed. (i.e. if you want a 2x2 pattern of maps, generate 4 maps in total. For 3x3, generate 9 maps in total.)</li>
       </ol>
     </li>
     <li>Once you have created your in-game maps, <strong>wait for the next world save to finish</strong> (runs every 15 minutes), then <strong>refresh this page</strong> to ensure that map ID range at the top of this page includes the maps you have just created.</li>
-    <li>Go to <strong><a href="https://mc-map.djfun.de" target="_blank">https://mc-map.djfun.de</a></strong> and follow these steps:
+    <li>To convert an image into a <strong>single map</strong>, go to <strong><a href="https://frumple.github.io/image-to-minecraft-map" target="_blank">Image to Minecraft Map</a></strong> and follow these instructions:
       <ol type="a">
-        <li>Go to the <strong>"Settings"</strong> tab, and change the <strong>"Color scheme"</strong> field to <strong>"Version 1.12 (2017)"</strong>. Click <strong>"Save Settings"</strong>.</li>
-        <li>Go back to the <strong>"Main"</strong> tab and select the image file to upload.</li>
-        <li>On Step 2, if you are splitting your image into multiple maps, set the horizontal and vertical dimensions here. Otherwise, just use the default values of "1".</li>
-        <li>On Step 3, check that the resulting colors of the map(s). If they are acceptable to you, click "Adjust colors".</li>
-        <li>On Step 4, enter the numerical ID of the map noted down in Step 1. For multiple maps, enter the lowest of these IDs, and the maps will be named sequentially. (i.e. For 4 maps with IDs 1000, 1001, 1002, 1003, enter in 1000.)</li>
-        <li>On Step 5, download the .dat files when they are ready.</li>
+        <li>Enter the ID of your map in the <strong>"Next Map ID #"</strong> field.</li>
+        <li>Set your desired <strong><a href="https://github.com/Frumple/image-to-minecraft-map/wiki/Settings" target="_blank">settings</a></strong> and upload your image.</li>
+        <li>Download the resulting .dat file.</li>
       </ol>
     </li>
-    <li>Upload the .dat files below, then <strong>check the maps in-game after the next server restart, scheduled daily at 12:00 AM UTC.</strong></li>
+    <li>To convert an image to <strong>multiple maps</strong>, for now we recommend using <strong><a href="https://rebane2001.com/mapartcraft" target="_blank">MapartCraft</a></strong>. Follow these instructions:
+      <ol type="a">
+        <li>Click <strong>"Pick Image"</strong> to upload your image.</li>
+        <li>Under Block Selection, set the <strong>"Presets"</strong> to <strong>"Everything"</strong>.</li>
+        <li>Under Settings, set the <strong>"Mode"</strong> to <strong>"Datafile (map.dat)"</strong>.</li>
+        <li>Set other settings as desired, such as the map size and the numerical filename range.</li>
+        <li>Donwload the .dat files directly or as a .zip archive.</li>
+      </ol>
+    </li>
   </ol>
+  <span style="color: red;">Upload the .dat files in the form below, then <strong>check the maps in-game after the next server restart, scheduled daily at 12:00 AM UTC.</strong></span>
   <h2>2. Enter your Minecraft Username</h2>
   <span>Username:</span>
   <input type="text" id="userName" name="userName" oninput="handleFiles(fileInput.files)" />
