@@ -1,4 +1,5 @@
-from flask import flash, Markup
+from flask import flash
+from markupsafe import Markup
 
 def get_flash_message(app, key):
   return app.config["FLASH_MESSAGES"][key]

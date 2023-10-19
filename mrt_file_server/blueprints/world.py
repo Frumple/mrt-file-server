@@ -12,8 +12,3 @@ def show_world_downloads_terms():
 @app.route("/world/download")
 def list_world_downloads():
   return render_template("world/download/index.html", home = False)
-
-@app.route("/world/download/<path:filename>")
-def download_world(filename):
-  log_info("WORLD_DOWNLOAD_SUCCESS", filename)
-  return send_from_directory(app.config["WORLD_DOWNLOADS_DIR"], filename, as_attachment = True)
